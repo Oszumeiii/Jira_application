@@ -42,7 +42,7 @@ jobs:
         run: flutter pub get
 
       - name: Analyze & test Flutter
-        working-directory: ./frontend
+        working-directory: ./jira
         run: |
           flutter analyze
           flutter test || echo "No frontend tests yet"
