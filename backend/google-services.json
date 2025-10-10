@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "389512526917",
+    "project_id": "jiraapp-46b2d",
+    "storage_bucket": "jiraapp-46b2d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:389512526917:android:831f46e64248b23068772c",
+        "android_client_info": {
+          "package_name": "com.example.jira"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6p2A2Q0sXpmAayxJByQncgZB4DGwUUr0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
