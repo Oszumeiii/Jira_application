@@ -1,4 +1,5 @@
 import { db } from "../config/db.js";
+import { Timestamp } from "firebase-admin/firestore";
 
 export class Project {
   constructor({
@@ -8,8 +9,8 @@ export class Project {
     ownerId,
     members = [],
     status = "active",
-    createdAt = Date.now(),
-    updatedAt = Date.now(),
+    createdAt = Timestamp.now(),
+    updatedAt = Timestamp.now(),
   }) {
     this.id = id;
     this.name = name;
@@ -25,19 +26,19 @@ export class Project {
     if (!this.name || !this.ownerId)
       throw new Error("Tên và ownerId là bắt buộc");
 
-    const ref = await db.collection("projects").add({
+    const data = {
       name: this.name,
       description: this.description,
       ownerId: this.ownerId,
-      members: this.members,
+      members: this.members.length ? this.members : [this.ownerId],
       status: this.status,
       createdAt: this.createdAt,
       updatedAt: this.updatedAt,
-    });
+    };
 
+    const ref = await db.collection("projects").add(data);
     this.id = ref.id;
+
     return this;
   }
-
-
 }

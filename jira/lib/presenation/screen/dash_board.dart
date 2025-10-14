@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jira/presenation/widgets/note_card.dart';
 import 'package:jira/presenation/widgets/project_card.dart';
+import 'package:jira/services/project_service.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -10,6 +11,7 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+
   int _selectedIndex = 0;
 
   final List<String> _tabs = ['Projects', 'Tasks', 'Profile'];
@@ -62,8 +64,34 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 }
 
-class _ProjectsTab extends StatelessWidget {
+class _ProjectsTab extends StatefulWidget {
   const _ProjectsTab();
+
+  @override
+  State<_ProjectsTab> createState() => _ProjectsTabState();
+}
+
+class _ProjectsTabState extends State<_ProjectsTab> {
+   final TextEditingController _nameController = TextEditingController();
+
+  Future<void> _addProject() async {
+    try {
+      final result = await ProjectService.addProject(
+        name : "JiraApp",
+       // name: _nameController.text,
+        ownerId: "adGGPKGGy6uPGk3PkWQU", 
+        description: "Dự án mới từ Flutter",
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('✅ ${result['message']}')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('❌ Lỗi: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +239,7 @@ class _ProjectsTab extends StatelessWidget {
                   ),
                   child: IconButton(
                     icon: const Icon(Icons.add, color: Colors.white),
-                    onPressed: () {},
+                    onPressed: _addProject
                   ),
                 ),
               ],

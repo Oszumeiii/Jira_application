@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TasksTab extends StatelessWidget {
-  const TasksTab();
+  const TasksTab({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class TasksTab extends StatelessWidget {
 }
 
 class ProfileTab extends StatelessWidget {
-  const ProfileTab();
+  const ProfileTab({super.key});
 
   @override
   Widget build(BuildContext context) {
