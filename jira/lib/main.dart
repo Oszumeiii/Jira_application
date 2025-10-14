@@ -4,7 +4,6 @@ import 'package:jira/domain/cubit/AuthCubit.dart';
 import 'package:jira/firebase_options.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jira/splash_screen.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
