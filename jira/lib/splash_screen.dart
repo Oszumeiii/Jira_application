@@ -12,7 +12,7 @@ class SplashScreen extends StatelessWidget {
         if (isLoggedIn) {
           return const DashboardScreen();
         } else {
-          return const DashboardScreen(); // thay the bang login
+          return const DashboardScreen(); 
         }
       },
     );

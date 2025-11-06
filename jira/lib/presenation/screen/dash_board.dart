@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jira/presenation/screen/add_project_page.dart';
 import 'package:jira/presenation/widgets/note_card.dart';
 import 'package:jira/presenation/widgets/project_card.dart';
-import 'package:jira/services/project_service.dart';
-
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -14,7 +14,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   int _selectedIndex = 0;
 
-  final List<String> _tabs = ['Projects', 'Tasks', 'Profile'];
+  final List<String> _tabs = ['Home', 'Projects', 'Tasks'];
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +35,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
             icon: const Icon(Icons.notifications_none),
             onPressed: () {},
           ),
-          IconButton(
-            icon: const Icon(Icons.account_circle),
-            onPressed: () {},
-          ),
+        IconButton(
+          icon: const Icon(Icons.account_circle),
+          onPressed: () {
+            context.go('/profile'); 
+          },
+        ),
+
         ],
       ),
       body: IndexedStack(
@@ -50,9 +53,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.work_outline), label: 'Projects'),
-          NavigationDestination(icon: Icon(Icons.task_outlined), label: 'Tasks'),
-          NavigationDestination(icon: Icon(Icons.person_outline), label: 'Profile'),
+          NavigationDestination(icon: Icon(Icons.work_outline), label: 'Home'),
+          NavigationDestination(icon: Icon(Icons.task_outlined), label: 'Projects'),
+          NavigationDestination(icon: Icon(Icons.person_outline), label: 'Tasks'),
         ],
         onDestinationSelected: (index) {
           setState(() {
@@ -72,25 +75,14 @@ class _ProjectsTab extends StatefulWidget {
 }
 
 class _ProjectsTabState extends State<_ProjectsTab> {
-   final TextEditingController _nameController = TextEditingController();
-
-  Future<void> _addProject() async {
-    try {
-      final result = await ProjectService.addProject(
-        name : "JiraApp",
-       // name: _nameController.text,
-        ownerId: "adGGPKGGy6uPGk3PkWQU", 
-        description: "Dự án mới từ Flutter",
+  void _showBottomSheetAddProject() {
+        showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => const AddProjectBottomSheet(),
       );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('✅ ${result['message']}')),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('❌ Lỗi: $e')),
-      );
-    }
   }
 
   @override
@@ -239,7 +231,7 @@ class _ProjectsTabState extends State<_ProjectsTab> {
                   ),
                   child: IconButton(
                     icon: const Icon(Icons.add, color: Colors.white),
-                    onPressed: _addProject
+                    onPressed: _showBottomSheetAddProject
                   ),
                 ),
               ],

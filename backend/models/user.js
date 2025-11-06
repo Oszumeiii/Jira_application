@@ -11,20 +11,20 @@ export class User {
     this.updatedAt = updatedAt;
 }
 //luu user moi vao firebase store
-    async save(){
-        if (!this.name || !this.email ) throw new Error(" Ten va email bat buoc")
+async save(){
+    if (!this.name || !this.email ) throw new Error(" Ten va email bat buoc")
 
-        const ref = await db.collection("users").add(
-            {
-                name: this.name,
-                email: this.email,
-                role: this.role,
-                photoUrl: this.photoUrl,
-                createdAt: this.createdAt,
-                updatedAt: this.updatedAt,
-                }
-        )
-        this.id = ref.id;
-        return this;
-    }
+    const ref = await db.collection("users").add(
+        {
+            name: this.name,
+            email: this.email,
+            role: this.role,
+            photoUrl: this.photoUrl,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt,
+            }
+    )
+    this.id = ref.id;
+    return this;
+}
 }
