@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jira/presenation/screen/dashboard/home_tab.dart';
+import 'package:jira/presenation/screen/dashboard/notif_tab.dart';
 import 'package:jira/presenation/screen/dashboard/profile.dart';
 import 'package:jira/presenation/screen/dashboard/projects_tab.dart';
 import 'package:jira/presenation/screen/dashboard/task_tab.dart';
-
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -15,12 +15,13 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
 
-  final List<String> _tabs = ['Home', 'Projects', 'Tasks'];
+  final List<String> _tabs = ['Home', 'Projects', 'Tasks', 'Notification'];
 
   final List<Widget> _tabBodies = const [
     HomeTab(),
     ProjectsTab(),
     TasksTab(),
+    NotifTab(),
   ];
 
   void _onTabSelected(int index) {
@@ -49,16 +50,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _tabBodies,
-      ),
+      body: IndexedStack(index: _selectedIndex, children: _tabBodies),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.task_outlined), label: 'Projects'),
-          NavigationDestination(icon: Icon(Icons.checklist_rtl_outlined), label: 'Tasks'),
+          NavigationDestination(
+            icon: Icon(Icons.task_outlined),
+            label: 'Projects',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.checklist_rtl_outlined),
+            label: 'Tasks',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.notifications),
+            label: 'Notification',
+          ),
         ],
         onDestinationSelected: _onTabSelected,
       ),
