@@ -1,80 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:jira/presenation/screen/add_project_page.dart';
+import 'package:jira/presenation/screen/dashboard/add_project_page.dart';
 import 'package:jira/presenation/widgets/note_card.dart';
 import 'package:jira/presenation/widgets/project_card.dart';
-class DashboardScreen extends StatefulWidget {
-  const DashboardScreen({super.key});
+
+class HomeTab extends StatefulWidget {
+  const HomeTab();
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  State<HomeTab> createState() => _HomeTabState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
-
-  int _selectedIndex = 0;
-
-  final List<String> _tabs = ['Home', 'Projects', 'Tasks'];
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor:  const Color(0xFFF5F5F0),
-      appBar: AppBar(
-        title: Text(_tabs[_selectedIndex] , style:  TextStyle(fontWeight:  FontWeight.bold , fontSize: 25 ,shadows: [
-      Shadow(
-        offset: Offset(2, 2), 
-        blurRadius: 5,       
-        color: Colors.black54, 
-      ),
-    ],)),
-        //backgroundColor: const Color(0xFF456882),
-        backgroundColor:   Color(0xFFF5F5F0),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none),
-            onPressed: () {},
-          ),
-        IconButton(
-          icon: const Icon(Icons.account_circle),
-          onPressed: () {
-            context.go('/profile'); 
-          },
-        ),
-
-        ],
-      ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: const [
-          _ProjectsTab(),
-        ],
-      ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.work_outline), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.task_outlined), label: 'Projects'),
-          NavigationDestination(icon: Icon(Icons.person_outline), label: 'Tasks'),
-        ],
-        onDestinationSelected: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-      ),
-    );
-  }
-}
-
-class _ProjectsTab extends StatefulWidget {
-  const _ProjectsTab();
-
-  @override
-  State<_ProjectsTab> createState() => _ProjectsTabState();
-}
-
-class _ProjectsTabState extends State<_ProjectsTab> {
+class _HomeTabState extends State<HomeTab> {
   void _showBottomSheetAddProject() {
         showModalBottomSheet(
         context: context,

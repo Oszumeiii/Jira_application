@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jira/presenation/login/login_view.dart';
+import 'package:go_router/go_router.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -48,12 +49,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _controller.jumpToPage(_pages.length - 1);
   }
 
+  // void _goToLogin() {
+  //   Navigator.pushReplacement(
+  //     context,
+  //     MaterialPageRoute(builder: (_) => LoginView()),
+  //   );
+  // }
+
   void _goToLogin() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => LoginView()),
-    );
-  }
+  context.go('/login'); 
+}
 
   @override
   Widget build(BuildContext context) {

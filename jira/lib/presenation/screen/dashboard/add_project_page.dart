@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:jira/presenation/widgets/add_project.dart';
 import 'package:jira/services/project_service.dart';
 
 class AddProjectBottomSheet extends StatefulWidget {
@@ -14,33 +14,33 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
   final TextEditingController _summaryController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   String _selectedType = "Software";
-  DateTime? _startDate;
+  // DateTime? _startDate;
   bool _isLoading = false;
 
-  Future<void> _pickDate() async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _startDate ?? now,
-      firstDate: DateTime(now.year - 1),
-      lastDate: DateTime(now.year + 5),
-      builder: (context, child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Colors.blueAccent,
-              onPrimary: Colors.white,
-              surface: Colors.white,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null) {
-      setState(() => _startDate = picked);
-    }
-  }
+  // Future<void> _pickDate() async {
+  //   final now = DateTime.now();
+  //   final picked = await showDatePicker(
+  //     context: context,
+  //     initialDate: _startDate ?? now,
+  //     firstDate: DateTime(now.year - 1),
+  //     lastDate: DateTime(now.year + 5),
+  //     builder: (context, child) {
+  //       return Theme(
+  //         data: ThemeData.light().copyWith(
+  //           colorScheme: const ColorScheme.light(
+  //             primary: Colors.blueAccent,
+  //             onPrimary: Colors.white,
+  //             surface: Colors.white,
+  //           ),
+  //         ),
+  //         child: child!,
+  //       );
+  //     },
+  //   );
+  //   if (picked != null) {
+  //     setState(() => _startDate = picked);
+  //   }
+  // }
 
   Future<void> _addProject() async {
     if (_nameController.text.trim().isEmpty) {
@@ -133,12 +133,15 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
             const SizedBox(height: 28),
 
             // ⚙️ Project Type
-            _buildDropdown(),
+            buildDropdown(
+              _selectedType,
+              (fn) => setState(fn),
+            ),
 
             const SizedBox(height: 20),
 
             // 🧾 Project Name
-            _buildTextField(
+            buildTextField(
               controller: _nameController,
               label: "Project Name",
               icon: Icons.folder_outlined,
@@ -147,7 +150,7 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
             const SizedBox(height: 16),
 
             // 📝 Summary
-            _buildTextField(
+            buildTextField(
               controller: _summaryController,
               label: "Summary",
               icon: Icons.short_text,
@@ -156,7 +159,7 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
             const SizedBox(height: 16),
 
             // 📄 Description
-            _buildTextField(
+            buildTextField(
               controller: _descriptionController,
               label: "Description",
               icon: Icons.description_outlined,
@@ -232,53 +235,6 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _selectedType,
-      decoration: InputDecoration(
-        labelText: "Project Type",
-        prefixIcon: const Icon(Icons.category_outlined, color: Colors.blueAccent),
-        filled: true,
-        fillColor: Colors.blue[50]?.withOpacity(0.3),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      items: const [
-        DropdownMenuItem(value: "Software", child: Text("Software")),
-        DropdownMenuItem(value: "Service", child: Text("Service Desk")),
-        DropdownMenuItem(value: "Marketing", child: Text("Marketing")),
-        DropdownMenuItem(value: "Business", child: Text("Business")),
-      ],
-      onChanged: (val) => setState(() => _selectedType = val!),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    int maxLines = 1,
-  }) {
-    return TextField(
-      controller: controller,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon, color: Colors.blueAccent),
-        filled: true,
-        fillColor: Colors.blue[50]?.withOpacity(0.3),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.blueAccent, width: 1.5),
         ),
       ),
     );

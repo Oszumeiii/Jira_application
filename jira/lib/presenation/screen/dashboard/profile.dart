@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -27,23 +28,26 @@ class ProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
               child: Column(
                 children: [
+                  // ===== Nút quay lại =====
                   Align(
-                    alignment: Alignment.topRight,
+                    alignment: Alignment.topLeft,
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.15),
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.close_rounded, color: Colors.white),
-                        onPressed: () {},
+                        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
                       ),
                     ),
                   ),
 
                   const SizedBox(height: 10),
 
-                  // Avatar
+                  // ===== Avatar =====
                   Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
@@ -91,7 +95,7 @@ class ProfileScreen extends StatelessWidget {
 
                   const SizedBox(height: 14),
 
-                  // site info
+                  // ===== Thông tin site =====
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
@@ -176,11 +180,14 @@ class ProfileScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            // ===== Logout Button với gradient xanh =====
+            // ===== Logout Button =====
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  // 👉 Khi nhấn Logout, chuyển về trang Login
+                  context.go('/login');
+                },
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   decoration: BoxDecoration(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:jira/presenation/login/cubit/login_cubit.dart';
 import 'package:jira/presenation/login/cubit/login_state.dart';
-import 'package:jira/presenation/screen/dash_board.dart';
 import 'package:jira/presenation/signup/signup_view.dart';
 
 class LoginView extends StatefulWidget {
@@ -20,6 +20,10 @@ class _LoginView extends State<LoginView> {
     _emailController.dispose();
     _passController.dispose();
     super.dispose();
+  }
+
+  void _navigationToDashboard() {
+    context.go('/dashboard');
   }
 
   @override
@@ -40,12 +44,7 @@ class _LoginView extends State<LoginView> {
                 child: BlocConsumer<LoginCubit, LoginState>(
                   listener: (context, state) {
                     if (state.isLoginSuccess) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DashboardScreen(),
-                        ),
-                      );
+                      _navigationToDashboard();
                       context.read<LoginCubit>().resetLoginSuccess();
                     } else if (state.errorMessage.isNotEmpty) {
                       showDialog(
