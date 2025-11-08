@@ -88,9 +88,15 @@ class _ProjectsTabState extends State<_ProjectsTab> {
   @override
   Widget build(BuildContext context) {
     final mockProjects = [
-      {'name': 'Jira App MVP', 'description': 'Build CI/CD + Firebase + Flutter'},
+      {
+        'name': 'Jira App MVP',
+        'description': 'Build CI/CD + Firebase + Flutter',
+      },
       {'name': 'AI Agent Tool', 'description': 'Integrate LLM to manage tasks'},
-      {'name': 'Bug Tracker', 'description': 'Simple issue tracker for internal devs'},
+      {
+        'name': 'Bug Tracker',
+        'description': 'Simple issue tracker for internal devs',
+      },
     ];
 
     final notes = [
