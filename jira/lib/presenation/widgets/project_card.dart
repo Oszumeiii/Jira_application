@@ -4,11 +4,7 @@ class ProjectCard extends StatelessWidget {
   final String name;
   final String description;
 
-  const ProjectCard({
-    super.key,
-    required this.name,
-    required this.description,
-  });
+  const ProjectCard({super.key, required this.name, required this.description});
 
   @override
   Widget build(BuildContext context) {
