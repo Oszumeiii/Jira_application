@@ -1,13 +1,12 @@
-const { initializeApp, applicationDefault, cert } = from ('firebase-admin/app');
-const { getFirestore } = from('firebase-admin/firestore');
-const serviceAccount = from('../google-services.json');
+import { initializeApp, cert } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
+import { createRequire } from 'module';
 
-// Replace the following with your service account credentials
+const require = createRequire(import.meta.url);
+const serviceAccount = require('../jiraapp-46b2d-firebase-adminsdk-fbsvc-92c070394e.json');
 
 initializeApp({
-    credential: cert(serviceAccount)
+  credential: cert(serviceAccount),
 });
 
-const db = getFirestore();
-
-module.exports = db;
+export const db = getFirestore();

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jira/domain/cubit/AuthCubit.dart';
-import 'package:jira/presenation/screen/dash_board.dart';
+
+import 'package:jira/presenation/onboarding/onboarding_view.dart';
+import 'package:jira/presenation/screen/dashboard/dash_board.dart';
+
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
@@ -12,7 +15,7 @@ class SplashScreen extends StatelessWidget {
         if (isLoggedIn) {
           return const DashboardScreen();
         } else {
-          return const DashboardScreen(); // thay the bang login
+          return OnboardingScreen();
         }
       },
     );
