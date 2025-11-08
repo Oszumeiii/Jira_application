@@ -85,4 +85,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'jiraapp-46b2d.firebasestorage.app',
     measurementId: 'G-00FWF3DDB4',
   );
+
 }

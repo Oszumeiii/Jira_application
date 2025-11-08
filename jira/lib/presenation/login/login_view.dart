@@ -28,7 +28,6 @@ class _LoginView extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Thêm BlocProvider trực tiếp vào đây
     return BlocProvider(
       create: (context) => LoginCubit(),
       child: Scaffold(
@@ -47,6 +46,7 @@ class _LoginView extends State<LoginView> {
                       _navigationToDashboard();
                       context.read<LoginCubit>().resetLoginSuccess();
                     } else if (state.errorMessage.isNotEmpty) {
+                      context.read<LoginCubit>().resetErrorMessage();
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(

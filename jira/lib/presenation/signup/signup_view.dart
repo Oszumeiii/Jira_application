@@ -49,6 +49,7 @@ class _SignUpPage extends State<SignUpPage> {
                   MaterialPageRoute(builder: (context) => LoginView()),
                 );
               } else if (state.errorMessage.isNotEmpty) {
+                context.read<SignUpCubit>().resetErrorMessage();
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
