@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jira/presenation/signup/cubit/signup_state.dart';
 
@@ -59,9 +61,7 @@ class SignUpCubit extends Cubit<SignUpState> {
     emit(state.copyWith(errorMessage: ''));
   }
 
-  final Dio dio = Dio();
-
-  void SignUp(
+  Future<void> SignUp(
     String firstName,
     String lastName,
     String email,
@@ -69,5 +69,53 @@ class SignUpCubit extends Cubit<SignUpState> {
     String userName,
   ) async {
     emit(state.copyWith(errorMessage: '', isSignUpSuccess: true));
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: passWord);
+      User? user = userCredential.user;
+      await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
+        'uid': user.uid,
+        'email': email,
+        'firstName': firstName,
+        'lastName': lastName,
+        'userName': userName,
+        'createdAt': FieldValue.serverTimestamp(),
+        'status': 'active',
+        'role': 'member',
+      });
+      emit(
+        state.copyWith(
+          isloading: false,
+          isSignUpSuccess: true,
+          errorMessage: '',
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      String errorMsg = '';
+      if (e.code == 'email-already-in-use') {
+        errorMsg = 'Email đã được sử dụng';
+      } else if (e.code == 'invalid-email') {
+        errorMsg = 'Email không hợp lệ';
+      } else if (e.code == 'weak-password') {
+        errorMsg = 'Mật khẩu quá yếu';
+      } else {
+        errorMsg = e.message ?? 'Lỗi đăng ký';
+      }
+      emit(
+        state.copyWith(
+          isloading: false,
+          isSignUpSuccess: false,
+          errorMessage: errorMsg,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          isloading: false,
+          isSignUpSuccess: false,
+          errorMessage: 'Đã xảy ra lỗi kết nối',
+        ),
+      );
+    }
   }
 }

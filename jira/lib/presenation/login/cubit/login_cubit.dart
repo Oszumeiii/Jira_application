@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart';
 import 'package:jira/presenation/login/cubit/login_state.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit()
@@ -43,29 +44,51 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   void resetErrorMessage() {
-    emit(state.copyWith(errorMessage: ''));
+    emit(state.copyWith(errorMessage: '', isloading: false));
   }
 
-  final Dio dio = Dio();
   Future<void> login(String email, String password) async {
-    try {
+    if (state.emailErr.isEmpty && state.passWordErr.isEmpty) {
       emit(state.copyWith(isloading: true));
+      try {
+        UserCredential userCredential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(email: email, password: password);
+        emit(
+          state.copyWith(
+            isloading: false,
+            isLoginSuccess: true,
+            errorMessage: '',
+          ),
+        );
 
-      emit(
-        state.copyWith(
-          isLoginSuccess: true,
-          isloading: false,
-          errorMessage: '',
-        ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(
-          isloading: false,
-          isLoginSuccess: false,
-          errorMessage: e.toString(),
-        ),
-      );
+        String? token = await userCredential.user?.getIdToken();
+        print('Firebase token: $token');
+      } on FirebaseAuthException catch (e) {
+        String errorMsg = '';
+        if (e.code == 'user-not-found') {
+          errorMsg = 'Không tìm thấy người dùng';
+        } else if (e.code == 'wrong-password') {
+          errorMsg = 'Sai mật khẩu';
+        } else {
+          errorMsg = e.message ?? 'Lỗi đăng nhập';
+        }
+
+        emit(
+          state.copyWith(
+            isloading: false,
+            isLoginSuccess: false,
+            errorMessage: errorMsg,
+          ),
+        );
+      } catch (e) {
+        emit(
+          state.copyWith(
+            isloading: false,
+            isLoginSuccess: false,
+            errorMessage: 'Lỗi kết nối',
+          ),
+        );
+      }
     }
   }
 }
