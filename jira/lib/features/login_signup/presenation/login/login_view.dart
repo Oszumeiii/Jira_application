@@ -28,6 +28,7 @@ class _LoginView extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    // ✅ Thêm BlocProvider trực tiếp vào đây
     return BlocProvider(
       create: (context) => LoginCubit(),
       child: Scaffold(

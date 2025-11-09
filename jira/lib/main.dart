@@ -2,13 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:jira/core/api_client.dart';
 import 'package:jira/domain/cubit/AuthCubit.dart';
 import 'package:jira/firebase_options.dart';
 import 'package:jira/presenation/login/login_view.dart';
 import 'package:jira/presenation/screen/dashboard/dash_board.dart';
-import 'package:jira/presenation/screen/dashboard/home_tab.dart';
 import 'package:jira/presenation/screen/dashboard/profile.dart';
-import 'package:jira/presenation/screen/dashboard/projects_tab.dart';
 import 'package:jira/splash_screen.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +15,7 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  ApiClient.setup(); 
   runApp(const MyApp());
 }
 
