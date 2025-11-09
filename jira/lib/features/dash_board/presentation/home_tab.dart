@@ -4,7 +4,7 @@ import 'package:jira/presenation/widgets/note_card.dart';
 import 'package:jira/presenation/widgets/project_card.dart';
 
 class HomeTab extends StatefulWidget {
-  const HomeTab();
+  const HomeTab({super.key});
 
   @override
   State<HomeTab> createState() => _HomeTabState();

@@ -13,7 +13,7 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _summaryController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  String _selectedType = "Software";
+  final String _selectedType = "Software";
   // DateTime? _startDate;
   bool _isLoading = false;
 
