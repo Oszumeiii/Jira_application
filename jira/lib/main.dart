@@ -6,9 +6,7 @@ import 'package:jira/domain/cubit/AuthCubit.dart';
 import 'package:jira/firebase_options.dart';
 import 'package:jira/presenation/login/view/login_view.dart';
 import 'package:jira/presenation/screen/dashboard/dash_board.dart';
-import 'package:jira/presenation/screen/dashboard/home_tab.dart';
 import 'package:jira/presenation/screen/dashboard/profile.dart';
-import 'package:jira/presenation/screen/dashboard/projects_tab.dart';
 import 'package:jira/splash_screen.dart';
 
 Future<void> main() async {
