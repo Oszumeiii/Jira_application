@@ -44,7 +44,7 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   void resetErrorMessage() {
-    emit(state.copyWith(errorMessage: '', isloading: false));
+    emit(state.copyWith(errorMessage: ''));
   }
 
   Future<void> login(String email, String password) async {
@@ -53,6 +53,23 @@ class LoginCubit extends Cubit<LoginState> {
       try {
         UserCredential userCredential = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: email, password: password);
+
+        User? user = userCredential.user;
+        if (user != null && !user.emailVerified) {
+          await user.sendEmailVerification();
+
+          emit(
+            state.copyWith(
+              isloading: false,
+              isLoginSuccess: false,
+              errorMessage:
+                  'Vui lòng xác minh email trước khi đăng nhập. '
+                  'Chúng tôi đã gửi lại link xác minh đến $email.',
+            ),
+          );
+          return;
+        }
+
         emit(
           state.copyWith(
             isloading: false,
@@ -61,7 +78,7 @@ class LoginCubit extends Cubit<LoginState> {
           ),
         );
 
-        String? token = await userCredential.user?.getIdToken();
+        String? token = await user?.getIdToken();
         print('Firebase token: $token');
       } on FirebaseAuthException catch (e) {
         String errorMsg = '';
@@ -69,6 +86,8 @@ class LoginCubit extends Cubit<LoginState> {
           errorMsg = 'Không tìm thấy người dùng';
         } else if (e.code == 'wrong-password') {
           errorMsg = 'Sai mật khẩu';
+        } else if (e.code == 'too-many-requests') {
+          errorMsg = 'Quá nhiều lần thử. Vui lòng thử lại sau.';
         } else {
           errorMsg = e.message ?? 'Lỗi đăng nhập';
         }
@@ -85,7 +104,7 @@ class LoginCubit extends Cubit<LoginState> {
           state.copyWith(
             isloading: false,
             isLoginSuccess: false,
-            errorMessage: 'Lỗi kết nối',
+            errorMessage: 'Lỗi kết nối. Vui lòng kiểm tra mạng.',
           ),
         );
       }
