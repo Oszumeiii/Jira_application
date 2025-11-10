@@ -18,7 +18,7 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
   bool _isLoading = false;
 
   // Future<void> _pickDate() async {
-  //   final now = DateTime.now();
+  //   final nxow = DateTime.now();
   //   final picked = await showDatePicker(
   //     context: context,
   //     initialDate: _startDate ?? now,
@@ -61,14 +61,14 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
 
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('✅ ${result['message']}')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('✅ ${result['message']}')));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('❌ Error: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('❌ Error: $e')));
     } finally {
       setState(() => _isLoading = false);
     }
@@ -116,7 +116,11 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
 
             Row(
               children: const [
-                Icon(Icons.auto_awesome_outlined, color: Colors.blueAccent, size: 28),
+                Icon(
+                  Icons.auto_awesome_outlined,
+                  color: Colors.blueAccent,
+                  size: 28,
+                ),
                 SizedBox(width: 8),
                 Text(
                   "Create New Project",
@@ -133,10 +137,7 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
             const SizedBox(height: 28),
 
             // ⚙️ Project Type
-            buildDropdown(
-              _selectedType,
-              (fn) => setState(fn),
-            ),
+            buildDropdown(_selectedType, (fn) => setState(fn)),
 
             const SizedBox(height: 20),
 
@@ -192,7 +193,6 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
             //     ),
             //   ),
             // ),
-
             const SizedBox(height: 28),
 
             // ✅ Button Create
@@ -222,7 +222,10 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
                     : const Icon(Icons.add_circle_outline),
                 label: Text(
                   _isLoading ? 'Creating...' : 'Create Project',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,

@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jira/presenation/signup/cubit/signup_state.dart';
@@ -68,11 +67,22 @@ class SignUpCubit extends Cubit<SignUpState> {
     String passWord,
     String userName,
   ) async {
-    emit(state.copyWith(errorMessage: '', isSignUpSuccess: true));
+    emit(
+      state.copyWith(errorMessage: '', isloading: true),
+    ); // Sửa: thêm isloading = true
+
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: passWord);
+
       User? user = userCredential.user;
+
+      // GỬI EMAIL XÁC MINH
+      if (user != null && !user.emailVerified) {
+        await user.sendEmailVerification();
+      }
+
+      // Lưu dữ liệu người dùng vào Firestore
       await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
         'uid': user.uid,
         'email': email,
@@ -82,7 +92,9 @@ class SignUpCubit extends Cubit<SignUpState> {
         'createdAt': FieldValue.serverTimestamp(),
         'status': 'active',
         'role': 'member',
+        'emailVerified': false, // Thêm trường này
       });
+
       emit(
         state.copyWith(
           isloading: false,
