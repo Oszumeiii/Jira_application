@@ -1,4 +1,3 @@
-// presenation/forgot_password/cubit/forgot_password_state.dart
 class ForgotPasswordState {
   final String emailErr;
   final bool isLoading;

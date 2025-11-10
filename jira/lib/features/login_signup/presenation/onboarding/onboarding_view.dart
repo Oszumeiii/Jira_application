@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jira/presenation/login/view/login_view.dart';
 import 'package:go_router/go_router.dart';
 
 class OnboardingScreen extends StatefulWidget {

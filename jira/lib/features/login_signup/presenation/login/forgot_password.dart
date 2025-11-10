@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jira/presenation/login/cubit/forgot_password_cubit.dart';
-import 'package:jira/presenation/login/cubit/forgot_password_state.dart';
+import 'package:jira/features/login_signup/presenation/login/cubit/forgot_password_cubit.dart';
+import 'package:jira/features/login_signup/presenation/login/cubit/forgot_password_state.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   @override
