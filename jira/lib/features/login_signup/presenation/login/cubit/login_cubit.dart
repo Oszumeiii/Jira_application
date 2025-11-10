@@ -1,7 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dio/dio.dart';
-import 'package:jira/presenation/login/cubit/login_state.dart';
+import 'package:jira/features/login_signup/presenation/login/cubit/login_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit()
@@ -80,6 +81,11 @@ class LoginCubit extends Cubit<LoginState> {
 
         String? token = await user?.getIdToken();
         print('Firebase token: $token');
+
+        if (token != null) {
+          final storage = FlutterSecureStorage();
+          await storage.write(key: 'idToken', value: token);
+        }
       } on FirebaseAuthException catch (e) {
         String errorMsg = '';
         if (e.code == 'user-not-found') {

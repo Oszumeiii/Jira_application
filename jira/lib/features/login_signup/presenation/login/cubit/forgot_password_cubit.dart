@@ -1,7 +1,6 @@
-// presenation/forgot_password/cubit/forgot_password_cubit.dart
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jira/presenation/login/cubit/forgot_password_state.dart';
+import 'package:jira/features/login_signup/presenation/login/cubit/forgot_password_state.dart';
 
 class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
   ForgotPasswordCubit()
