@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:jira/presenation/login/cubit/login_cubit.dart';
-import 'package:jira/presenation/login/cubit/login_state.dart';
-import 'package:jira/presenation/signup/signup_view.dart';
+import 'package:jira/features/login_signup/presenation/login/cubit/login_cubit.dart';
+import 'package:jira/features/login_signup/presenation/login/cubit/login_state.dart';
+import 'package:jira/features/login_signup/presenation/signup/signup_view.dart';
 
 class LoginView extends StatefulWidget {
+  const LoginView({super.key});
+
   @override
   _LoginView createState() => _LoginView();
 }

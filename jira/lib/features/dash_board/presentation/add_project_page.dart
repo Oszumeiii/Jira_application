@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jira/presenation/widgets/add_project.dart';
+import 'package:jira/features/login_signup/presenation/widgets/add_project.dart';
 import 'package:jira/services/project_service.dart';
 
 class AddProjectBottomSheet extends StatefulWidget {
@@ -62,12 +62,12 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
       if (mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('✅ ${result['message']}')),
+          SnackBar(content: Text(' ${result['message']}')),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('❌ Error: $e')),
+        SnackBar(content: Text('Error: $e')),
       );
     } finally {
       setState(() => _isLoading = false);

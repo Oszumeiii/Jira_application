@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jira/presenation/login/login_view.dart';
-import 'package:jira/presenation/signup/cubit/signup_cubit.dart';
-import 'package:jira/presenation/signup/cubit/signup_state.dart';
+import 'package:jira/features/login_signup/presenation/login/login_view.dart';
+import 'package:jira/features/login_signup/presenation/signup/cubit/signup_cubit.dart';
+import 'package:jira/features/login_signup/presenation/signup/cubit/signup_state.dart';
 
 class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
+
   @override
   _SignUpPage createState() => _SignUpPage();
 }
 
 class _SignUpPage extends State<SignUpPage> {
   bool _showPass = true;
-  var _nameErr = "Ô này không được để trống";
+  final _nameErr = "Ô này không được để trống";
   var _fnameInvalid = false;
   var _lnameInvalid = false;
 
-  TextEditingController _fNameController = TextEditingController();
-  TextEditingController _lNameController = TextEditingController();
-  TextEditingController _uNameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passController = TextEditingController();
+  final TextEditingController _fNameController = TextEditingController();
+  final TextEditingController _lNameController = TextEditingController();
+  final TextEditingController _uNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
 
   void validateFirstName(String value) {
     setState(() {
