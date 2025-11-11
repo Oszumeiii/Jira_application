@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jira/core/api_client.dart';
 import 'package:jira/features/dash_board/presentation/dash_board.dart';
-import 'package:jira/features/dash_board/presentation/profile.dart';
+import 'package:jira/features/dash_board/presentation/profile/profile.dart';
 import 'package:jira/features/login_signup/domain/cubit/AuthCubit.dart';
 import 'package:jira/features/login_signup/presenation/login/login_view.dart';
 import 'package:jira/firebase_options.dart';
