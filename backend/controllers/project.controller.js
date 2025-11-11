@@ -5,7 +5,9 @@ import  { sendSuccessResponse, sendErrorResponse } from "../utils/response.js";
 
 export const getProjectByUserId = async (req, res) => {
   try {
-    const userId = req.query.userId;
+
+    const userId = req.user.uid;
+  
     const snapshot = await db.collection("projects")
       .where("ownerId", "==", userId)
       .get();
@@ -28,35 +30,35 @@ export const getProjectByUserId = async (req, res) => {
 
 
 
-export const createProject = async (req , res) =>{
-    try {
-        const { name, description, ownerId, members } = req.body;
-        if (!name || !ownerId) {
-            return res.status(400).json({ error: "Thiếu tên project hoặc ownerId" });
-        }
-        const project = new Project({
-        name,
-        description,
-        ownerId,
-        members,
-        });
+// export const createProject = async (req , res) =>{
+//     try {
+//         const { name, description, ownerId, members } = req.body;
+//         if (!name || !ownerId) {
+//             return res.status(400).json({ error: "Thiếu tên project hoặc ownerId" });
+//         }
+//         const project = new Project({
+//         name,
+//         description,
+//         ownerId,
+//         members,
+//         });
 
-        await project.save();
+//         await project.save();
 
-        return res.status(201).json({
-        message: "Tạo project thành công!",
-        project: {
-            id: project.id,
-            name: project.name,
-            description: project.description,
-            ownerId: project.ownerId,
-            members: project.members,
-            status: project.status,
-            createdAt: project.createdAt,
-        },
-        });
-    }catch (error) {
-    console.error("Lỗi khi tạo project:", error);
-    return res.status(500).json({ error: "Lỗi server" });
-  }
-}
+//         return res.status(201).json({
+//         message: "Tạo project thành công!",
+//         project: {
+//             id: project.id,
+//             name: project.name,
+//             description: project.description,
+//             ownerId: project.ownerId,
+//             members: project.members,
+//             status: project.status,
+//             createdAt: project.createdAt,
+//         },
+//         });
+//     }catch (error) {
+//     console.error("Lỗi khi tạo project:", error);
+//     return res.status(500).json({ error: "Lỗi server" });
+//   }
+// }

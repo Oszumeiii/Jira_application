@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jira/presenation/screen/dashboard/add_project_page.dart';
-import 'package:jira/presenation/widgets/note_card.dart';
-import 'package:jira/presenation/widgets/project_card.dart';
+import 'package:jira/features/dash_board/presentation/add_project_page.dart';
+import 'package:jira/features/login_signup/presenation/widgets/note_card.dart';
+import 'package:jira/features/login_signup/presenation/widgets/project_card.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
