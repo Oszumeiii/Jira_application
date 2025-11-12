@@ -11,15 +11,14 @@ import 'package:jira/features/login_signup/presenation/login/login_view.dart';
 import 'package:jira/features/dash_board/presentation/dash_board.dart';
 import 'package:jira/features/dash_board/presentation/profile.dart';
 import 'package:jira/splash_screen.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  configureDependencies();
-
-  ApiClient.setup(); 
+  ApiClient.setup();
   runApp(const MyApp());
 }
 
@@ -50,11 +49,9 @@ class MyApp extends StatelessWidget {
         // GoRoute(path: '/dashboard/projects', builder: (context, state) => const ProjectsTab()),
         // GoRoute(path: '/dashboard/tasks', builder: (context, state) => const SplashScreen()),
       ],
-);
+    );
     return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => AuthCubit()),
-      ],
+      providers: [BlocProvider(create: (_) => AuthCubit())],
       child: MaterialApp.router(
         title: 'Jira App',
         debugShowCheckedModeBanner: false,

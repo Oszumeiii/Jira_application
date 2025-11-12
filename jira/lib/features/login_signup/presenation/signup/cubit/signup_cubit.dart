@@ -67,11 +67,22 @@ class SignUpCubit extends Cubit<SignUpState> {
     String passWord,
     String userName,
   ) async {
-    emit(state.copyWith(errorMessage: '', isSignUpSuccess: true));
+    emit(
+      state.copyWith(errorMessage: '', isloading: true),
+    ); // Sửa: thêm isloading = true
+
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: passWord);
+
       User? user = userCredential.user;
+
+      // GỬI EMAIL XÁC MINH
+      if (user != null && !user.emailVerified) {
+        await user.sendEmailVerification();
+      }
+
+      // Lưu dữ liệu người dùng vào Firestore
       await FirebaseFirestore.instance.collection('users').doc(user!.uid).set({
         'uid': user.uid,
         'email': email,
@@ -81,7 +92,9 @@ class SignUpCubit extends Cubit<SignUpState> {
         'createdAt': FieldValue.serverTimestamp(),
         'status': 'active',
         'role': 'member',
+        'emailVerified': false, // Thêm trường này
       });
+
       emit(
         state.copyWith(
           isloading: false,

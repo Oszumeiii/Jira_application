@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jira/features/login_signup/presenation/login/cubit/login_cubit.dart';
 import 'package:jira/features/login_signup/presenation/login/cubit/login_state.dart';
+import 'package:jira/features/login_signup/presenation/login/forgot_password.dart';
 import 'package:jira/features/login_signup/presenation/signup/signup_view.dart';
 
 class LoginView extends StatefulWidget {
@@ -30,7 +31,6 @@ class _LoginView extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Thêm BlocProvider trực tiếp vào đây
     return BlocProvider(
       create: (context) => LoginCubit(),
       child: Scaffold(
@@ -166,9 +166,22 @@ class _LoginView extends State<LoginView> {
                           padding: const EdgeInsets.fromLTRB(0, 0, 0, 30),
                           child: Container(
                             alignment: Alignment.centerRight,
-                            child: Text(
-                              "Forgot Password?",
-                              style: TextStyle(color: Color(0xff7C7C7C)),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ForgotPasswordPage(),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                "Forgot Password?",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 79, 128, 178),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
                           ),
                         ),

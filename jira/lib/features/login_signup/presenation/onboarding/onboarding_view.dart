@@ -56,8 +56,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   // }
 
   void _goToLogin() {
-  context.go('/login'); 
-}
+    context.go('/login');
+  }
 
   @override
   Widget build(BuildContext context) {

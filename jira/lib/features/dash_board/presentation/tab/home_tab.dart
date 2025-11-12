@@ -12,13 +12,12 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   void _showBottomSheetAddProject() {
-        showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (context) => const AddProjectBottomSheet(),
-      );
-
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const AddProjectBottomSheet(),
+    );
   }
 
   @override
@@ -39,8 +38,7 @@ class _HomeTabState extends State<HomeTab> {
       {
         'name': 'Huấn',
         'avatar': 'https://i.pravatar.cc/150?img=3',
-        'note':
-            'Hôm nay trời đẹp quá!',
+        'note': 'Hôm nay trời đẹp quá!',
       },
       {
         'name': 'Lan',
@@ -59,71 +57,67 @@ class _HomeTabState extends State<HomeTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.search, color: Colors.grey),
-          const SizedBox(width: 8),
-          Expanded(
-            child: TextField(
-              decoration: const InputDecoration(
-                hintText: "Search projects, tasks, or notes...",
-                border: InputBorder.none,
-              ),
-              onChanged: (query) {
-                // TODO: thêm logic tìm kiếm sau
-                print("Searching: $query");
-              },
+            margin: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 6,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.search, color: Colors.grey),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: TextField(
+                    decoration: const InputDecoration(
+                      hintText: "Search projects, tasks, or notes...",
+                      border: InputBorder.none,
+                    ),
+                    onChanged: (query) {
+                      // TODO: thêm logic tìm kiếm sau
+                      print("Searching: $query");
+                    },
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.filter_list, color: Colors.grey),
+                  onPressed: () {
+                    // TODO: mở modal filter
+                  },
+                ),
+              ],
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.filter_list, color: Colors.grey),
-            onPressed: () {
-              // TODO: mở modal filter
-            },
-          ),
-        ],
-      ),
-    ),
           const Text(
             "Notes ...",
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-            ),
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
 
-         SizedBox(
-              height: 100,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: notes.length,
-                itemBuilder: (context, index) {
-                  final note = notes[index];
-                  return  NoteCard(
-                      avatar: note['avatar']!,
-                      name: note['name']!,
-                      note: note['note']!,
-                  );
-                },
-              ),
+          SizedBox(
+            height: 100,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: notes.length,
+              itemBuilder: (context, index) {
+                final note = notes[index];
+                return NoteCard(
+                  avatar: note['avatar']!,
+                  name: note['name']!,
+                  note: note['note']!,
+                );
+              },
             ),
-            const SizedBox(height: 8),
+          ),
+          const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12.0),
             child: Container(
@@ -146,7 +140,12 @@ class _HomeTabState extends State<HomeTab> {
           ),
 
           Padding(
-            padding: const EdgeInsets.only(top: 10, left: 4, right: 4, bottom: 8),
+            padding: const EdgeInsets.only(
+              top: 10,
+              left: 4,
+              right: 4,
+              bottom: 8,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -173,7 +172,7 @@ class _HomeTabState extends State<HomeTab> {
                   ),
                   child: IconButton(
                     icon: const Icon(Icons.add, color: Colors.white),
-                    onPressed: _showBottomSheetAddProject
+                    onPressed: _showBottomSheetAddProject,
                   ),
                 ),
               ],
@@ -202,4 +201,3 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 }
-
