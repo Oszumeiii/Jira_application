@@ -4,6 +4,7 @@ import 'package:jira/features/dash_board/presentation/add_project_page.dart';
 import 'package:jira/features/dash_board/presentation/profile/profile.dart';
 import 'package:jira/features/dash_board/presentation/tab/home_tab.dart';
 import 'package:jira/features/dash_board/presentation/tab/notif_tab.dart';
+import 'package:jira/features/dash_board/projects/domain/entities/project_entity.dart';
 import 'package:jira/features/dash_board/projects/presentation/cubit/project_cubit.dart';
 import 'package:jira/features/dash_board/projects/presentation/view/projects_tab.dart';
 import 'package:jira/features/dash_board/presentation/tab/task_tab.dart';
@@ -37,15 +38,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
 
 
-  void _showBottomSheetAddProject() {
-      showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => const AddProjectBottomSheet(),
-    );
+void _showBottomSheetAddProject() async {
+  final project = await showModalBottomSheet<ProjectEntity>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (_) => const AddProjectBottomSheet(),
+  );
 
+  if (project != null) {
+    context.read<ProjectCubit>().createProject(project).then((_) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Project created successfully")));
+    }).catchError((e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Error: $e")));
+    });
   }
+}
+
 
   void _onTabSelected(int index) {
     setState(() => _selectedIndex = index);

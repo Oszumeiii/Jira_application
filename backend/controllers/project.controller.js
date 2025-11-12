@@ -28,37 +28,47 @@ export const getProjectByUserId = async (req, res) => {
   }
 };
 
+export const createProject = async (req, res) => {
+  try {
+    const { name, description, status, createdAt, updatedAt } = req.body;
+    const ownerId = req.user?.uid;
 
+    if (!ownerId) {
+      return res.status(401).json({ status: "error", message: "Unauthorized" });
+    }
 
-// export const createProject = async (req , res) =>{
-//     try {
-//         const { name, description, ownerId, members } = req.body;
-//         if (!name || !ownerId) {
-//             return res.status(400).json({ error: "Thiếu tên project hoặc ownerId" });
-//         }
-//         const project = new Project({
-//         name,
-//         description,
-//         ownerId,
-//         members,
-//         });
+    if (!name || !description) {
+      return res.status(400).json({ status: "error", message: "Tên và mô tả là bắt buộc" });
+    }
 
-//         await project.save();
+    const project = new Project({
+      name,
+      description,
+      ownerId,
+      status: status || "active",
+      createdAt: createdAt ? new Date(createdAt) : new Date(),
+      updatedAt: updatedAt ? new Date(updatedAt) : new Date(),
+    });
 
-//         return res.status(201).json({
-//         message: "Tạo project thành công!",
-//         project: {
-//             id: project.id,
-//             name: project.name,
-//             description: project.description,
-//             ownerId: project.ownerId,
-//             members: project.members,
-//             status: project.status,
-//             createdAt: project.createdAt,
-//         },
-//         });
-//     }catch (error) {
-//     console.error("Lỗi khi tạo project:", error);
-//     return res.status(500).json({ error: "Lỗi server" });
-//   }
-// }
+     await project.save();
+    console.log("Project đã được tạo:", project);
+
+    return res.status(201).json({
+      status: "success",
+      message: "Tạo project thành công!",
+      data: {
+        id: project._id,
+        name: project.name,
+        description: project.description,
+        ownerId: project.ownerId,
+        members: project.members,
+        status: project.status,
+        createdAt: project.createdAt,
+        updatedAt: project.updatedAt,
+      },
+    });
+  } catch (error) {
+    console.error("Lỗi khi tạo project:", error);
+    return res.status(500).json({ status: "error", message: error.message });
+  }
+};

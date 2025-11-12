@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jira/features/dash_board/projects/presentation/cubit/project_state.dart';
 import '../../../../login_signup/presenation/widgets/project_card.dart';
 import '../../../projects/presentation/cubit/project_cubit.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 
 class ProjectsTab extends StatelessWidget {
