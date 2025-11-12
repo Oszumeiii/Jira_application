@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:jira/presenation/screen/dashboard/home_tab.dart';
-import 'package:jira/presenation/screen/dashboard/notif_tab.dart';
-import 'package:jira/presenation/screen/dashboard/profile.dart';
-import 'package:jira/presenation/screen/dashboard/projects_tab.dart';
-import 'package:jira/presenation/screen/dashboard/task_tab.dart';
+import 'package:jira/features/dash_board/presentation/home_tab.dart';
+import 'package:jira/features/dash_board/presentation/notif_tab.dart';
+import 'package:jira/features/dash_board/presentation/profile.dart';
+import 'package:jira/features/dash_board/presentation/projects_tab.dart';
+import 'package:jira/features/dash_board/presentation/task_tab.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});

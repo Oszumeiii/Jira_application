@@ -1,6 +1,6 @@
 // projects_tab.dart
 import 'package:flutter/material.dart';
-import '../../widgets/project_card.dart';
+import 'package:jira/features/login_signup/presenation/widgets/project_card.dart';
 
 class ProjectsTab extends StatelessWidget {
   const ProjectsTab({super.key});
@@ -13,7 +13,10 @@ class ProjectsTab extends StatelessWidget {
         'description': 'Build CI/CD + Firebase + Flutter',
       },
       {'name': 'AI Agent Tool', 'description': 'Integrate LLM to manage tasks'},
-      {'name': 'Bug Tracker', 'description': 'Simple issue tracker for internal devs'},
+      {
+        'name': 'Bug Tracker',
+        'description': 'Simple issue tracker for internal devs',
+      },
     ];
 
     return SingleChildScrollView(

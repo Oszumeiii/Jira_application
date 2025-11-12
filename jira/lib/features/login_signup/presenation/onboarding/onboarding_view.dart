@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jira/presenation/login/login_view.dart';
 import 'package:go_router/go_router.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -57,8 +56,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   // }
 
   void _goToLogin() {
-  context.go('/login'); 
-}
+    context.go('/login');
+  }
 
   @override
   Widget build(BuildContext context) {
