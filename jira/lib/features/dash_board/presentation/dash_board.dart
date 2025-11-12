@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jira/features/dash_board/presentation/home_tab.dart';
 import 'package:jira/features/dash_board/presentation/notif_tab.dart';
-import 'package:jira/features/dash_board/presentation/profile.dart';
+import 'package:jira/features/dash_board/presentation/profile/profile.dart';
 import 'package:jira/features/dash_board/presentation/projects_tab.dart';
 import 'package:jira/features/dash_board/presentation/task_tab.dart';
 
