@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:jira/presenation/login/login_view.dart';
-import 'package:jira/presenation/signup/cubit/signup_cubit.dart';
-import 'package:jira/presenation/signup/cubit/signup_state.dart';
+import 'package:jira/features/login_signup/presenation/login/login_view.dart';
+import 'package:jira/features/login_signup/presenation/signup/cubit/signup_cubit.dart';
+import 'package:jira/features/login_signup/presenation/signup/cubit/signup_state.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -44,10 +44,24 @@ class _SignUpPage extends State<SignUpPage> {
           builder: (blocContext) => BlocConsumer<SignUpCubit, SignUpState>(
             listener: (context, state) {
               if (state.isSignUpSuccess) {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => LoginView()),
+                // HIỆN THÔNG BÁO XÁC MINH EMAIL
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      "Đăng ký thành công! Vui lòng kiểm tra email để xác minh tài khoản.",
+                    ),
+                    backgroundColor: Colors.green,
+                    duration: Duration(seconds: 6),
+                  ),
                 );
+
+                // Chuyển về Login sau 2 giây
+                Future.delayed(Duration(seconds: 2), () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginView()),
+                  );
+                });
               } else if (state.errorMessage.isNotEmpty) {
                 context.read<SignUpCubit>().resetErrorMessage();
                 showDialog(
@@ -59,7 +73,7 @@ class _SignUpPage extends State<SignUpPage> {
                       TextButton(
                         onPressed: () {
                           Navigator.pop(context);
-                          blocContext.read<SignUpCubit>().resetErrorMessage();
+                          context.read<SignUpCubit>().resetErrorMessage();
                         },
                         child: Text("OK"),
                       ),
