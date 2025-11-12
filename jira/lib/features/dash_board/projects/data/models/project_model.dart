@@ -3,43 +3,44 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProjectModel extends ProjectEntity {
   const ProjectModel({
-    required super.id,
+    super.id,
     required super.name,
     required super.description,
-    required super.ownerId,
-    required super.members,
+    super.ownerId,
+    super.members,
     required super.status,
     required super.createdAt,
-    required super.updatedAt,
+    super.updatedAt,
   });
 
-  /// Parse dữ liệu từ JSON hoặc Firestore
   factory ProjectModel.fromJson(Map<String, dynamic> json) {
-    final id = json['id'] ?? json['_id'] ?? '';
+  final data = json;
 
-    DateTime parseDate(dynamic value) {
-      if (value is Timestamp) {
-        return value.toDate();
-      } else if (value is String) {
-        return DateTime.tryParse(value) ?? DateTime.now();
-      } else {
-        return DateTime.now();
-      }
+  final id = data['id'] ?? data['_id'];
+
+  DateTime parseDate(dynamic value) {
+    if (value is Timestamp) {
+      return value.toDate();
+    } else if (value is String) {
+      return DateTime.tryParse(value) ?? DateTime.now();
+    } else {
+      return DateTime.now();
     }
-
-    return ProjectModel(
-      id: id,
-      name: json['name'] ?? '',
-      description: json['description'] ?? '',
-      ownerId: json['ownerId'] ?? '',
-      members: List<String>.from(json['members'] ?? []),
-      status: json['status'] ?? 'active',
-      createdAt: parseDate(json['createdAt']),
-      updatedAt: parseDate(json['updatedAt']),
-    );
   }
 
-  /// Convert lại sang JSON để gửi lên backend
+  return ProjectModel(
+    id: id,
+    name: data['name'] ?? '',
+    description: data['description'] ?? '',
+    ownerId: data['ownerId'],
+    members: data['members'] != null ? List<String>.from(data['members']) : null,
+    status: data['status'] ?? 'active',
+    createdAt: parseDate(data['createdAt']),
+    updatedAt: data['updatedAt'] != null ? parseDate(data['updatedAt']) : null,
+  );
+}
+
+
   Map<String, dynamic> toJson() {
     return {
       "id": id,
@@ -49,21 +50,20 @@ class ProjectModel extends ProjectEntity {
       "members": members,
       "status": status,
       "createdAt": createdAt.toUtc().toIso8601String(),
-      "updatedAt": updatedAt.toUtc().toIso8601String(),
+      "updatedAt": updatedAt?.toUtc().toIso8601String(),
     };
   }
 
   ProjectEntity toEntity() {
-  return ProjectEntity(
-    id: id,
-    name: name,
-    description: description,
-    ownerId: ownerId,
-    members: members,
-    status: status,
-    createdAt: createdAt,
-    updatedAt: updatedAt,
-  );
-}
-
+    return ProjectEntity(
+      id: id,
+      name: name,
+      description: description,
+      ownerId: ownerId,
+      members: members,
+      status: status,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+    );
+  }
 }

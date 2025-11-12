@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 import 'package:jira/features/dash_board/projects/data/data_source/project_remote_datasource.dart';
+import 'package:jira/features/dash_board/projects/data/models/project_model.dart';
 import 'package:jira/features/dash_board/projects/domain/entities/project_entity.dart';
 import 'package:jira/features/dash_board/projects/domain/repositories/project_repository.dart';
 
@@ -10,10 +11,22 @@ import 'package:jira/features/dash_board/projects/domain/repositories/project_re
 class ProjectRepositoryImpl extends ProjectRepository{
   final  ProjectRemoteDataSource remoteDataSource;
   ProjectRepositoryImpl(this.remoteDataSource);
-  // @override
-  // Future<ProjectEntity> createProject(ProjectEntity project) {
-  //   return remoteDataSource.createProject(project as ProjectModel);
-  // }
+
+  
+  @override
+  Future<ProjectEntity> createProject(ProjectEntity project) {
+    final projectModel = ProjectModel(
+      id: project.id,
+      name: project.name,
+      description: project.description,
+      ownerId: project.ownerId,
+      members: project.members,
+      status: project.status,
+      createdAt: project.createdAt,
+      updatedAt: project.updatedAt,
+    );
+    return remoteDataSource.createProject(projectModel);
+  }
   
 @override
 Future<List<ProjectEntity>> getAllProjects() async {

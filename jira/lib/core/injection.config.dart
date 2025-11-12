@@ -17,6 +17,8 @@ import 'package:jira/features/dash_board/projects/data/repositories_impl/project
     as _i77;
 import 'package:jira/features/dash_board/projects/domain/repositories/project_repository.dart'
     as _i688;
+import 'package:jira/features/dash_board/projects/domain/usecases/create_project_usecase.dart'
+    as _i644;
 import 'package:jira/features/dash_board/projects/domain/usecases/get_all_projects_usecase.dart'
     as _i760;
 import 'package:jira/features/dash_board/projects/presentation/cubit/project_cubit.dart'
@@ -40,8 +42,12 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i77.ProjectRepositoryImpl(gh<_i355.ProjectRemoteDataSource>()));
     gh.factory<_i760.GetAllProjectsUsecase>(
         () => _i760.GetAllProjectsUsecase(gh<_i688.ProjectRepository>()));
+    gh.factory<_i644.CreateProjectUseCase>(
+        () => _i644.CreateProjectUseCase(gh<_i688.ProjectRepository>()));
     gh.factory<_i32.ProjectCubit>(() => _i32.ProjectCubit(
-        getAllProjectsUseCase: gh<_i760.GetAllProjectsUsecase>()));
+          getAllProjectsUseCase: gh<_i760.GetAllProjectsUsecase>(),
+          createProjectUseCase: gh<_i644.CreateProjectUseCase>(),
+        ));
     return this;
   }
 }

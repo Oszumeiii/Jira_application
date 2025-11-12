@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:jira/features/dash_board/projects/domain/entities/project_entity.dart';
 import 'package:jira/features/login_signup/presenation/widgets/add_project.dart';
-import 'package:jira/services/project_service.dart';
+// Add project BottomSheet
 
 class AddProjectBottomSheet extends StatefulWidget {
   const AddProjectBottomSheet({super.key});
@@ -14,69 +15,38 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
   final TextEditingController _summaryController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final String _selectedType = "Software";
-  // DateTime? _startDate;
   bool _isLoading = false;
 
-  // Future<void> _pickDate() async {
-  //   final nxow = DateTime.now();
-  //   final picked = await showDatePicker(
-  //     context: context,
-  //     initialDate: _startDate ?? now,
-  //     firstDate: DateTime(now.year - 1),
-  //     lastDate: DateTime(now.year + 5),
-  //     builder: (context, child) {
-  //       return Theme(
-  //         data: ThemeData.light().copyWith(
-  //           colorScheme: const ColorScheme.light(
-  //             primary: Colors.blueAccent,
-  //             onPrimary: Colors.white,
-  //             surface: Colors.white,
-  //           ),
-  //         ),
-  //         child: child!,
-  //       );
-  //     },
-  //   );
-  //   if (picked != null) {
-  //     setState(() => _startDate = picked);
-  //   }
-  // }
+ void _submit() {
+    final name = _nameController.text.trim();
+    final description = _descriptionController.text.trim();
 
-  Future<void> _addProject() async {
-    if (_nameController.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('⚠️ Please enter project name')),
-      );
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Please enter project name")));
       return;
     }
 
-    setState(() => _isLoading = true);
+    final project = ProjectEntity(
+      id: null,
+      name: name,
+      description: description,
+      members: [],
+      status: "Active",
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
 
-    try {
-      final result = await ProjectService.addProject(
-        name: _nameController.text.trim(),
-        ownerId: "adGGPKGGy6uPGk3PkWQU",
-        description: _descriptionController.text.trim(),
-      );
+    Navigator.of(context).pop(project); 
+  }
 
-      if (mounted) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('✅ ${result['message']}')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('❌ Error: $e')),
-      );
-    } finally {
-      setState(() => _isLoading = false);
-    }
 
-    print("Project Type: $_selectedType");
-    print("Project Name: ${_nameController.text.trim()}");
-    print("Summary: ${_summaryController.text.trim()}");
-    print("Description: ${_descriptionController.text.trim()}");
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _summaryController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 
   @override
@@ -168,34 +138,8 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
             ),
 
             const SizedBox(height: 16),
-
-            // 📅 Start Date
-            // InkWell(
-            //   onTap: _pickDate,
-            //   borderRadius: BorderRadius.circular(12),
-            //   child: InputDecorator(
-            //     decoration: InputDecoration(
-            //       labelText: "Start Date",
-            //       prefixIcon: const Icon(Icons.date_range_outlined, color: Colors.blueAccent),
-            //       filled: true,
-            //       fillColor: Colors.blue[50]?.withOpacity(0.3),
-            //       border: OutlineInputBorder(
-            //         borderRadius: BorderRadius.circular(12),
-            //       ),
-            //     ),
-            //     child: Text(
-            //       _startDate == null
-            //           ? "Not selected"
-            //           : DateFormat('dd/MM/yyyy').format(_startDate!),
-            //       style: TextStyle(
-            //         color: _startDate == null ? Colors.grey[600] : Colors.black87,
-            //       ),
-            //     ),
-            //   ),
-            // ),
             const SizedBox(height: 28),
-
-            // ✅ Button Create
+            // Button Create
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               width: double.infinity,
@@ -209,7 +153,7 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
                 ),
               ),
               child: ElevatedButton.icon(
-                onPressed: _isLoading ? null : _addProject,
+                onPressed: _isLoading ? null : _submit,
                 icon: _isLoading
                     ? const SizedBox(
                         height: 20,
