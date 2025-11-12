@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:jira/core/api_client.dart';
 import '../models/project_model.dart';

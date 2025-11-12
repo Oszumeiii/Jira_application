@@ -19,7 +19,7 @@ class ProfileScreen extends StatelessWidget {
 }
 
 class _ProfileView extends StatelessWidget {
-  const _ProfileView({super.key});
+  const _ProfileView();
 
   @override
   Widget build(BuildContext context) {

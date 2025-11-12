@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:jira/features/login_signup/presenation/widgets/add_project.dart';
-import 'package:jira/features/login_signup/presenation/widgets/add_project.dart';
 import 'package:jira/services/project_service.dart';
 
 class AddProjectBottomSheet extends StatefulWidget {

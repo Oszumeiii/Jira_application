@@ -1,9 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:jira/features/dash_board/presentation/add_project_page.dart';
+import 'package:jira/features/dash_board/presentation/profile/profile.dart';
 import 'package:jira/features/dash_board/presentation/tab/home_tab.dart';
 import 'package:jira/features/dash_board/presentation/tab/notif_tab.dart';
-import 'package:jira/features/dash_board/presentation/profile.dart';
 import 'package:jira/features/dash_board/projects/presentation/cubit/project_cubit.dart';
 import 'package:jira/features/dash_board/projects/presentation/view/projects_tab.dart';
 import 'package:jira/features/dash_board/presentation/tab/task_tab.dart';

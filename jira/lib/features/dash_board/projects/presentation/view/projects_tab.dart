@@ -19,7 +19,7 @@ class ProjectsTab extends StatelessWidget {
         if (state.errorMessage.isNotEmpty) {
           return Center(
             child: Text(
-              state.errorMessage + "1",
+              "${state.errorMessage}1",
               style: const TextStyle(color: Colors.red),
             ),
           );

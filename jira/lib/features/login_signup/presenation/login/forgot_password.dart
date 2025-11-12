@@ -4,6 +4,8 @@ import 'package:jira/features/login_signup/presenation/login/cubit/forgot_passwo
 import 'package:jira/features/login_signup/presenation/login/cubit/forgot_password_state.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
+  const ForgotPasswordPage({super.key});
+
   @override
   _ForgotPasswordPageState createState() => _ForgotPasswordPageState();
 }
