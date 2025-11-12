@@ -61,14 +61,14 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
 
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('✅ ${result['message']}')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('✅ ${result['message']}')),
+        );
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('❌ Error: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('❌ Error: $e')),
+      );
     } finally {
       setState(() => _isLoading = false);
     }

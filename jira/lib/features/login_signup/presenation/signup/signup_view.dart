@@ -5,21 +5,23 @@ import 'package:jira/features/login_signup/presenation/signup/cubit/signup_cubit
 import 'package:jira/features/login_signup/presenation/signup/cubit/signup_state.dart';
 
 class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
+
   @override
   _SignUpPage createState() => _SignUpPage();
 }
 
 class _SignUpPage extends State<SignUpPage> {
   bool _showPass = true;
-  var _nameErr = "Ô này không được để trống";
+  final _nameErr = "Ô này không được để trống";
   var _fnameInvalid = false;
   var _lnameInvalid = false;
 
-  TextEditingController _fNameController = TextEditingController();
-  TextEditingController _lNameController = TextEditingController();
-  TextEditingController _uNameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passController = TextEditingController();
+  final TextEditingController _fNameController = TextEditingController();
+  final TextEditingController _lNameController = TextEditingController();
+  final TextEditingController _uNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passController = TextEditingController();
 
   void validateFirstName(String value) {
     setState(() {
