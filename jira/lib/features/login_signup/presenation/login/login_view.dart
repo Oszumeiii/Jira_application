@@ -7,6 +7,8 @@ import 'package:jira/features/login_signup/presenation/login/forgot_password.dar
 import 'package:jira/features/login_signup/presenation/signup/signup_view.dart';
 
 class LoginView extends StatefulWidget {
+  const LoginView({super.key});
+
   @override
   _LoginView createState() => _LoginView();
 }

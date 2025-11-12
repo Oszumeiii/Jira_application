@@ -1,0 +1,55 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
+import 'package:jira/features/dash_board/projects/domain/usecases/get_all_projects_usecase.dart';
+import 'project_state.dart';
+
+
+@injectable
+class ProjectCubit extends Cubit<ProjectState> {
+  final GetAllProjectsUsecase getAllProjectsUseCase;
+
+  ProjectCubit({
+    required this.getAllProjectsUseCase,
+  }) : super(const ProjectState());
+
+
+  Future<void> loadProjects() async {
+    emit(state.copyWith(isLoading: true));
+    try {
+      
+      final projects = await getAllProjectsUseCase();
+     // print(projects);
+      emit(state.copyWith(isLoading: false, projects: projects));
+    } catch (e) {
+      emit(state.copyWith(
+        isLoading: false,
+        errorMessage: e.toString(),
+      ));
+    }
+  }
+
+  // Future<void> createProject(ProjectEntity project) async {
+  //   emit(state.copyWith(isLoading: true, isSuccess: false, errorMessage: ''));
+  //   try {
+  //     final createdProject = await createProjectUseCase(project);
+
+  //     final updatedProjects = List<ProjectEntity>.from(state.projects)
+  //       ..add(createdProject);
+
+  //     emit(state.copyWith(
+  //       isLoading: false,
+  //       isSuccess: true,
+  //       projects: updatedProjects,
+  //     ));
+  //   } catch (e) {
+  //     emit(state.copyWith(
+  //       isLoading: false,
+  //       isSuccess: false,
+  //       errorMessage: e.toString(),
+  //     ));
+  //   }
+  // }
+  void resetStatus() {
+    emit(state.copyWith(isSuccess: false, errorMessage: ''));
+  }
+}
