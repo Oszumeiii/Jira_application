@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:jira/features/dash_board/presentation/add_project_page.dart';
 import 'package:jira/features/dash_board/presentation/profile/profile.dart';
+import 'package:jira/features/dash_board/presentation/tab/chat_tab/chat_tab.dart';
 import 'package:jira/features/dash_board/presentation/tab/home_tab.dart';
 import 'package:jira/features/dash_board/presentation/tab/notif_tab.dart';
 import 'package:jira/features/dash_board/projects/domain/entities/project_entity.dart';
@@ -13,22 +14,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
-
   @override
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
-
   int _selectedIndex = 0;
-  final List<String> _tabs = ['Home', 'Projects', 'Tasks', 'Notification'];
-  final List<Widget> _tabBodies =  [
+  final List<String> _tabs = ['Home', 'Projects', 'Tasks', 'Chat'];
+  final List<Widget> _tabBodies = [
     HomeTab(),
     ProjectsTab(),
     TasksTab(),
-    NotifTab(),
+    ChatTab(),
   ];
-    @override
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -36,27 +35,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
+  void _showBottomSheetAddProject() async {
+    final project = await showModalBottomSheet<ProjectEntity>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const AddProjectBottomSheet(),
+    );
 
-
-void _showBottomSheetAddProject() async {
-  final project = await showModalBottomSheet<ProjectEntity>(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (_) => const AddProjectBottomSheet(),
-  );
-
-  if (project != null) {
-    context.read<ProjectCubit>().createProject(project).then((_) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Project created successfully")));
-    }).catchError((e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Error: $e")));
-    });
+    if (project != null) {
+      context
+          .read<ProjectCubit>()
+          .createProject(project)
+          .then((_) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Project created successfully")),
+            );
+          })
+          .catchError((e) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text("Error: $e")));
+          });
+    }
   }
-}
-
 
   void _onTabSelected(int index) {
     setState(() => _selectedIndex = index);
@@ -88,8 +90,7 @@ void _showBottomSheetAddProject() async {
               title: const Text('New project'),
               onTap: () {
                 Navigator.pop(context);
-              _showBottomSheetAddProject() ;
-
+                _showBottomSheetAddProject();
               },
             ),
           ],
@@ -98,10 +99,8 @@ void _showBottomSheetAddProject() async {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F0),
       appBar: AppBar(
@@ -111,14 +110,27 @@ void _showBottomSheetAddProject() async {
         ),
         backgroundColor: const Color(0xFFF5F5F0),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.account_circle),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const ProfileScreen()),
-              );
-            },
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.notifications),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const NotifTab()),
+                  );
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.account_circle),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                  );
+                },
+              ),
+            ],
           ),
         ],
       ),
@@ -140,11 +152,16 @@ void _showBottomSheetAddProject() async {
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.8),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(30),
+                ),
               ),
               child: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 8,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -152,7 +169,7 @@ void _showBottomSheetAddProject() async {
                       _buildNavItem(Icons.task_outlined, 'Projects', 1),
                       _buildCenterButton(),
                       _buildNavItem(Icons.checklist_rtl_outlined, 'Tasks', 2),
-                      _buildNavItem(Icons.notifications, 'Notification', 3),
+                      _buildNavItem(Icons.chat_bubble, 'Chat', 3),
                     ],
                   ),
                 ),

@@ -5,9 +5,7 @@ class TasksTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text("Task list will appear here"),
-    );
+    return const Center(child: Text("Task list will appear here"));
   }
 }
 
@@ -16,8 +14,6 @@ class ProfileTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text("Profile info will appear here"),
-    );
+    return const Center(child: Text("Profile info will appear here"));
   }
 }
