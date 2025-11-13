@@ -15,7 +15,7 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
   final TextEditingController _summaryController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final String _selectedType = "Software";
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
  void _submit() {
     final name = _nameController.text.trim();
