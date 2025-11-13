@@ -5,6 +5,9 @@ class ProjectModel extends ProjectEntity {
   const ProjectModel({
     super.id,
     required super.name,
+    required super.priority , 
+    required super.projectType , 
+    required super.sumary ,
     required super.description,
     super.ownerId,
     super.members,
@@ -12,6 +15,7 @@ class ProjectModel extends ProjectEntity {
     required super.createdAt,
     super.updatedAt,
   });
+
 
   factory ProjectModel.fromJson(Map<String, dynamic> json) {
   final data = json;
@@ -31,6 +35,9 @@ class ProjectModel extends ProjectEntity {
   return ProjectModel(
     id: id,
     name: data['name'] ?? '',
+    priority: data['priority'] ??'',
+    projectType: data['projectType']??'',
+    sumary: data['sumary']??'',
     description: data['description'] ?? '',
     ownerId: data['ownerId'],
     members: data['members'] != null ? List<String>.from(data['members']) : null,
@@ -45,6 +52,9 @@ class ProjectModel extends ProjectEntity {
     return {
       "id": id,
       "name": name,
+      "priority" : priority , 
+      "projectType": projectType , 
+      "sumary" : sumary , 
       "description": description,
       "ownerId": ownerId,
       "members": members,
@@ -58,6 +68,9 @@ class ProjectModel extends ProjectEntity {
     return ProjectEntity(
       id: id,
       name: name,
+      priority: priority,
+      projectType: projectType,
+      sumary: sumary,
       description: description,
       ownerId: ownerId,
       members: members,

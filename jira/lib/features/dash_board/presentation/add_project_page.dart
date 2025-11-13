@@ -16,10 +16,12 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
   final TextEditingController _descriptionController = TextEditingController();
   final String _selectedType = "Software";
   final bool _isLoading = false;
+  String _priority = "Low";
 
  void _submit() {
     final name = _nameController.text.trim();
     final description = _descriptionController.text.trim();
+    final sumary = _summaryController.text.trim();
 
     if (name.isEmpty) {
       ScaffoldMessenger.of(context)
@@ -30,6 +32,9 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
     final project = ProjectEntity(
       id: null,
       name: name,
+      priority: _priority,
+      projectType: _selectedType,
+      sumary: sumary,
       description: description,
       members: [],
       status: "Active",
@@ -108,6 +113,7 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
 
             // ⚙️ Project Type
             buildDropdown(_selectedType, (fn) => setState(fn)),
+            buildDropdownProjecType(_priority, (fn) => setState(fn)),
 
             const SizedBox(height: 20),
 
