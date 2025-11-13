@@ -30,27 +30,46 @@ export const getProjectByUserId = async (req, res) => {
 
 export const createProject = async (req, res) => {
   try {
-    const { name, description, status, createdAt, updatedAt } = req.body;
-    const ownerId = req.user?.uid;
+    const {
+      name,
+      priority , 
+      description,
+      status,
+      projectType,
+      sumary,
+      createdAt,
+      updatedAt,
+      members,
+    } = req.body;
 
+    const ownerId = req.user?.uid;
     if (!ownerId) {
-      return res.status(401).json({ status: "error", message: "Unauthorized" });
+      return res
+        .status(401)
+        .json({ status: "error", message: "Unauthorized" });
     }
 
     if (!name || !description) {
-      return res.status(400).json({ status: "error", message: "Tên và mô tả là bắt buộc" });
+      return res
+        .status(400)
+        .json({ status: "error", message: "Tên và mô tả là bắt buộc" });
     }
+
 
     const project = new Project({
       name,
+      priority ,
       description,
+      projectType: projectType || "general",
+      sumary: sumary || "",
       ownerId,
+      members: Array.isArray(members) ? members : [],
       status: status || "active",
       createdAt: createdAt ? new Date(createdAt) : new Date(),
       updatedAt: updatedAt ? new Date(updatedAt) : new Date(),
     });
 
-     await project.save();
+    await project.save();
     console.log("Project đã được tạo:", project);
 
     return res.status(201).json({
@@ -59,6 +78,9 @@ export const createProject = async (req, res) => {
       data: {
         id: project._id,
         name: project.name,
+        priority : project.priority,
+        projectType: project.projectType,
+        sumary: project.sumary,
         description: project.description,
         ownerId: project.ownerId,
         members: project.members,
@@ -69,16 +91,17 @@ export const createProject = async (req, res) => {
     });
   } catch (error) {
     console.error("Lỗi khi tạo project:", error);
-    return res.status(500).json({ status: "error", message: error.message });
+    return res
+      .status(500)
+      .json({ status: "error", message: error.message });
   }
 };
-
 
 
 // Remove 
 export const removeProject = async (req, res) => {
   try {
-    const { idProject } = req.body;
+    const idProject = req.body.id;
     const ownerId = req.user?.uid;
 
     if (!ownerId) {
