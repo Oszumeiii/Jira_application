@@ -17,13 +17,14 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
   final String _selectedType = "Software";
   bool _isLoading = false;
 
- void _submit() {
+  void _submit() {
     final name = _nameController.text.trim();
     final description = _descriptionController.text.trim();
 
     if (name.isEmpty) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Please enter project name")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter project name")),
+      );
       return;
     }
 
@@ -37,9 +38,8 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
       updatedAt: DateTime.now(),
     );
 
-    Navigator.of(context).pop(project); 
+    Navigator.of(context).pop(project);
   }
-
 
   @override
   void dispose() {

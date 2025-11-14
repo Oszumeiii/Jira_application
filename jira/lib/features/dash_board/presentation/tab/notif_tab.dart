@@ -16,13 +16,47 @@ class _NotifTabState extends State<NotifTab> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              // --- Tabs ---
-              Row(
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back_ios_new,
+                        size: 20,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  const Text(
+                    "Thông báo",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // --- Tabs ---
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   _buildTabButton("All", primaryPurple),
@@ -32,35 +66,42 @@ class _NotifTabState extends State<NotifTab> {
                   _buildTabButton("Read", primaryPurple),
                 ],
               ),
+            ),
 
-              const SizedBox(height: 100),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset("assets/images/bell.png", height: 120),
-                  const SizedBox(height: 20),
-                  const Text(
-                    "Không có thông báo mới",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+            const SizedBox(height: 32),
+
+            // --- Empty State ---
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 50),
+                    Image.asset("assets/images/bell.png", height: 120),
+                    const SizedBox(height: 20),
+                    const Text(
+                      "Không có thông báo mới",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    "Nội dung cập nhật cho công việc mà bạn được chỉ định\nvà đang theo dõi sẽ xuất hiện ở đây.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.black54,
-                      fontSize: 14,
-                      height: 1.5,
+                    const SizedBox(height: 8),
+                    const Text(
+                      "Nội dung cập nhật cho công việc mà bạn được chỉ định\nvà đang theo dõi sẽ xuất hiện ở đây.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 14,
+                        height: 1.5,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
