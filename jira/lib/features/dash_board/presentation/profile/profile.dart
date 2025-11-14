@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:jira/features/dash_board/presentation/profile/cubit/profile_cubit.dart';
 import 'package:jira/features/dash_board/presentation/profile/cubit/profile_state.dart';
+import 'dart:io';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -60,7 +62,7 @@ class _ProfileView extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
                   child: Column(
                     children: [
-                      // Nút quay lại → SỬA: né BoxShape.circle
+                      // Nút quay lại
                       Align(
                         alignment: Alignment.topLeft,
                         child: CircleAvatar(
@@ -78,45 +80,97 @@ class _ProfileView extends StatelessWidget {
 
                       const SizedBox(height: 10),
 
-                      // Avatar → SỬA: né BoxShape.circle
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(
-                            48,
-                          ), // thay BoxShape.circle
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 15,
-                              offset: const Offset(0, 5),
+                      // Avatar với nút chỉnh sửa
+                      Stack(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(48),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  blurRadius: 15,
+                                  offset: const Offset(0, 5),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        child: CircleAvatar(
-                          radius: 48,
-                          backgroundColor: Colors.white,
-                          child: Text(
-                            (user['firstName']?[0] ?? '') +
-                                (user['lastName']?[0] ?? ''),
-                            style: const TextStyle(
-                              color: primaryBlue,
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 1.5,
+                            child: CircleAvatar(
+                              radius: 48,
+                              backgroundColor: Colors.white,
+                              backgroundImage: user['photoURL'] != null
+                                  ? NetworkImage(user['photoURL'])
+                                  : null,
+                              child: user['photoURL'] == null
+                                  ? Text(
+                                      (user['firstName']?[0] ?? '') +
+                                          (user['lastName']?[0] ?? ''),
+                                      style: const TextStyle(
+                                        color: primaryBlue,
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.bold,
+                                        letterSpacing: 1.5,
+                                      ),
+                                    )
+                                  : null,
                             ),
                           ),
-                        ),
+                          Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: () => _showAvatarEditDialog(context),
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: primaryBlue,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
 
                       const SizedBox(height: 16),
 
-                      Text(
-                        "${user['firstName']} ${user['lastName']}",
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
+                      // Tên với nút chỉnh sửa
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "${user['firstName']} ${user['lastName']}",
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: () => _showEditNameDialog(context),
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.edit,
+                                color: Colors.white,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 6),
                       Text(
@@ -129,7 +183,7 @@ class _ProfileView extends StatelessWidget {
 
                       const SizedBox(height: 14),
 
-                      // SỬA: border: Border.all(...) → dùng ShapeDecoration
+                      // Domain badge
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -280,6 +334,235 @@ class _ProfileView extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _showEditNameDialog(BuildContext context) {
+    final cubit = context.read<ProfileCubit>();
+    final state = cubit.state;
+    final user = state.userData!;
+
+    final firstNameController = TextEditingController(
+      text: user['firstName'] ?? '',
+    );
+    final lastNameController = TextEditingController(
+      text: user['lastName'] ?? '',
+    );
+    final userNameController = TextEditingController(
+      text: user['userName'] ?? '',
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text(
+          'Chỉnh sửa thông tin',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: firstNameController,
+                decoration: InputDecoration(
+                  labelText: 'Họ',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  prefixIcon: const Icon(Icons.person),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: lastNameController,
+                decoration: InputDecoration(
+                  labelText: 'Tên',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  prefixIcon: const Icon(Icons.person_outline),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: userNameController,
+                decoration: InputDecoration(
+                  labelText: 'Tên người dùng',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  prefixIcon: const Icon(Icons.alternate_email),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Hủy'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await cubit.updateProfile(
+                firstName: firstNameController.text.trim(),
+                lastName: lastNameController.text.trim(),
+                userName: userNameController.text.trim(),
+              );
+              if (context.mounted) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Đã cập nhật thông tin'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF0065FF),
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Lưu'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAvatarEditDialog(BuildContext context) {
+    final cubit = context
+        .read<ProfileCubit>(); // Lấy cubit ở đây, trước khi mở bottom sheet
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (bottomSheetContext) => Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Chọn từ thư viện'),
+              onTap: () async {
+                Navigator.pop(bottomSheetContext);
+                await _pickAndUploadImage(context, ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Chụp ảnh'),
+              onTap: () async {
+                Navigator.pop(bottomSheetContext);
+                await _pickAndUploadImage(context, ImageSource.camera);
+              },
+            ),
+            if (cubit.state.userData?['photoURL'] != null)
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text(
+                  'Xóa ảnh đại diện',
+                  style: TextStyle(color: Colors.red),
+                ),
+                onTap: () async {
+                  Navigator.pop(bottomSheetContext);
+                  await cubit.updateProfile(photoURL: '');
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Đã xóa ảnh đại diện'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                  }
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _pickAndUploadImage(
+    BuildContext context,
+    ImageSource source,
+  ) async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (image == null) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Không chọn được ảnh'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+        return;
+      }
+
+      final file = File(image.path);
+      final cubit = context.read<ProfileCubit>();
+
+      // Show loading
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: CircularProgressIndicator()),
+      );
+
+      final url = await cubit.uploadAvatar(file);
+
+      if (context.mounted) {
+        Navigator.pop(context); // Đóng loading
+
+        if (url != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Đã cập nhật ảnh đại diện'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(cubit.state.error ?? 'Lỗi upload ảnh'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } on UnsupportedError catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text(
+              'Không hỗ trợ chọn ảnh trên thiết bị mô phỏng. '
+              'Vui lòng dùng thiết bị thật hoặc thêm ảnh vào thư viện.',
+            ),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lỗi: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 }
 

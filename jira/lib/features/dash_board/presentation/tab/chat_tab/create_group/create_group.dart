@@ -1,116 +1,18 @@
-// features/dash_board/presentation/tab/chat_tab/create_group/create_group.dart
+// features/dash_board/presentation/tab/chat_tab/create_group/create_group_content.dart
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'create_group_cubit.dart';
+import 'create_group_state.dart';
 
-class CreateGroupScreen extends StatefulWidget {
-  const CreateGroupScreen({super.key});
-
-  @override
-  State<CreateGroupScreen> createState() => _CreateGroupScreenState();
-}
-
-class _CreateGroupScreenState extends State<CreateGroupScreen> {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final TextEditingController _nameController = TextEditingController();
-  List<Map<String, dynamic>> friends = [];
-  List<String> selectedFriends = [];
-  bool _isLoading = false;
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadFriends();
-  }
-
-  Future<void> _loadFriends() async {
-    setState(() => _isLoading = true);
-    try {
-      final uid = _auth.currentUser!.uid;
-      final userDoc = await _db.collection('users').doc(uid).get();
-      final friendIds = List<String>.from(userDoc['friends'] ?? []);
-
-      final List<Map<String, dynamic>> loaded = [];
-      for (var id in friendIds) {
-        final fDoc = await _db.collection('users').doc(id).get();
-        if (fDoc.exists) {
-          loaded.add({
-            'uid': id,
-            'name': fDoc['name'] ?? 'Unknown',
-            'email': fDoc['email'] ?? '',
-            'avatar': fDoc['photoURL'],
-          });
-        }
-      }
-      setState(() => friends = loaded);
-    } catch (e) {
-      setState(() => _error = "Không thể tải danh sách bạn bè.");
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _createGroup() async {
-    final groupName = _nameController.text.trim();
-    if (groupName.isEmpty || selectedFriends.isEmpty) {
-      setState(
-        () => _error = "Vui lòng nhập tên nhóm và chọn ít nhất 1 thành viên.",
-      );
-      return;
-    }
-
-    setState(() => _isLoading = true);
-    try {
-      final uid = _auth.currentUser!.uid;
-      final members = [uid, ...selectedFriends];
-
-      final groupRef = await _db.collection('chats').add({
-        'name': groupName,
-        'isGroup': true,
-        'members': members,
-        'lastMessage': '',
-        'createdAt': FieldValue.serverTimestamp(),
-        'admin': uid,
-      });
-
-      await groupRef.collection('messages').add({
-        'text': "$groupName đã được tạo.",
-        'from': uid,
-        'time': FieldValue.serverTimestamp(),
-        'system': true,
-      });
-
-      if (mounted) Navigator.pop(context);
-    } catch (e) {
-      setState(() => _error = "Không thể tạo nhóm.");
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
+class CreateGroupContent extends StatelessWidget {
+  const CreateGroupContent({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF4F5F7),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.close, size: 20),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          "Tạo nhóm mới",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-        ),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
+    return BlocBuilder<CreateGroupCubit, CreateGroupState>(
+      builder: (context, state) {
+        return Column(
           children: [
             // Group Name
             Container(
@@ -120,7 +22,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 border: Border.all(color: Colors.grey.shade300),
               ),
               child: TextField(
-                controller: _nameController,
+                onChanged: context.read<CreateGroupCubit>().onGroupNameChanged,
                 decoration: const InputDecoration(
                   hintText: "Tên nhóm",
                   prefixIcon: Icon(Icons.group, color: Color(0xFF6554C0)),
@@ -143,7 +45,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                 ),
                 const Spacer(),
                 Text(
-                  "${selectedFriends.length} được chọn",
+                  "${state.selectedFriendIds.length} được chọn",
                   style: const TextStyle(color: Color(0xFF6554C0)),
                 ),
               ],
@@ -158,28 +60,30 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: Colors.grey.shade300),
                 ),
-                child: _isLoading
+                child: state.isLoading
                     ? const Center(child: CircularProgressIndicator())
-                    : friends.isEmpty
+                    : state.friends.isEmpty
                     ? const Center(child: Text("Chưa có bạn bè"))
                     : ListView.separated(
                         padding: const EdgeInsets.symmetric(vertical: 8),
-                        itemCount: friends.length,
+                        itemCount: state.friends.length,
                         separatorBuilder: (_, __) =>
                             const Divider(height: 1, indent: 72),
                         itemBuilder: (context, i) {
-                          final f = friends[i];
-                          final selected = selectedFriends.contains(f['uid']);
+                          final friend = state.friends[i];
+                          final isSelected = state.selectedFriendIds.contains(
+                            friend.uid,
+                          );
                           return CheckboxListTile(
                             secondary: CircleAvatar(
                               radius: 22,
                               backgroundColor: const Color(0xFFDFE1E6),
-                              backgroundImage: f['avatar'] != null
-                                  ? NetworkImage(f['avatar'])
+                              backgroundImage: friend.photoURL != null
+                                  ? NetworkImage(friend.photoURL!)
                                   : null,
-                              child: f['avatar'] == null
+                              child: friend.photoURL == null
                                   ? Text(
-                                      f['name'][0].toUpperCase(),
+                                      friend.name[0].toUpperCase(),
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -187,25 +91,19 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                                   : null,
                             ),
                             title: Text(
-                              f['name'],
+                              friend.name,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
                             subtitle: Text(
-                              f['email'],
+                              friend.email,
                               style: const TextStyle(fontSize: 13),
                             ),
-                            value: selected,
-                            onChanged: (v) {
-                              setState(() {
-                                if (v == true) {
-                                  selectedFriends.add(f['uid']);
-                                } else {
-                                  selectedFriends.remove(f['uid']);
-                                }
-                              });
-                            },
+                            value: isSelected,
+                            onChanged: (_) => context
+                                .read<CreateGroupCubit>()
+                                .toggleFriend(friend.uid),
                             activeColor: const Color(0xFF6554C0),
                             controlAffinity: ListTileControlAffinity.trailing,
                           );
@@ -216,8 +114,8 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
 
             const SizedBox(height: 16),
 
-            // Error
-            if (_error != null)
+            // Error Message
+            if (state.errorMessage != null)
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -233,7 +131,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        _error!,
+                        state.errorMessage!,
                         style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
                     ),
@@ -247,8 +145,10 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: _isLoading ? null : _createGroup,
-                icon: _isLoading
+                onPressed: state.isLoading
+                    ? null
+                    : () => context.read<CreateGroupCubit>().createGroup(),
+                icon: state.isLoading
                     ? const SizedBox(
                         width: 20,
                         height: 20,
@@ -258,7 +158,7 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                         ),
                       )
                     : const Icon(Icons.add, size: 20),
-                label: Text(_isLoading ? "Đang tạo..." : "Tạo nhóm"),
+                label: Text(state.isLoading ? "Đang tạo..." : "Tạo nhóm"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF6554C0),
                   foregroundColor: Colors.white,
@@ -267,13 +167,12 @@ class _CreateGroupScreenState extends State<CreateGroupScreen> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                   elevation: 0,
-                  shadowColor: Colors.transparent,
                 ),
               ),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }

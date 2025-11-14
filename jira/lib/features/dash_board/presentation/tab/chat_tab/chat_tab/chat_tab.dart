@@ -7,8 +7,8 @@ import 'package:jira/features/dash_board/presentation/tab/chat_tab/chat/chat_lis
 import 'package:jira/features/dash_board/presentation/tab/chat_tab/chat/chat_search_bar.dart';
 import 'package:jira/features/dash_board/presentation/tab/chat_tab/chat/search_result_view.dart';
 import 'package:jira/features/dash_board/presentation/tab/chat_tab/chat_header.dart';
-import 'package:jira/features/dash_board/presentation/tab/chat_tab/chat_tab/chat_tab_cubit.dart';
 import 'package:jira/features/dash_board/presentation/tab/chat_tab/chat_tab/chat_tab_state.dart';
+import 'chat_tab_cubit.dart';
 
 class ChatTab extends StatefulWidget {
   const ChatTab({super.key});
