@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jira/features/dash_board/projects/domain/entities/project_entity.dart';
+import 'package:jira/features/dash_board/projects/presentation/view/add_member_bottomsheet.dart';
 import 'package:jira/features/login_signup/presenation/widgets/add_project.dart';
-// Add project BottomSheet
 
 class AddProjectBottomSheet extends StatefulWidget {
   const AddProjectBottomSheet({super.key});
@@ -14,14 +14,23 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _summaryController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+
+  // Lưu member dạng map: {'uid': '...', 'email': '...'}
+  List<Map<String, String>> members = [];
+
   final String _selectedType = "Software";
-  bool _isLoading = false;
+  final bool _isLoading = false;
+  final String _priority = "Low";
 
   void _submit() {
     final name = _nameController.text.trim();
     final description = _descriptionController.text.trim();
+    final summary = _summaryController.text.trim();
 
     if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter project name")),
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please enter project name")),
       );
@@ -31,8 +40,11 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
     final project = ProjectEntity(
       id: null,
       name: name,
+      priority: _priority,
+      projectType: _selectedType,
+      sumary: summary,
       description: description,
-      members: [],
+      members: members.isNotEmpty ? members.map((m) => m['uid']!).toList() : [],
       status: "Active",
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
@@ -72,6 +84,7 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Drag handle
             Center(
               child: Container(
                 width: 40,
@@ -84,6 +97,7 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
               ),
             ),
 
+            // Title
             Row(
               children: const [
                 Icon(
@@ -106,12 +120,69 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
 
             const SizedBox(height: 28),
 
-            // ⚙️ Project Type
-            buildDropdown(_selectedType, (fn) => setState(fn)),
+            // Type dropdown + Assign members
+            Row(
+              children: [
+                Expanded(
+                  child: buildDropdown(_selectedType, (fn) => setState(fn)),
+                ),
+                const SizedBox(width: 8),
+                InkWell(
+                  borderRadius: BorderRadius.circular(10),
+                  onTap: () async {
+                    final result = await showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                      ),
+                      builder: (_) => const AddMemberBottomSheet(),
+                    );
+
+                    if (result != null && result.isNotEmpty) {
+                      setState(() {
+                        List<Map<String, String>> newMembers = List<Map<String, String>>.from(result);
+                        final existingUids = members.map((e) => e['uid']).toSet();
+                        members = [
+                          ...members,
+                          ...newMembers.where((e) => !existingUids.contains(e['uid']))
+                        ];
+                      });
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade400, width: 2),
+                      color: const Color.fromARGB(255, 0, 174, 255),
+                    ),
+                    child: Row(
+                      children: const [
+                        Icon(Icons.person_add_alt_1, size: 20, color: Colors.black87),
+                        SizedBox(width: 6),
+                        Text(
+                          "Assign",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
 
             const SizedBox(height: 20),
 
-            // 🧾 Project Name
+            // Priority dropdown
+            buildDropdownProjecType(_priority, (fn) => setState(fn)),
+
+            const SizedBox(height: 20),
+
+            // Project Name
             buildTextField(
               controller: _nameController,
               label: "Project Name",
@@ -120,7 +191,7 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
 
             const SizedBox(height: 16),
 
-            // 📝 Summary
+            // Summary
             buildTextField(
               controller: _summaryController,
               label: "Summary",
@@ -129,7 +200,7 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
 
             const SizedBox(height: 16),
 
-            // 📄 Description
+            // Description
             buildTextField(
               controller: _descriptionController,
               label: "Description",
@@ -137,9 +208,62 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
               maxLines: 3,
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
+
+            if (members.isNotEmpty) ...[
+                Text(
+                  "Create New Project",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: members.map((m) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.blueAccent),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircleAvatar(
+                          radius: 12,
+                          backgroundColor: Colors.blueAccent,
+                          child: Text(
+                            m['email']?.substring(0, 1).toUpperCase() ?? '?',
+                            style: const TextStyle(color: Colors.white, fontSize: 12),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          m['email'] ?? '',
+                          style: const TextStyle(color: Colors.black87),
+                        ),
+                        const SizedBox(width: 4),
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              members.remove(m);
+                            });
+                          },
+                          child: const Icon(Icons.close, size: 18, color: Colors.redAccent),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
             const SizedBox(height: 28),
-            // Button Create
+            // Create button
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               width: double.infinity,

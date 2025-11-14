@@ -5,6 +5,9 @@ export class Project {
   constructor({
     id = null,
     name,
+    priority = "Low",
+    projectType , 
+    sumary , 
     description = "",
     ownerId,
     members = [],
@@ -14,6 +17,9 @@ export class Project {
   }) {
     this.id = id;
     this.name = name;
+    this.priority = priority , 
+    this.projectType = projectType,
+    this.sumary = sumary , 
     this.description = description;
     this.ownerId = ownerId;
     this.members = members;
@@ -28,6 +34,9 @@ export class Project {
 
     const data = {
       name: this.name,
+      priority : this.priority , 
+      projectType : this.projectType , 
+      sumary : this.sumary ,
       description: this.description,
       ownerId: this.ownerId,
       members: this.members.length ? this.members : [this.ownerId],

@@ -2,9 +2,12 @@ import '../../domain/entities/project_entity.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProjectModel extends ProjectEntity {
-  const ProjectModel({
+   ProjectModel({
     super.id,
     required super.name,
+    required super.priority , 
+    required super.projectType , 
+    required super.sumary ,
     required super.description,
     super.ownerId,
     super.members,
@@ -13,11 +16,8 @@ class ProjectModel extends ProjectEntity {
     super.updatedAt,
   });
 
-  factory ProjectModel.fromJson(Map<String, dynamic> json) {
-  final data = json;
 
-  final id = data['id'] ?? data['_id'];
-
+factory ProjectModel.fromJson(Map<String, dynamic> json) {
   DateTime parseDate(dynamic value) {
     if (value is Timestamp) {
       return value.toDate();
@@ -29,22 +29,29 @@ class ProjectModel extends ProjectEntity {
   }
 
   return ProjectModel(
-    id: id,
-    name: data['name'] ?? '',
-    description: data['description'] ?? '',
-    ownerId: data['ownerId'],
-    members: data['members'] != null ? List<String>.from(data['members']) : null,
-    status: data['status'] ?? 'active',
-    createdAt: parseDate(data['createdAt']),
-    updatedAt: data['updatedAt'] != null ? parseDate(data['updatedAt']) : null,
+    id: json['id'] ?? json['_id'],
+    name: json['name'] ?? '',
+    priority: json['priority'] ?? '',
+    projectType: json['projectType'] ?? '',
+    sumary: json['sumary'] ?? '',
+    description: json['description'] ?? '',
+    ownerId: json['ownerId'] ?? '',
+    members: json['members'] != null ? List<String>.from(json['members']) : [],
+    status: json['status'] ?? 'active',
+    createdAt: parseDate(json['createdAt']),
+    updatedAt: json['updatedAt'] != null ? parseDate(json['updatedAt']) : null,
   );
 }
+
 
 
   Map<String, dynamic> toJson() {
     return {
       "id": id,
       "name": name,
+      "priority" : priority , 
+      "projectType": projectType , 
+      "sumary" : sumary , 
       "description": description,
       "ownerId": ownerId,
       "members": members,
@@ -58,6 +65,9 @@ class ProjectModel extends ProjectEntity {
     return ProjectEntity(
       id: id,
       name: name,
+      priority: priority,
+      projectType: projectType,
+      sumary: sumary,
       description: description,
       ownerId: ownerId,
       members: members,

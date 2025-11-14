@@ -14,12 +14,16 @@ import 'package:jira/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   ApiClient.setup();
   configureDependencies();
   runApp(const MyApp());
 }
+
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -31,18 +35,17 @@ class MyApp extends StatelessWidget {
         GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
         GoRoute(path: '/login', builder: (context, state) => LoginView()),
         GoRoute(
-          path: '/dashboard',
-          builder: (context, state) => MultiBlocProvider(
-            providers: [
-              BlocProvider<ProjectCubit>(create: (_) => getIt<ProjectCubit>()),
-            ],
-            child: const DashboardScreen(),
-          ),
-        ),
-        GoRoute(
-          path: '/profile',
-          builder: (context, state) => const ProfileScreen(),
-        ),
+            path: '/dashboard',
+            builder: (context, state) => MultiBlocProvider(
+              providers: [
+                BlocProvider<ProjectCubit>(
+                  create: (_) => getIt<ProjectCubit>(),
+                ),
+              ],
+              child: const DashboardScreen(),
+            ),
+            ),
+        GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
         // GoRoute(path: '/dashboard/home', builder: (context, state) => const HomeTab()),
         // GoRoute(path: '/dashboard/projects', builder: (context, state) => const ProjectsTab()),
         // GoRoute(path: '/dashboard/tasks', builder: (context, state) => const SplashScreen()),
@@ -53,7 +56,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         title: 'Jira App',
         debugShowCheckedModeBanner: false,
-        routerConfig: router,
+        routerConfig: router, 
       ),
     );
   }
