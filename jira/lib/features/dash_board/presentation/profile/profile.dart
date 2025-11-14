@@ -60,32 +60,30 @@ class _ProfileView extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 28),
                   child: Column(
                     children: [
-                      // Nút quay lại
+                      // Nút quay lại → SỬA: né BoxShape.circle
                       Align(
                         alignment: Alignment.topLeft,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.15),
-                            shape: BoxShape.circle,
-                          ),
+                        child: CircleAvatar(
+                          radius: 28,
+                          backgroundColor: Colors.white.withOpacity(0.15),
                           child: IconButton(
                             icon: const Icon(
                               Icons.arrow_back_ios_new_rounded,
                               color: Colors.white,
                             ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
+                            onPressed: () => Navigator.pop(context),
                           ),
                         ),
                       ),
 
                       const SizedBox(height: 10),
 
-                      // Avatar
+                      // Avatar → SỬA: né BoxShape.circle
                       Container(
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
+                          borderRadius: BorderRadius.circular(
+                            48,
+                          ), // thay BoxShape.circle
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withOpacity(0.2),
@@ -131,16 +129,20 @@ class _ProfileView extends StatelessWidget {
 
                       const SizedBox(height: 14),
 
+                      // SỬA: border: Border.all(...) → dùng ShapeDecoration
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 8,
                         ),
-                        decoration: BoxDecoration(
+                        decoration: ShapeDecoration(
                           color: Colors.white.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.2),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: const BorderSide(
+                              color: Colors.white,
+                              width: 0.2,
+                            ),
                           ),
                         ),
                         child: Row(
