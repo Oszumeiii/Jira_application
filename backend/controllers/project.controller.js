@@ -30,35 +30,58 @@ export const getProjectByUserId = async (req, res) => {
 
 export const createProject = async (req, res) => {
   try {
-    const { name, description, status, createdAt, updatedAt } = req.body;
-    const ownerId = req.user?.uid;
+    const {
+      name,
+      priority , 
+      description,
+      status,
+      projectType,
+      sumary,
+      createdAt,
+      updatedAt,
+      members,
+    } = req.body;
+    console.log(members);
 
+    const ownerId = req.user?.uid;
     if (!ownerId) {
-      return res.status(401).json({ status: "error", message: "Unauthorized" });
+      return res
+        .status(401)
+        .json({ status: "error", message: "Unauthorized" });
     }
 
     if (!name || !description) {
-      return res.status(400).json({ status: "error", message: "Tên và mô tả là bắt buộc" });
+      return res
+        .status(400)
+        .json({ status: "error", message: "Tên và mô tả là bắt buộc" });
     }
 
-    const project = new Project({
+
+    let project = new Project({
       name,
+      priority ,
       description,
+      projectType: projectType || "general",
+      sumary: sumary || "",
       ownerId,
+      members: members,
       status: status || "active",
       createdAt: createdAt ? new Date(createdAt) : new Date(),
       updatedAt: updatedAt ? new Date(updatedAt) : new Date(),
     });
 
-     await project.save();
+    project = await project.save();
     console.log("Project đã được tạo:", project);
 
     return res.status(201).json({
       status: "success",
       message: "Tạo project thành công!",
       data: {
-        id: project._id,
+        id: project.id,
         name: project.name,
+        priority : project.priority,
+        projectType: project.projectType,
+        sumary: project.sumary,
         description: project.description,
         ownerId: project.ownerId,
         members: project.members,
@@ -69,6 +92,96 @@ export const createProject = async (req, res) => {
     });
   } catch (error) {
     console.error("Lỗi khi tạo project:", error);
-    return res.status(500).json({ status: "error", message: error.message });
+    return res
+      .status(500)
+      .json({ status: "error", message: error.message });
+  }
+};
+
+
+// Remove 
+export const removeProject = async (req, res) => {
+  try {
+    const idProject = req.body.id;
+    const ownerId = req.user?.uid;
+
+    if (!ownerId) {
+      return sendErrorResponse(res, 401, "Unauthorized", "You must be logged in to delete a project");
+    }
+
+    if (!idProject) {
+      return sendErrorResponse(res, 400, "BadRequest", "Missing project ID");
+    }
+
+    const projectRef = db.collection("projects").doc(idProject);
+    const doc = await projectRef.get();
+
+    if (!doc.exists) {
+      return sendErrorResponse(res, 404, "NotFound", "Project not found");
+    }
+
+    const projectData = doc.data();
+    if (projectData.ownerId !== ownerId) {
+      return sendErrorResponse(res, 403, "Forbidden", "You are not authorized to delete this project");
+    }
+
+    await projectRef.delete();
+
+    return sendSuccessResponse(res, 200, "Project deleted successfully", {
+      id: idProject,
+      name: projectData.name,
+      description: projectData.description,
+    });
+  } catch (error) {
+    console.error("Error while deleting project:", error);
+    return sendErrorResponse(res, 500, "InternalServerError", "An unexpected error occurred while deleting the project");
+  }
+};
+
+// Edit 
+export const editProject = async (req, res) => {
+  try {
+    const { idProject, name, description, status } = req.body;
+    const ownerId = req.user?.uid;
+
+    if (!ownerId) {
+      return sendErrorResponse(res, 401, "Unauthorized", "You must be logged in to update a project");
+    }
+
+    if (!idProject) {
+      return sendErrorResponse(res, 400, "BadRequest", "Missing project ID");
+    }
+
+    const projectRef = db.collection("projects").doc(idProject);
+    const doc = await projectRef.get();
+
+    if (!doc.exists) {
+      return sendErrorResponse(res, 404, "NotFound", "Project not found");
+    }
+
+  
+    const projectData = doc.data();
+    if (projectData.ownerId !== ownerId) {
+      return sendErrorResponse(res, 403, "Forbidden", "You are not authorized to edit this project");
+    }
+
+
+    const updatedFields = {
+      ...(name && { name }),
+      ...(description && { description }),
+      ...(status && { status }),
+      updatedAt: new Date(),
+    };
+
+    await projectRef.update(updatedFields);
+
+    return sendSuccessResponse(res, 200, "Project updated successfully", {
+      id: idProject,
+      ...projectData,
+      ...updatedFields,
+    });
+  } catch (error) {
+    console.error("Error while updating project:", error);
+    return sendErrorResponse(res, 500, "InternalServerError", "An unexpected error occurred while updating the project");
   }
 };

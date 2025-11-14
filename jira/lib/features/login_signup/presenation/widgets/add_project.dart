@@ -50,3 +50,26 @@ Widget buildTextField({
     );
   }
 
+
+
+  Widget buildDropdownProjecType( String selectedType, void Function(void Function()) setState) {
+    return DropdownButtonFormField<String>(
+      value: selectedType,
+      decoration: InputDecoration(
+        labelText: "Project Type",
+        prefixIcon: const Icon(Icons.category_outlined, color: Colors.blueAccent),
+        filled: true,
+        fillColor: Colors.blue[50]?.withOpacity(0.3),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+      items: const [
+        DropdownMenuItem(value: "Low", child: Text("Low")),
+        DropdownMenuItem(value: "Medium", child: Text("Medium")),
+        DropdownMenuItem(value: "High", child: Text("High")),
+      ],
+      onChanged: (val) => setState(() => selectedType = val!),
+    );
+  }
+

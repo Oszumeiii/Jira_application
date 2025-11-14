@@ -18,6 +18,9 @@ class ProjectRepositoryImpl extends ProjectRepository{
     final projectModel = ProjectModel(
       id: project.id,
       name: project.name,
+      priority : project.priority , 
+      projectType: project.projectType,
+      sumary: project.sumary,
       description: project.description,
       ownerId: project.ownerId,
       members: project.members,
@@ -25,6 +28,7 @@ class ProjectRepositoryImpl extends ProjectRepository{
       createdAt: project.createdAt,
       updatedAt: project.updatedAt,
     );
+    print(project);
     return remoteDataSource.createProject(projectModel);
   }
   
@@ -34,5 +38,17 @@ Future<List<ProjectEntity>> getAllProjects() async {
   final projects = projectModels.map((m) => m.toEntity()).toList();
   return projects;
 }
+
+  @override
+  Future<void> removeProject(String idProject) async{
+    try {
+          await remoteDataSource.removeProject(idProject);
+    } catch (e) {
+      throw Exception("Repository: failed to remove project - $e");
+    }
+  }
+
+
+
 
 }
