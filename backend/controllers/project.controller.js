@@ -41,6 +41,7 @@ export const createProject = async (req, res) => {
       updatedAt,
       members,
     } = req.body;
+    console.log(members);
 
     const ownerId = req.user?.uid;
     if (!ownerId) {
@@ -63,7 +64,7 @@ export const createProject = async (req, res) => {
       projectType: projectType || "general",
       sumary: sumary || "",
       ownerId,
-      members: Array.isArray(members) ? members : [],
+      members: members,
       status: status || "active",
       createdAt: createdAt ? new Date(createdAt) : new Date(),
       updatedAt: updatedAt ? new Date(updatedAt) : new Date(),
