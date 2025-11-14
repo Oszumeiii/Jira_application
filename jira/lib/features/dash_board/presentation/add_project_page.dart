@@ -31,6 +31,9 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please enter project name")),
       );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter project name")),
+      );
       return;
     }
 
