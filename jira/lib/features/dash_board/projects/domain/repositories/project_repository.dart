@@ -9,4 +9,8 @@ abstract class ProjectRepository {
 
   //Define method to retrieve all projects
   Future<List<ProjectEntity>> getAllProjects();
+
+  //Remove project method 
+
+  Future <void> removeProject(String idProject);
 }

@@ -21,6 +21,10 @@ import 'package:jira/features/dash_board/projects/domain/usecases/create_project
     as _i644;
 import 'package:jira/features/dash_board/projects/domain/usecases/get_all_projects_usecase.dart'
     as _i760;
+import 'package:jira/features/dash_board/projects/domain/usecases/remove_project_usecase.dart'
+    as _i134;
+import 'package:jira/features/dash_board/projects/domain/usecases/update_project_usecase.dart'
+    as _i723;
 import 'package:jira/features/dash_board/projects/presentation/cubit/project_cubit.dart'
     as _i32;
 
@@ -40,13 +44,18 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i355.ProjectRemoteDataSourceImpl());
     gh.factory<_i688.ProjectRepository>(
         () => _i77.ProjectRepositoryImpl(gh<_i355.ProjectRemoteDataSource>()));
-    gh.factory<_i644.CreateProjectUseCase>(
-        () => _i644.CreateProjectUseCase(gh<_i688.ProjectRepository>()));
+    gh.factory<_i134.RemoveProjectUsecase>(
+        () => _i134.RemoveProjectUsecase(gh<_i688.ProjectRepository>()));
     gh.factory<_i760.GetAllProjectsUsecase>(
         () => _i760.GetAllProjectsUsecase(gh<_i688.ProjectRepository>()));
+    gh.factory<_i644.CreateProjectUseCase>(
+        () => _i644.CreateProjectUseCase(gh<_i688.ProjectRepository>()));
+    gh.factory<_i723.UpdateProjectUsecase>(
+        () => _i723.UpdateProjectUsecase(gh<_i688.ProjectRepository>()));
     gh.factory<_i32.ProjectCubit>(() => _i32.ProjectCubit(
           getAllProjectsUseCase: gh<_i760.GetAllProjectsUsecase>(),
           createProjectUseCase: gh<_i644.CreateProjectUseCase>(),
+          removeProjectUsecase: gh<_i134.RemoveProjectUsecase>(),
         ));
     return this;
   }
