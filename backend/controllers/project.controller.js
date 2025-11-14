@@ -56,7 +56,7 @@ export const createProject = async (req, res) => {
     }
 
 
-    const project = new Project({
+    let project = new Project({
       name,
       priority ,
       description,
@@ -69,14 +69,14 @@ export const createProject = async (req, res) => {
       updatedAt: updatedAt ? new Date(updatedAt) : new Date(),
     });
 
-    await project.save();
+    project = await project.save();
     console.log("Project đã được tạo:", project);
 
     return res.status(201).json({
       status: "success",
       message: "Tạo project thành công!",
       data: {
-        id: project._id,
+        id: project.id,
         name: project.name,
         priority : project.priority,
         projectType: project.projectType,

@@ -20,8 +20,8 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
       '/projects',
       data: project.toJson(),
     );
-    print(project.toJson());
-    final data = response.data['data'];
+    print(response);
+    final data = response.data['data'];  
     return ProjectModel.fromJson(data);
   }
 
