@@ -38,75 +38,77 @@ export const getIssuesByProject = async (req, res) => {
 
 
 export const createIssue = async (req, res) => {
-    try {
-        const projectId = req.params.projectId;     
-        const userId = req.user?.id;               
+  try {
+    console.log("Create Issue called");
+    const userId = req.user?.uid;
+    console.log("User ID from token:", userId);
+    console.log(req.body);
 
-        const {
-            title,
-            summary,
-            description = "",
-            type = "task",
-            priority = "Low",
-            status = "todo",
-            assigneeId = null,
-            parentId = null,
-        } = req.body;
+    const {
+      projectId,
+      title,
+      summary,
+      description = "",
+      type = "task",
+      priority = "Low",
+      status = "todo",
+      assigneeId = null,
+      parentId = null,
+      createdAt,
+      updatedAt,
+    } = req.body;
 
-        if (!title ) {
-            return res.status(400).json({ message: "Missing title !" });
-        }
-
-        // Firestore tự tạo ID
-        const docRef = db.collection("issues").doc();
-        const issueId = docRef.id;
-
-        const newIssue = {
-            id: issueId,        
-            projectId,
-            title,
-            summary,
-            description,
-            type,
-            priority,
-            status,
-            assigneeId,
-            reporterId: userId,
-            parentId,
-            subTasks: [],
-            createdAt: createdAt ? new Date(createdAt) : new Date(),
-            updatedAt: updatedAt ? new Date(updatedAt) : new Date(),
-        };
-
-        await docRef.set(newIssue);
-
-        // Nếu có parentId → update Issue cha
-        if (parentId) {
-            const parentRef = db.collection("issues").doc(parentId);
-            const parentSnap = await parentRef.get();
-
-            if (!parentSnap.exists) {
-                return res.status(404).json({ message: "Parrent Issue not Found" });
-            }
-
-            const parentData = parentSnap.data();
-
-            await parentRef.update({
-                subTasks: [...parentData.subTasks, issueId],
-                updatedAt: new Date(),
-            });
-        }
-
-        return res.status(201).json({
-            message: "Create Issue successfully",
-            issue: newIssue,
-        });
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Error Internal Server !", error: error.message });
+    if (!title) {
+      return sendErrorResponse(res, 400, "MISSING_TITLE", "Title is required!");
     }
+
+    const docRef = db.collection("issues").doc();
+    const issueId = docRef.id;
+
+    const newIssue = {
+      id: issueId,
+      projectId,
+      title,
+      summary,
+      description,
+      type,
+      priority,
+      status,
+      assigneeId,
+      reporterId: userId ?? "", 
+      parentId,
+      subTasks: [],
+      createdAt: createdAt ? new Date(createdAt) : new Date(),
+      updatedAt: updatedAt ? new Date(updatedAt) : new Date(),
+    };
+
+    console.log("New Issue Data:", newIssue);
+
+    await docRef.set(newIssue);
+
+    if (parentId) {
+      const parentRef = db.collection("issues").doc(parentId);
+      const parentSnap = await parentRef.get();
+
+      if (!parentSnap.exists) {
+        return sendErrorResponse(res, 404, "PARENT_NOT_FOUND", "Parent issue not found");
+      }
+
+      const parentData = parentSnap.data();
+      await parentRef.update({
+        subTasks: [...parentData.subTasks, issueId],
+        updatedAt: new Date(),
+      });
+    }
+
+    return sendSuccessResponse(res, 201, "Issue created successfully", { issue: newIssue });
+
+  } catch (error) {
+    console.error(error);
+    return sendErrorResponse(res, 500, "INTERNAL_ERROR", error.message);
+  }
 };
+
 
 
 export const getIssueById = async (req, res) => {

@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jira/features/dash_board/Issues/domain/Entity/issue_entity.dart';
 import 'package:jira/features/dash_board/Issues/presentation/cubit/issue_cubit.dart';
 import 'package:jira/features/dash_board/Issues/presentation/cubit/issue_state.dart';
+import 'package:jira/features/dash_board/Issues/presentation/view/add_issue_bottomsheet.dart';
+import 'package:jira/features/dash_board/projects/domain/entities/project_entity.dart';
 
 class ProjectDetailPage extends StatefulWidget {
-  final String projectId;
+  final ProjectEntity project ; 
 
-  const ProjectDetailPage({super.key, required this.projectId});
+  const ProjectDetailPage({super.key, required this.project});
 
   @override
   State<ProjectDetailPage> createState() => _ProjectDetailPageState();
@@ -22,7 +24,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    context.read<IssueCubit>().loadIssuesByProject(widget.projectId);
+    context.read<IssueCubit>().loadIssuesByProject(widget.project.id!);
   }
 
   Widget taskItem(IssueEntity issue, Color color) {
@@ -64,6 +66,19 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
         ],
       ),
     );
+  }
+
+  //bottomsheet add issue
+  void _showBottomSheetAddIssue(String projectId) async {
+      final newIssue = await showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        builder: (context) => AddIssueBottomsheet(project: widget.project),
+      );
+      if (newIssue != null) {
+        context.read<IssueCubit>().addIssue(newIssue);
+      }
   }
 
   Widget buildTasks(List<IssueEntity> tasks, Color color) {
@@ -115,7 +130,7 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: const Icon(Icons.add, size: 28),
         onPressed: () {
-          // TODO: Thêm issue mới
+          _showBottomSheetAddIssue(widget.project.id!);
         },
       ),
 
@@ -133,6 +148,8 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
               ),
             );
           }
+
+          print(state.todo.length);
 
           return TabBarView(
             controller: _tabController,

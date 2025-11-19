@@ -12,8 +12,8 @@ class IssueRepoImpl extends IssueRepository{
 
   @override
   Future<IssueEntity> createIssue(IssueEntity issue) {
-    // TODO: implement createIssue
-    throw UnimplementedError();
+    return remoteDataSource.createIssue(IssueModel.fromEntity(issue))
+        .then((model) => model.toEntity());
   }
 
   @override
@@ -31,9 +31,7 @@ class IssueRepoImpl extends IssueRepository{
 @override
 Future<List<IssueEntity>> getIssuesByProject(String projectId) async {
   List<IssueModel> models = await remoteDataSource.getIssuesByProject(projectId);
-
   List<IssueEntity> entities = models.map((model) => model.toEntity()).toList();
-
   return entities;
 }
 

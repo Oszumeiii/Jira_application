@@ -1,9 +1,9 @@
 class IssueEntity {
-  final String id;
+  final String? id;
   final String projectId;
   final String title;
   final String summary;
-  final String description;
+  final String? description;
   final String type;
   final String priority;
   final String status;
@@ -15,24 +15,24 @@ class IssueEntity {
   final List<String> subTasks;
 
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
 
   IssueEntity({
-    required this.id,
+    this.id,
     required this.projectId,
     required this.title,
     required this.summary,
-    this.description = "",
+    this.description,
     this.type = "task",
     this.priority = "Low",
     this.status = "todo",
     this.assigneeId,
     this.reporterId,
     this.parentId,
-    this.subTasks = const [],
+    List<String>? subTasks,
     required this.createdAt,
-    required this.updatedAt,
-  });
+    this.updatedAt,
+  }) : subTasks = subTasks ?? [];
 
   IssueEntity copyWith({
     String? title,
@@ -42,8 +42,10 @@ class IssueEntity {
     String? priority,
     String? status,
     String? assigneeId,
+    String? reporterId,
     String? parentId,
     List<String>? subTasks,
+    DateTime? updatedAt,
   }) {
     return IssueEntity(
       id: id,
@@ -55,11 +57,11 @@ class IssueEntity {
       priority: priority ?? this.priority,
       status: status ?? this.status,
       assigneeId: assigneeId ?? this.assigneeId,
-      reporterId: reporterId,
+      reporterId: reporterId ?? this.reporterId,
       parentId: parentId ?? this.parentId,
       subTasks: subTasks ?? this.subTasks,
       createdAt: createdAt,
-      updatedAt: DateTime.now(),
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }

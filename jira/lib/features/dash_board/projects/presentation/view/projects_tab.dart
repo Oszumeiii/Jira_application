@@ -75,7 +75,7 @@ class ProjectsTab extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (_) => BlocProvider(
                                 create: (_) => getIt<IssueCubit>(),
-                                child: ProjectDetailPage(projectId: project.id!),
+                                child: ProjectDetailPage(project: project),
                               ),
                             ),
                           );

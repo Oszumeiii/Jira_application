@@ -24,10 +24,21 @@ class IssueCubit extends Cubit<IssueState> {
     emit(state.copyWith(isLoading: true, error: null));
     try {
       final issues = await getIssueByProjectUsecase(projectId);
-      final todo = issues.where((issue) => issue.status == 'To Do').toList();
-      final inProgress = issues.where((issue) => issue.status == 'In Progress').toList();
-      final done = issues.where((issue) => issue.status == 'Done').toList();
+      final todo = issues.where((issue) => issue.status == 'todo').toList();
+      final inProgress = issues.where((issue) => issue.status == 'inProgress').toList();
+      final done = issues.where((issue) => issue.status == 'done').toList();
       emit(state.copyWith(isLoading : false, todo: todo, inProgress: inProgress, done: done));
+    } catch (e) {
+      emit(state.copyWith(isLoading: false, error: e.toString()));
+    }
+  }
+
+  Future<void> addIssue(issue) async {
+    emit(state.copyWith(isLoading: true, error: null));
+    try {
+      final newIssue = await createIssueUsecase(issue);
+      final updatedTodo = List.of(state.todo)..add(newIssue);
+      emit(state.copyWith(isLoading: false, todo: updatedTodo));
     } catch (e) {
       emit(state.copyWith(isLoading: false, error: e.toString()));
     }

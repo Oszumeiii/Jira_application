@@ -186,3 +186,38 @@ export const editProject = async (req, res) => {
     return sendErrorResponse(res, 500, "InternalServerError", "An unexpected error occurred while updating the project");
   }
 };
+
+
+//get user in project
+export const getUserInProject = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+
+    const projectDoc = await db.collection("projects").doc(projectId).get();
+    if (!projectDoc.exists) {
+      return res.status(404).json({ success: false, message: "Project not found" });
+    }
+
+    const projectData = projectDoc.data();
+    const ownerId = projectData.ownerId;
+    const memberIds = projectData.members || [];
+
+    const allUserIds = [ownerId, ...memberIds.filter(id => id !== ownerId)];
+
+    const userDocs = await Promise.all(
+      allUserIds.map(uid => db.collection("users").doc(uid).get())
+    );
+
+
+    const users = userDocs
+      .filter(doc => doc.exists)
+      .map(doc => ({ id: doc.id, ...doc.data() }));
+
+    return res.status(200).json({ success: true, users });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+

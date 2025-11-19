@@ -15,17 +15,39 @@ abstract class IssueRemoteDataSource {
 @Injectable(as: IssueRemoteDataSource) 
 class IssueRemoteDataSourceImpl implements IssueRemoteDataSource {
   @override
-  Future<IssueModel> createIssue(IssueModel issue) async {
-    
+ @override
+Future<IssueModel> createIssue(IssueModel issue) async {
+  try {
     final response = await ApiClient.dio.post(
       '/issues',
-      data: issue.toMap(),
+      data: issue.toJson(),
     );
-    print(response);
-    final data = response.data['data'];  
-    return IssueModel.fromMap(data);
 
+    if (response.data == null || response.data is! Map<String, dynamic>) {
+      throw Exception("Invalid API response");
+    }
+
+    final jsonData = response.data as Map<String, dynamic>;
+    final statusCode = jsonData['statusCode'] ?? 500;
+
+    if (statusCode != 201) {
+      final message = jsonData['message'] ?? "Unknown error";
+      throw Exception("API Error: $message");
+    }
+
+    final data = jsonData['data'];
+    if (data == null || data is! Map<String, dynamic>) {
+      throw Exception("API returned empty or invalid data");
+    }
+
+    return IssueModel.fromJson(data);
+  } catch (e, s) {
+    print("Error while creating issue: $e");
+    print(s);
+    rethrow; 
   }
+}
+
 
   @override
 Future<List<IssueModel>> getIssuesByProject(String idProject) async {
@@ -56,7 +78,7 @@ Future<List<IssueModel>> getIssuesByProject(String idProject) async {
 
     final dataList = (jsonData['data'] ?? []) as List<dynamic>;
 
-    return dataList.map((e) => IssueModel.fromMap(e)).toList();
+    return dataList.map((e) => IssueModel.fromJson(e)).toList();
 
   } catch (e, s) {
     print("Error while calling API getIssuesByProject: $e");
