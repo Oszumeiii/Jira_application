@@ -196,9 +196,9 @@ class _AssignMemberBottomSheetState extends State<AssignMemberBottomSheet> {
                 Navigator.pop(context, selectedUsers);
               },
               icon: const Icon(Icons.person_add_alt_1),
-              label: const Text("Assign Selected"),
+              label: const Text("Assign Selected" ,  style:  TextStyle(color: Colors.white)),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 12, 12, 13),
+                backgroundColor: const Color.fromARGB(255, 0, 0, 154),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
             ),

@@ -15,7 +15,7 @@ abstract class IssueRemoteDataSource {
 
 @Injectable(as: IssueRemoteDataSource) 
 class IssueRemoteDataSourceImpl implements IssueRemoteDataSource {
- @override
+@override
 Future<IssueModel> createIssue(IssueModel issue) async {
   try {
     final response = await ApiClient.dio.post(
@@ -28,24 +28,24 @@ Future<IssueModel> createIssue(IssueModel issue) async {
     }
 
     final jsonData = response.data as Map<String, dynamic>;
-    final statusCode = jsonData['statusCode'] ?? 500;
 
+    final statusCode = jsonData['statusCode'];
     if (statusCode != 201) {
-      final message = jsonData['message'] ?? "Unknown error";
-      throw Exception("API Error: $message");
+      throw Exception("API Error: ${jsonData['message'] ?? 'Unknown error'}");
     }
 
-    final data = jsonData['data'];
+    final data = jsonData['data']['issue'];
     if (data == null || data is! Map<String, dynamic>) {
-      throw Exception("API returned empty or invalid data");
+      throw Exception("API returned invalid or empty data");
     }
-
     return IssueModel.fromJson(data);
+
   } catch (e) {
     print("Error while creating issue: $e");
-    rethrow; 
+    rethrow;
   }
 }
+
 
 
   @override

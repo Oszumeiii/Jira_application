@@ -19,8 +19,13 @@ class ProjectsTab extends StatelessWidget {
             const SnackBar(content: Text("Operation successful!")),
           );
         } else if (state.errorMessage.isNotEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.errorMessage)),
+          ScaffoldMessenger.of(context).showSnackBar(   
+          SnackBar(
+              content: Text(state.errorMessage),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              backgroundColor: Colors.green.shade600,
+            ),   
           );
         }
       },
@@ -36,13 +41,7 @@ class ProjectsTab extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("No projects yet."),
-                const SizedBox(height: 12),
-                ElevatedButton(
-                  onPressed: () {
-                  },
-                  child: const Text("Create your first project"),
-                ),
+                const Text("No projects yet." ),
               ],
             ),
           );

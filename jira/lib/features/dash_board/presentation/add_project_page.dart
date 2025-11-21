@@ -178,7 +178,7 @@ class _AddProjectBottomSheetState extends State<AddProjectBottomSheet> {
             const SizedBox(height: 20),
 
             // Priority dropdown
-            buildDropdownProjecType(_priority, (fn) => setState(fn)),
+            buildDropdownPriority(_priority, (fn) => setState(fn)),
 
             const SizedBox(height: 20),
 

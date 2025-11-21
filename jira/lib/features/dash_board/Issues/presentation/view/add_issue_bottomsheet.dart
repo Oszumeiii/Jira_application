@@ -138,21 +138,97 @@ Future<List<UserModel>> _loadUsersInProject(String projectId) async {
             // Type dropdown + Assign members
             Row(
               children: [
-                Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: _selectedType,
-                    decoration: const InputDecoration(labelText: "Type"),
-                    items: ["Task", "Bug", "Story", "Sub-task"]
-                        .map((type) => DropdownMenuItem(
-                              value: type,
-                              child: Text(type),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      if (value != null) setState(() => _selectedType = value);
-                    },
+                  Expanded(
+                    child: DropdownButtonFormField<String>(
+                      value: _selectedType,
+                      decoration: InputDecoration(
+                        labelText: "Issue Type",
+                        labelStyle: TextStyle(
+                          color: Colors.grey[700],
+                          fontWeight: FontWeight.w500,
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.label_outline,
+                          color: Colors.blueAccent,
+                        ),
+                        filled: true,
+                        fillColor: Colors.blue[50]?.withOpacity(0.3),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: Colors.blueAccent,
+                            width: 2,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
+                      ),
+                      dropdownColor: Colors.white,
+                      icon: const Icon(Icons.arrow_drop_down, color: Colors.blueAccent),
+                      isExpanded: true,
+                      items: [
+                        DropdownMenuItem(
+                          value: "Task",
+                          child: Row(
+                            children: [
+                              Icon(Icons.check_circle_outline, color: Colors.blue[700], size: 20),
+                              const SizedBox(width: 12),
+                              const Text("Task"),
+                            ],
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: "Bug",
+                          child: Row(
+                            children: [
+                              Icon(Icons.bug_report_outlined, color: Colors.red[700], size: 20),
+                              const SizedBox(width: 12),
+                              const Text("Bug"),
+                            ],
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: "Story",
+                          child: Row(
+                            children: [
+                              Icon(Icons.menu_book_outlined, color: Colors.green[700], size: 20),
+                              const SizedBox(width: 12),
+                              const Text("Story"),
+                            ],
+                          ),
+                        ),
+                        DropdownMenuItem(
+                          value: "Sub-task",
+                          child: Row(
+                            children: [
+                              Icon(Icons.subdirectory_arrow_right, color: Colors.orange[700], size: 20),
+                              const SizedBox(width: 12),
+                              const Text("Sub-task"),
+                            ],
+                          ),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        if (value != null) setState(() => _selectedType = value);
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please select an issue type';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                ),
                 const SizedBox(width: 8),
                 InkWell(
                   borderRadius: BorderRadius.circular(10),
@@ -198,15 +274,105 @@ Future<List<UserModel>> _loadUsersInProject(String projectId) async {
 
             const SizedBox(height: 20),
 
-            // Priority dropdown
+                        // Priority dropdown
             DropdownButtonFormField<String>(
               value: _priority,
-              decoration: const InputDecoration(labelText: "Priority"),
-              items: ["Low", "Medium", "High", "Critical"]
-                  .map((p) => DropdownMenuItem(value: p, child: Text(p)))
-                  .toList(),
+              decoration: InputDecoration(
+                labelText: "Priority Level",
+                labelStyle: TextStyle(
+                  color: Colors.grey[700],
+                  fontWeight: FontWeight.w500,
+                ),
+                prefixIcon: const Icon(
+                  Icons.flag_outlined,
+                  color: Colors.blueAccent,
+                ),
+                filled: true,
+                fillColor: Colors.blue[50]?.withOpacity(0.3),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(
+                    color: Colors.blueAccent,
+                    width: 2,
+                  ),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 16,
+                ),
+              ),
+              dropdownColor: Colors.white,
+              icon: const Icon(Icons.arrow_drop_down, color: Colors.blueAccent),
+              isExpanded: true,
+              items: [
+                DropdownMenuItem(
+                  value: "Low",
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 12,
+                        height: 12,
+                        decoration: const BoxDecoration(
+                          color: Colors.green,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Text("Low Priority"),
+                    ],
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: "Medium",
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 12,
+                        height: 12,
+                        decoration: const BoxDecoration(
+                          color: Colors.orange,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Text("Medium Priority"),
+                    ],
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: "High",
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 12,
+                        height: 12,
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Text("High Priority"),
+                    ],
+                  ),
+                ),
+              ],
               onChanged: (value) {
                 if (value != null) setState(() => _priority = value);
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please select a priority level';
+                }
+                return null;
               },
             ),
 
@@ -233,23 +399,34 @@ Future<List<UserModel>> _loadUsersInProject(String projectId) async {
 
             // Create button
             SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton.icon(
-                onPressed: _isLoading ? null : _submit,
-                icon: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                      )
-                    : const Icon(Icons.add_circle_outline),
-                label: Text(
-                  _isLoading ? 'Creating...' : 'Create Issue',
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton.icon(
+                    onPressed: _isLoading ? null : _submit,
+                    icon: _isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Icon(Icons.add_circle_outline),
+                    label: Text(
+                      _isLoading ? 'Creating...' : 'Create Issue',
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue, 
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8), 
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
+
           ],
         ),
       ),

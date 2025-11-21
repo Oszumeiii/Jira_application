@@ -135,7 +135,7 @@ export const createIssue = async (req, res) => {
       priority,
       status,
       assigneeId,
-      reporterId: userId ?? "", 
+      reporterId: userId , 
       parentId,
       subTasks: [],
       createdAt: createdAt ? new Date(createdAt) : new Date(),

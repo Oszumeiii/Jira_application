@@ -44,14 +44,13 @@ export const createProject = async (req, res) => {
     console.log(members);
 
     const ownerId = req.user?.uid;
-    projectType = 'Scrum';
     if (!ownerId) {
       return res
         .status(401)
         .json({ status: "error", message: "Unauthorized" });
     }
 
-    if (!name || !description) {
+    if (!name) {
       return res
         .status(400)
         .json({ status: "error", message: "Tên và mô tả là bắt buộc" });

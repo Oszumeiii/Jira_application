@@ -240,10 +240,13 @@ class _AddMemberBottomSheetState extends State<AddMemberBottomSheet> {
 
                 Navigator.pop(context, selectedUsers);
               },
-              icon: const Icon(Icons.person_add_alt_1),
-              label: const Text("Add Members"),
+              icon: const Icon(Icons.person_add_alt_1 , color: Color.fromARGB(255, 255, 255, 255)),
+              label: const Text("Add Members" ,style: TextStyle(
+                                            fontSize: 12,
+                                            color: Color.fromARGB(255, 255, 255, 255),
+                                          ), ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
+                backgroundColor: const Color.fromARGB(255, 0, 50, 137),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),

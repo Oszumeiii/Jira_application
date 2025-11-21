@@ -31,7 +31,6 @@ class _ProjectDetailPageState extends State<ProjectDetailPage>
   Widget taskItem(IssueEntity issue, Color color) {
   return GestureDetector(
     onTap: () {
-      print(issue.id);
       Navigator.push(
         context,
         MaterialPageRoute(

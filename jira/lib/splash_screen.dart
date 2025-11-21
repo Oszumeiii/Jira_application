@@ -24,6 +24,7 @@ class SplashScreen extends StatelessWidget {
           );
         }
         else {
+        
          return MultiBlocProvider(
             providers: [
               BlocProvider<ProjectCubit>(

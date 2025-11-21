@@ -48,14 +48,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
           .read<ProjectCubit>()
           .createProject(project)
           .then((_) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Project created successfully")),
-            );
+              ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar( SnackBar(
+                      content: const Text("Project created Sucessfully !"),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      backgroundColor: const Color.fromARGB(255, 0, 52, 137),
+                    ),);
           })
           .catchError((e) {
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(SnackBar(content: Text("Error: $e")));
+            ).showSnackBar( SnackBar(
+        content: const Text("Error !"),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        backgroundColor: Colors.green.shade600,
+      ),);
+
           });
     }
   }
