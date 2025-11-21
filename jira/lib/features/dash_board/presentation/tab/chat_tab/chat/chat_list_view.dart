@@ -26,6 +26,7 @@ class ChatListView extends StatelessWidget {
     return BlocBuilder<ChatTabCubit, ChatTabState>(
       builder: (context, state) {
         final friends = state.allFriends;
+        final friendMap = {for (var f in friends) f.id: f}; // Dễ tra cứu
 
         return StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
@@ -43,7 +44,7 @@ class ChatListView extends StatelessWidget {
             final chatDocs = snapshot.data!.docs;
             final List<ChatItemModel> items = [];
 
-            // 1. Thêm bạn bè chưa từng nhắn (hiển thị dưới cùng)
+            // 1. Thêm bạn bè chưa từng nhắn (xuống cuối)
             for (final friend in friends) {
               final hasChat = chatDocs.any((doc) {
                 final data = doc.data() as Map<String, dynamic>;
@@ -63,7 +64,7 @@ class ChatListView extends StatelessWidget {
               }
             }
 
-            // 2. Thêm tất cả cuộc trò chuyện (1-1 + nhóm)
+            // 2. Thêm tất cả cuộc trò chuyện
             for (final doc in chatDocs) {
               final data = doc.data() as Map<String, dynamic>;
               final members = List<String>.from(data['members'] ?? []);
@@ -72,30 +73,27 @@ class ChatListView extends StatelessWidget {
               final isGroup = data['isGroup'] == true;
               if (selectedTab == 'Groups' && !isGroup) continue;
 
-              String name = data['name']?.toString() ?? '';
-              String? photoURL = data['groupPhotoURL'] ?? data['photoURL'];
+              String name = '';
+              String? photoURL;
+              bool isOnline = false;
 
-              // Nếu là chat 1-1 và chưa có tên → lấy tên bạn bè
-              if (!isGroup && name.isEmpty) {
+              if (isGroup) {
+                // Nhóm: dùng dữ liệu từ document
+                name = data['name']?.toString() ?? 'Nhóm chat';
+                photoURL = data['groupPhotoURL'];
+              } else {
+                // Chat 1-1: lấy từ danh sách bạn bè (chuẩn như FriendsListView)
                 final otherId = members.firstWhere(
                   (id) => id != currentUid,
                   orElse: () => '',
                 );
-                if (otherId.isNotEmpty) {
-                  final friend = friends.firstWhere(
-                    (f) => f.id == otherId,
-                    orElse: () => ChatItemModel(
-                      id: otherId,
-                      name: 'Người dùng',
-                      email: null,
-                      photoURL: null,
-                      isGroup: false,
-                      members: [],
-                      isOnline: false,
-                    ),
-                  );
+                final friend = friendMap[otherId];
+                if (friend != null) {
                   name = friend.name;
                   photoURL = friend.photoURL;
+                  isOnline = friend.isOnline;
+                } else {
+                  name = 'Người dùng';
                 }
               }
 
@@ -104,24 +102,10 @@ class ChatListView extends StatelessWidget {
               final lastTime = (data['lastMessageTime'] as Timestamp?)
                   ?.toDate();
 
-              // Xác định trạng thái online (chỉ cho chat cá nhân)
-              final otherUserId = isGroup
-                  ? null
-                  : members.firstWhere(
-                      (id) => id != currentUid,
-                      orElse: () => '',
-                    );
-              final isOnline =
-                  !isGroup &&
-                  otherUserId!.isNotEmpty &&
-                  friends.any((f) => f.id == otherUserId && f.isOnline);
-
               items.add(
                 ChatItemModel(
                   id: doc.id,
-                  name: name.isEmpty
-                      ? (isGroup ? 'Nhóm chat' : 'Người dùng')
-                      : name,
+                  name: name,
                   photoURL: photoURL,
                   isGroup: isGroup,
                   members: members,
@@ -132,7 +116,7 @@ class ChatListView extends StatelessWidget {
               );
             }
 
-            // Lọc theo từ khóa tìm kiếm
+            // Lọc tìm kiếm
             final filtered = items.where((item) {
               if (searchQuery.trim().isEmpty) return true;
               return item.name.toLowerCase().contains(
@@ -199,7 +183,7 @@ class ChatListView extends StatelessWidget {
                       ),
                     ),
                     title: Text(
-                      item.name,
+                      item.name.isNotEmpty ? item.name : 'Không tên',
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
@@ -226,17 +210,12 @@ class ChatListView extends StatelessWidget {
                             ),
                           ),
                     onTap: () {
-                      final String targetChatId;
-                      final bool isGroupChat = item.isGroup;
-
-                      if (isGroupChat) {
-                        targetChatId = item.id; // nhóm: dùng document ID
-                      } else {
-                        targetChatId = item.members.firstWhere(
-                          (id) => id != currentUid,
-                          orElse: () => item.id,
-                        );
-                      }
+                      final targetChatId = item.isGroup
+                          ? item.id
+                          : item.members.firstWhere(
+                              (id) => id != currentUid,
+                              orElse: () => item.id,
+                            );
 
                       Navigator.push(
                         context,
@@ -244,13 +223,13 @@ class ChatListView extends StatelessWidget {
                           builder: (_) => BlocProvider(
                             create: (_) => ChatDetailCubit(
                               targetChatId,
-                              isGroupChat,
-                              initialIsChatId: isGroupChat,
+                              item.isGroup,
+                              initialIsChatId: item.isGroup,
                             ),
                             child: ChatDetailPage(
                               chatId: targetChatId,
                               chatName: item.name,
-                              isGroup: isGroupChat,
+                              isGroup: item.isGroup,
                               members: item.members,
                             ),
                           ),
@@ -268,7 +247,7 @@ class ChatListView extends StatelessWidget {
   }
 }
 
-// Extension copyWith chuẩn như bạn đang dùng
+// Extension copyWith
 extension on ChatItemModel {
   ChatItemModel copyWith({String? lastMessage, DateTime? lastMessageTime}) {
     return ChatItemModel(
