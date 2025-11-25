@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:jira/features/dash_board/presentation/add_project_page.dart';
 import 'package:jira/features/dash_board/presentation/profile/profile.dart';
-import 'package:jira/features/dash_board/presentation/tab/chat_tab/chat_tab.dart';
+import 'package:jira/features/dash_board/presentation/tab/chat_tab/chat_tab/chat_tab.dart';
 import 'package:jira/features/dash_board/presentation/tab/home_tab.dart';
 import 'package:jira/features/dash_board/presentation/tab/notif_tab.dart';
 import 'package:jira/features/dash_board/projects/domain/entities/project_entity.dart';
@@ -48,25 +48,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
           .read<ProjectCubit>()
           .createProject(project)
           .then((_) {
-              ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar( SnackBar(
-                      content: const Text("Project created Sucessfully !"),
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      backgroundColor: const Color.fromARGB(255, 0, 52, 137),
-                    ),);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text("Project created Sucessfully !"),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                backgroundColor: const Color.fromARGB(255, 0, 52, 137),
+              ),
+            );
           })
           .catchError((e) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar( SnackBar(
-        content: const Text("Error !"),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        backgroundColor: Colors.green.shade600,
-      ),);
-
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text("Error !"),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                backgroundColor: Colors.green.shade600,
+              ),
+            );
           });
     }
   }

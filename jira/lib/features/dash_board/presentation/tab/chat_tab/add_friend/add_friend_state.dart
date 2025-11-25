@@ -1,81 +1,65 @@
-// features/add_friend/cubit/add_friend_state.dart
-class UserSuggestion {
-  final String uid;
-  final String name;
-  final String email;
-  final String? photoURL;
+// features/dash_board/presentation/tab/chat_tab/add_friend/add_friend_state.dart
+import 'package:equatable/equatable.dart';
 
-  UserSuggestion({
-    required this.uid,
-    required this.name,
-    required this.email,
-    this.photoURL,
-  });
-
-  // Để so sánh khi rebuild
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is UserSuggestion &&
-          runtimeType == other.runtimeType &&
-          uid == other.uid &&
-          name == other.name &&
-          email == other.email &&
-          photoURL == other.photoURL;
-
-  @override
-  int get hashCode => Object.hash(uid, name, email, photoURL);
-}
-
-class AddFriendState {
+class AddFriendState extends Equatable {
   final String query;
   final List<UserSuggestion> suggestions;
   final bool isLoading;
   final String? message;
+  final String? errorMessage;
+  final String? successMessage;
 
   const AddFriendState({
     this.query = '',
     this.suggestions = const [],
     this.isLoading = false,
     this.message,
+    this.errorMessage,
+    this.successMessage,
   });
 
-  // CopyWith thủ công
   AddFriendState copyWith({
     String? query,
     List<UserSuggestion>? suggestions,
     bool? isLoading,
     String? message,
+    String? errorMessage,
+    String? successMessage,
   }) {
     return AddFriendState(
       query: query ?? this.query,
       suggestions: suggestions ?? this.suggestions,
       isLoading: isLoading ?? this.isLoading,
       message: message,
+      errorMessage: errorMessage,
+      successMessage: successMessage,
     );
   }
 
-  // So sánh để tránh rebuild thừa
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AddFriendState &&
-          runtimeType == other.runtimeType &&
-          query == other.query &&
-          _listEquals(suggestions, other.suggestions) &&
-          isLoading == other.isLoading &&
-          message == other.message;
+  List<Object?> get props => [
+    query,
+    suggestions,
+    isLoading,
+    message,
+    errorMessage,
+    successMessage,
+  ];
+}
+
+class UserSuggestion extends Equatable {
+  final String uid;
+  final String name;
+  final String email;
+  final String? photoURL;
+
+  const UserSuggestion({
+    required this.uid,
+    required this.name,
+    required this.email,
+    this.photoURL,
+  });
 
   @override
-  int get hashCode =>
-      Object.hash(query, Object.hashAll(suggestions), isLoading, message);
-
-  // Helper để so sánh list
-  bool _listEquals(List<UserSuggestion> a, List<UserSuggestion> b) {
-    if (a.length != b.length) return false;
-    for (int i = 0; i < a.length; i++) {
-      if (a[i] != b[i]) return false;
-    }
-    return true;
-  }
+  List<Object?> get props => [uid, name, email, photoURL];
 }

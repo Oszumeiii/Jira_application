@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jira/features/login_signup/presenation/login/cubit/login_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -70,6 +71,33 @@ class LoginCubit extends Cubit<LoginState> {
           return;
         }
 
+        final uid = user!.uid;
+        final userDoc = FirebaseFirestore.instance.collection('users').doc(uid);
+        final snapshot = await userDoc.get();
+
+        if (!snapshot.exists) {
+          await userDoc.set({
+            'uid': uid,
+            'email': email,
+            'firstName': '',
+            'lastName': '',
+            'userName': email.split('@')[0],
+            'photoURL': 'https://i.pravatar.cc/150?u=$uid',
+            'friends': <String>[],
+            'online': true,
+            'createdAt': FieldValue.serverTimestamp(),
+          });
+        } else {
+          // Cập nhật online
+          await userDoc.update({'online': true});
+        }
+
+        String? token = await user.getIdToken();
+        if (token != null) {
+          final storage = FlutterSecureStorage();
+          await storage.write(key: 'idToken', value: token);
+        }
+
         emit(
           state.copyWith(
             isloading: false,
@@ -77,14 +105,6 @@ class LoginCubit extends Cubit<LoginState> {
             errorMessage: '',
           ),
         );
-
-        String? token = await user?.getIdToken();
-        print('Firebase token: $token');
-
-        if (token != null) {
-          final storage = FlutterSecureStorage();
-          await storage.write(key: 'idToken', value: token);
-        }
       } on FirebaseAuthException catch (e) {
         String errorMsg = '';
         if (e.code == 'user-not-found') {
