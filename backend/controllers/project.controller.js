@@ -141,50 +141,52 @@ export const removeProject = async (req, res) => {
 // Edit 
 export const editProject = async (req, res) => {
   try {
-    const { idProject, name, description, status } = req.body;
+    const { id, name, description, status, members } = req.body;
     const ownerId = req.user?.uid;
 
     if (!ownerId) {
       return sendErrorResponse(res, 401, "Unauthorized", "You must be logged in to update a project");
     }
-
-    if (!idProject) {
+    if (!id) {
       return sendErrorResponse(res, 400, "BadRequest", "Missing project ID");
     }
 
-    const projectRef = db.collection("projects").doc(idProject);
+    const projectRef = db.collection("projects").doc(id);
     const doc = await projectRef.get();
 
     if (!doc.exists) {
       return sendErrorResponse(res, 404, "NotFound", "Project not found");
     }
 
-  
     const projectData = doc.data();
+
     if (projectData.ownerId !== ownerId) {
       return sendErrorResponse(res, 403, "Forbidden", "You are not authorized to edit this project");
     }
 
-
-    const updatedFields = {
-      ...(name && { name }),
-      ...(description && { description }),
-      ...(status && { status }),
-      updatedAt: new Date(),
-    };
+    const updatedFields = {};
+    if (name !== undefined && name.trim() !== "") updatedFields.name = name;
+    if (description !== undefined && description.trim() !== "") updatedFields.description = description;
+    if (status !== undefined && status.trim() !== "") updatedFields.status = status;
+    if (Array.isArray(members)) updatedFields.members = members; // <-- cập nhật members
+    updatedFields.updatedAt = new Date();
 
     await projectRef.update(updatedFields);
 
+    const updatedDoc = await projectRef.get();
+    const updatedData = updatedDoc.data();
+
     return sendSuccessResponse(res, 200, "Project updated successfully", {
-      id: idProject,
-      ...projectData,
-      ...updatedFields,
+      id: updatedDoc.id,
+      ...updatedData,
     });
   } catch (error) {
     console.error("Error while updating project:", error);
     return sendErrorResponse(res, 500, "InternalServerError", "An unexpected error occurred while updating the project");
   }
 };
+
+
 
 
 //get user in project

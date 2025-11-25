@@ -10,7 +10,7 @@ const route  = express.Router();
 route.get("/", verifyToken , getProjectByUserId);
 route.post('/', verifyToken , createProject);
 route.delete("/", verifyToken, removeProject);
-route.put("/", verifyToken, );
+route.put("/", verifyToken, editProject );
 
 
 // get user in project

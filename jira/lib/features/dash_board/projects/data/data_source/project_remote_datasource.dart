@@ -5,13 +5,14 @@ import '../models/project_model.dart';
 abstract class ProjectRemoteDataSource {
   Future<ProjectModel> createProject(ProjectModel project);
    Future<List<ProjectModel>> getAllProjects();
+   Future<ProjectModel> updateProject(ProjectModel project);
 
   Future<void> removeProject(String idProject);
 }
 
 
 
-@Injectable(as: ProjectRemoteDataSource) //khi injectable tạo instance sẽ tạo instance của ProjectRemoteDataSourceImpl
+@Injectable(as: ProjectRemoteDataSource) 
 class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
   
   @override
@@ -45,4 +46,26 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
     catch (e) {
       throw Exception("Unexpected error while deleting project: $e");
     }
-  }}
+  }
+  
+  @override
+  Future<ProjectModel> updateProject(ProjectModel project) async {
+    try {
+      final response = await ApiClient.dio.put(
+        '/projects',
+        data: project.toJson(),
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data['data'];
+        return ProjectModel.fromJson(data);
+      } else {
+        throw Exception("Failed to update project: ${response.statusMessage}");
+      }
+    } catch (e) {
+      throw Exception("Unexpected error while updating project: $e");
+    }
+  }
+
+
+  }

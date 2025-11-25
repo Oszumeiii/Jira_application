@@ -4,7 +4,8 @@ import 'package:jira/core/injection.dart';
 import 'package:jira/features/dash_board/Issues/presentation/cubit/issue_cubit.dart';
 import 'package:jira/features/dash_board/projects/presentation/cubit/project_cubit.dart';
 import 'package:jira/features/dash_board/projects/presentation/cubit/project_state.dart';
-import 'package:jira/features/dash_board/Issues/presentation/detail_project_page.dart';
+import 'package:jira/features/dash_board/Issues/presentation/board_project.dart';
+import 'package:jira/features/dash_board/projects/presentation/view/project_info_page.dart';
 import '../../../../login_signup/presenation/widgets/project_row.dart';
 
 class ProjectsTab extends StatelessWidget {
@@ -74,7 +75,7 @@ class ProjectsTab extends StatelessWidget {
                             MaterialPageRoute(
                               builder: (context) => BlocProvider(
                                 create: (_) => getIt<IssueCubit>(),
-                                child: ProjectDetailPage(project: project),
+                                child: BoardProjectScreen(project: project),
                               ),
                             ),
                           );
@@ -82,17 +83,28 @@ class ProjectsTab extends StatelessWidget {
                           },
 
                         child: ProjectRow(
-                          name: project.name,
-                          projectType: project.description ,
-                          status: project.status,
-                          onEdit: () {
-                          },
-                          onDelete: () async {
-                            await context
-                                .read<ProjectCubit>()
-                                .removeProject(project.id!);
-                          },
-                        ),
+                            name: project.name,
+                            projectType: project.description,
+                            status: project.status,
+                            onDetail: () {
+                              final cubit = context.read<ProjectCubit>(); 
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => BlocProvider.value(
+                                    value: cubit,
+                                    child: ProjectInfoPage(project: project),
+                                  ),
+                                ),
+                              );
+                            },
+
+                            onDelete: () async {
+                              // Delete project
+                              await context.read<ProjectCubit>().removeProject(project.id!);
+                            },
+                          )
+
                       );
                     },
                   ),

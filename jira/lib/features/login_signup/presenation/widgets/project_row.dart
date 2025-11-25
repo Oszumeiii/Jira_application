@@ -4,7 +4,7 @@ class ProjectRow extends StatelessWidget {
   final String name;
   final String projectType;
   final String? status;
-  final VoidCallback? onEdit;
+  final VoidCallback? onDetail;
   final VoidCallback? onDelete;
 
   const ProjectRow({
@@ -12,7 +12,7 @@ class ProjectRow extends StatelessWidget {
     required this.name,
     required this.projectType,
     this.status,
-    this.onEdit,
+    this.onDetail,
     this.onDelete,
   });
 
@@ -40,7 +40,7 @@ class ProjectRow extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            const Color.fromARGB(255, 0, 41, 87)!,
+            const Color.fromARGB(255, 0, 41, 87),
             Colors.blue[900]!,
           ],
           begin: Alignment.topLeft,
@@ -108,130 +108,130 @@ class ProjectRow extends StatelessWidget {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // if (onEdit != null)
-              //   Container(
-              //     decoration: BoxDecoration(
-              //       color: Colors.white.withOpacity(0.15),
-              //       borderRadius: BorderRadius.circular(8),
-              //     ),
-              //     child: IconButton(
-              //       icon: const Icon(
-              //         Icons.edit_outlined,
-              //         size: 20,
-              //         color: Colors.white,
-              //       ),
-              //       onPressed: onEdit,
-              //       tooltip: 'Edit project',
-              //       splashRadius: 20,
-              //     ),
-              //   ),
-              // if (onEdit != null && onDelete != null)
-              //   const SizedBox(width: 8),
-            if (onDelete != null)
-  Container(
-    decoration: BoxDecoration(
-      color: const Color.fromARGB(255, 250, 249, 248).withOpacity(0.2),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    child: IconButton(
-      icon: const Icon(
-        Icons.delete_outline,
-        size: 20,
-        color: Colors.white, // icon màu trắng
-      ),
-      tooltip: 'Delete project',
-      splashRadius: 20,
-      onPressed: () async {
-        final confirmed = await showDialog<bool>(
-          context: context,
-          builder: (context) => Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            backgroundColor: const Color.fromARGB(255, 30, 30, 30), // nền dark
-            insetPadding: const EdgeInsets.symmetric(horizontal: 40),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.warning_amber_rounded, size: 48, color: Color.fromARGB(255, 255, 0, 4)),
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Remove Project',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 255, 255, 255), // text màu trắng
+              if (onDetail != null)
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.info_outline,
+                      size: 20,
+                      color: Colors.white,
                     ),
+                    onPressed: onDetail,
+                    tooltip: 'Project Detail',
+                    splashRadius: 20,
                   ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Are you sure you want to remove this project? This action cannot be undone.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.white70), // text màu trắng nhạt
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      OutlinedButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          side: const BorderSide(color: Colors.white70),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                          child: Text(
-                            'Cancel',
-                            style: TextStyle(color: Colors.white), // text trắng
-                          ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(context, true),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red.shade700,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                          child: Text(
-                            'Remove',
-                            style: TextStyle(color: Colors.white), // text trắng
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
+                ),
 
-        if (confirmed == true) {
-          onDelete!();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text(
-                "Project removed successfully!",
-                style: TextStyle(color: Colors.white), // text trắng
-              ),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              backgroundColor: Colors.red.shade700,
-            ),
-          );
-        }
-      },
-    ),
-  ),
+                const SizedBox(width: 8),
+            if (onDelete != null)
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 250, 249, 248).withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      size: 20,
+                      color: Colors.white, // icon màu trắng
+                    ),
+                    tooltip: 'Delete project',
+                    splashRadius: 20,
+                    onPressed: () async {
+                      final confirmed = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          backgroundColor: const Color.fromARGB(255, 30, 30, 30), // nền dark
+                          insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.warning_amber_rounded, size: 48, color: Color.fromARGB(255, 255, 0, 4)),
+                                const SizedBox(height: 16),
+                                const Text(
+                                  'Remove Project',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color.fromARGB(255, 255, 255, 255), // text màu trắng
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  'Are you sure you want to remove this project? This action cannot be undone.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 14, color: Colors.white70), // text màu trắng nhạt
+                                ),
+                                const SizedBox(height: 20),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    OutlinedButton(
+                                      onPressed: () => Navigator.pop(context, false),
+                                      style: OutlinedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        side: const BorderSide(color: Colors.white70),
+                                      ),
+                                      child: const Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                        child: Text(
+                                          'Cancel',
+                                          style: TextStyle(color: Colors.white), // text trắng
+                                        ),
+                                      ),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () => Navigator.pop(context, true),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red.shade700,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      child: const Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                        child: Text(
+                                          'Remove',
+                                          style: TextStyle(color: Colors.white), // text trắng
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+
+                      if (confirmed == true) {
+                        onDelete!();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: const Text(
+                              "Project removed successfully!",
+                              style: TextStyle(color: Colors.white), // text trắng
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            backgroundColor: Colors.red.shade700,
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                ),
 
 
             ],

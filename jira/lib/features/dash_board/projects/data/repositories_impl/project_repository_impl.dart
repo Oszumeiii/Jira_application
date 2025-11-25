@@ -47,6 +47,13 @@ Future<List<ProjectEntity>> getAllProjects() async {
       throw Exception("Repository: failed to remove project - $e");
     }
   }
+  
+  @override
+  Future<ProjectEntity> updateProject(ProjectEntity project) async {
+    final projectModel = ProjectModel.fromEntity(project);
+     ProjectModel result = await remoteDataSource.updateProject(projectModel);
+    return result.toEntity();
+  }
 
 
 

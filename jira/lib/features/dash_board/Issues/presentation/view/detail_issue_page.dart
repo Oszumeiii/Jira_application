@@ -33,12 +33,6 @@ class _DetailIssuePageState extends State<DetailIssuePage> {
     _reporterFuture = _fetchUser(_currentIssue.reporterId);
     _projectMembersFuture = UserService.getUsersInProject(_currentIssue.projectId);
 
-    try {
-      final cubit = BlocProvider.of<IssueCubit>(context);
-      print("IssueCubit tồn tại: $cubit");
-    } catch (e) {
-      print("Không tìm thấy IssueCubit trong context");
-    }
   }
 
   @override
@@ -152,10 +146,10 @@ Future<void> _updateTitle() async {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.grey.shade600,
                       ),
+                      child: const Text('Cancel'),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton(
@@ -253,10 +247,10 @@ Future<void> _updateDescription() async {
                   children: [
                     TextButton(
                       onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
                       style: TextButton.styleFrom(
                         foregroundColor: Colors.grey.shade600,
                       ),
+                      child: const Text('Cancel'),
                     ),
                     const SizedBox(width: 12),
                     ElevatedButton(

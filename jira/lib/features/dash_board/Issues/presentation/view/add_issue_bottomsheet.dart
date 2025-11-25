@@ -229,46 +229,46 @@ Future<List<UserModel>> _loadUsersInProject(String projectId) async {
                       },
                     ),
                   ),
-                const SizedBox(width: 8),
-                InkWell(
-                  borderRadius: BorderRadius.circular(10),
-                  onTap: () async {
-                    final result = await showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                      ),
-                      builder: (_) =>  AssignMemberBottomSheet(members: members),
-                    );
+                // const SizedBox(width: 8),
+                // InkWell(
+                //   borderRadius: BorderRadius.circular(10),
+                //   onTap: () async {
+                //     final result = await showModalBottomSheet(
+                //       context: context,
+                //       isScrollControlled: true,
+                //       shape: const RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                //       ),
+                //       builder: (_) =>  AssignMemberBottomSheet(members: members),
+                //     );
 
-                    if (result != null && result.isNotEmpty) {
-                      setState(() {
-                        List<Map<String, String>> newMembers = List<Map<String, String>>.from(result);
-                        // final existingUids = members.map((e) => e['uid']).toSet();
-                        // members = [
-                        //   ...members,
-                        //   ...newMembers.where((e) => !existingUids.contains(e['uid']))
-                        // ];
-                      });
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.shade400, width: 2),
-                      color: const Color.fromARGB(255, 0, 174, 255),
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.person_add_alt_1, size: 20, color: Colors.black87),
-                        SizedBox(width: 6),
-                        Text("Assign", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500))
-                      ],
-                    ),
-                  ),
-                ),
+                //     if (result != null && result.isNotEmpty) {
+                //       setState(() {
+                //         List<Map<String, String>> newMembers = List<Map<String, String>>.from(result);
+                //         // final existingUids = members.map((e) => e['uid']).toSet();
+                //         // members = [
+                //         //   ...members,
+                //         //   ...newMembers.where((e) => !existingUids.contains(e['uid']))
+                //         // ];
+                //       });
+                //     }
+                //   },
+                //   child: Container(
+                //     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                //     decoration: BoxDecoration(
+                //       borderRadius: BorderRadius.circular(12),
+                //       border: Border.all(color: Colors.grey.shade400, width: 2),
+                //       color: const Color.fromARGB(255, 0, 174, 255),
+                //     ),
+                //     child: Row(
+                //       children: const [
+                //         Icon(Icons.person_add_alt_1, size: 20, color: Colors.black87),
+                //         SizedBox(width: 6),
+                //         Text("Assign", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500))
+                //       ],
+                //     ),
+                //   ),
+                // ),
               ],
             ),
 

@@ -100,6 +100,7 @@ extension GetItInjectableX on _i174.GetIt {
           getAllProjectsUseCase: gh<_i760.GetAllProjectsUsecase>(),
           createProjectUseCase: gh<_i644.CreateProjectUseCase>(),
           removeProjectUsecase: gh<_i134.RemoveProjectUsecase>(),
+          updateProjectUsecase: gh<_i723.UpdateProjectUsecase>(),
         ));
     return this;
   }

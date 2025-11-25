@@ -16,6 +16,52 @@ class ProjectModel extends ProjectEntity {
     super.updatedAt,
   });
 
+ProjectModel copyWith({
+  String? id,
+  String? name,
+  String? priority,
+  String? projectType,
+  String? sumary,
+  String? description,
+  String? ownerId,
+  List<String>? members,
+  String? status,
+  DateTime? createdAt,
+  DateTime? updatedAt,
+}) {
+  return ProjectModel(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    priority: priority ?? this.priority,
+    projectType: projectType ?? this.projectType,
+    sumary: sumary ?? this.sumary,
+    description: description ?? this.description,
+    ownerId: ownerId ?? this.ownerId,
+    members: members ?? this.members,
+    status: status ?? this.status,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+}
+
+
+  factory ProjectModel.fromEntity(ProjectEntity entity) {
+    return ProjectModel(
+      id: entity.id,
+      name: entity.name,
+      priority: entity.priority,
+      projectType: entity.projectType,
+      sumary: entity.sumary,
+      description: entity.description,
+      ownerId: entity.ownerId,
+      members: entity.members,
+      status: entity.status,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+    );
+  }
+
+
 
 factory ProjectModel.fromJson(Map<String, dynamic> json) {
   DateTime parseDate(dynamic value) {

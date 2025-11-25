@@ -13,4 +13,8 @@ abstract class ProjectRepository {
   //Remove project method 
 
   Future <void> removeProject(String idProject);
+
+  // Update project info 
+  Future <ProjectEntity> updateProject(ProjectEntity project);
+
 }

@@ -7,16 +7,16 @@ import 'package:jira/features/dash_board/Issues/presentation/view/add_issue_bott
 import 'package:jira/features/dash_board/Issues/presentation/view/detail_issue_page.dart';
 import 'package:jira/features/dash_board/projects/domain/entities/project_entity.dart';
 
-class ProjectDetailPage extends StatefulWidget {
+class BoardProjectScreen extends StatefulWidget {
   final ProjectEntity project ; 
 
-  const ProjectDetailPage({super.key, required this.project});
+  const BoardProjectScreen({super.key, required this.project});
 
   @override
-  State<ProjectDetailPage> createState() => _ProjectDetailPageState();
+  State<BoardProjectScreen> createState() => _BoardProjectScreenState();
 }
 
-class _ProjectDetailPageState extends State<ProjectDetailPage>
+class _BoardProjectScreenState extends State<BoardProjectScreen>
     with SingleTickerProviderStateMixin {
 
   late TabController _tabController;
