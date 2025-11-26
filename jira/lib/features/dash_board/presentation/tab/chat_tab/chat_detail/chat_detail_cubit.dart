@@ -1,3 +1,4 @@
+// features/dash_board/presentation/tab/chat_tab/chat_detail/chat_detail_cubit.dart
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -197,22 +198,17 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
                     if (updateData.isNotEmpty) {
                       await chatDocRef.update(updateData);
                       print(
-                        '[ChatDetailCubit._init] Updated chat info: $updateData',
+                        '[ChatDetailCubit._init] Updated existing 1-1 chat info: $updateData',
                       );
                     }
                   }
                 }
               }
             } catch (e) {
-              print('[ChatDetailCubit._init] Error updating chat: $e');
+              print('[ChatDetailCubit._init] Error updating chat info: $e');
             }
           } else {
-            // Chỉ tạo chat mới nếu KHÔNG tìm thấy chat nào
-            print(
-              '[ChatDetailCubit._init] No existing chat found, creating new one',
-            );
-
-            // Fetch the other user's info before creating chat
+            // Tạo chat mới nếu không tìm thấy
             String? otherUserName;
             String? otherUserPhoto;
             try {
@@ -233,7 +229,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
             }
 
             final chatRef = await FirebaseConfig.firestore
-                .collection( 'chats')
+                .collection('chats')
                 .add({
                   'name': otherUserName ?? '', // Lưu tên ngay khi tạo
                   'isGroup': false,
@@ -292,13 +288,17 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
         .orderBy('timestamp', descending: true)
         .snapshots()
         .listen(
-          (snapshot) {
+          (snapshot) async {
             print(
               '[ChatDetailCubit._loadMessages] Received ${snapshot.docs.length} messages',
             );
             final messages = snapshot.docs
                 .map((d) => MessageModel.fromJson(d.data(), d.id))
                 .toList();
+
+            // Fetch user infos for senders in group chat
+            await _fetchUserInfosForMessages(messages);
+
             emit(
               state.copyWith(
                 messages: messages,
@@ -317,6 +317,46 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
             );
           },
         );
+  }
+
+  Future<void> _fetchUserInfosForMessages(List<MessageModel> messages) async {
+    if (!isGroup) return; // Chỉ cần cho group chat
+
+    final currentUid = FirebaseConfig.auth.currentUser?.uid ?? '';
+    final uniqueSenderIds = messages
+        .map((m) => m.from)
+        .where((id) => id != currentUid && !state.userInfos.containsKey(id))
+        .toSet()
+        .toList();
+
+    if (uniqueSenderIds.isEmpty) return;
+
+    final newUserInfos = <String, Map<String, dynamic>>{};
+
+    // Fetch in batches of 10 (Firestore whereIn limit)
+    for (var i = 0; i < uniqueSenderIds.length; i += 10) {
+      final batch = uniqueSenderIds.sublist(
+        i,
+        (i + 10 < uniqueSenderIds.length) ? i + 10 : uniqueSenderIds.length,
+      );
+
+      final snapshot = await FirebaseConfig.firestore
+          .collection('users')
+          .where(FieldPath.documentId, whereIn: batch)
+          .get();
+
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        newUserInfos[doc.id] = {
+          'name': data['userName'] ?? data['firstName'] ?? 'Người dùng ẩn danh',
+          'photoURL': data['photoURL'],
+        };
+      }
+    }
+
+    if (newUserInfos.isNotEmpty) {
+      emit(state.copyWith(userInfos: {...state.userInfos, ...newUserInfos}));
+    }
   }
 
   void _listenToTypingStatus() {

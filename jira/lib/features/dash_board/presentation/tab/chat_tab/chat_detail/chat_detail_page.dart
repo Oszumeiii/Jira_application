@@ -35,8 +35,6 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   void initState() {
     super.initState();
     _messageController = TextEditingController();
-    // NOTE: Do NOT create ChatDetailCubit here.
-    // ChatDetailCubit must be provided by the caller via BlocProvider.
   }
 
   @override
@@ -47,7 +45,6 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Expect a BlocProvider<ChatDetailCubit> above this widget.
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -66,7 +63,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             ),
             if (widget.isGroup)
               Text(
-                '${widget.members.length} thành viên',
+                '${widget.members.length} members',
                 style: const TextStyle(color: Colors.grey, fontSize: 12),
               ),
           ],
@@ -102,12 +99,28 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                     if (messageIndex >= state.messages.length)
                       return const SizedBox.shrink();
                     final message = state.messages[messageIndex];
+                    final isCurrentUser =
+                        message.from == FirebaseConfig.auth.currentUser?.uid;
+
+                    String? senderName;
+                    String? senderAvatarUrl;
+
+                    if (!isCurrentUser) {
+                      if (widget.isGroup) {
+                        final userInfo = state.userInfos[message.from];
+                        senderName = userInfo?['name'] ?? 'Người dùng ẩn danh';
+                        senderAvatarUrl = userInfo?['photoURL'];
+                      } else {
+                        senderName = widget.opponentName ?? 'Người dùng';
+                        senderAvatarUrl = widget.opponentAvatarUrl;
+                      }
+                    }
+
                     return MessageBubble(
                       message: message,
-                      isCurrentUser:
-                          message.from == FirebaseConfig.auth.currentUser?.uid,
-                      opponentAvatarUrl: widget.opponentAvatarUrl,
-                      opponentName: widget.opponentName,
+                      isCurrentUser: isCurrentUser,
+                      opponentAvatarUrl: senderAvatarUrl,
+                      opponentName: senderName,
                       isGroup: widget.isGroup,
                     );
                   },
@@ -124,12 +137,11 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   child: TextField(
                     controller: _messageController,
                     onChanged: (text) {
-                      // safe to call; provider should exist
                       final cubit = context.read<ChatDetailCubit?>();
                       if (cubit != null) cubit.setTyping(text.isNotEmpty);
                     },
                     decoration: InputDecoration(
-                      hintText: 'Nhập tin nhắn...',
+                      hintText: 'Message...',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
                         borderSide: BorderSide(color: Colors.grey.shade300),
