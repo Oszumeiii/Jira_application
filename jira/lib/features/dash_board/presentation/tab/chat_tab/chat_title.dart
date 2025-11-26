@@ -28,7 +28,7 @@ class ChatTile extends StatelessWidget {
     return ListTile(
       leading: AvatarWidget(url: avatar, initials: name, radius: 24),
       title: Text(
-        name.isEmpty ? 'Không tên' : name,
+        name.isEmpty ? 'No name' : name,
         style: const TextStyle(fontWeight: FontWeight.w600),
       ),
       subtitle: Text(lastMessage, maxLines: 1, overflow: TextOverflow.ellipsis),
@@ -73,7 +73,7 @@ class ChatTile extends StatelessWidget {
     final date = DateTime(time.year, time.month, time.day);
     if (date == today)
       return '${time.hour}:${time.minute.toString().padLeft(2, '0')}';
-    if (date == today.subtract(const Duration(days: 1))) return 'Hôm qua';
+    if (date == today.subtract(const Duration(days: 1))) return 'Yesterday';
     return '${time.day}/${time.month}';
   }
 }

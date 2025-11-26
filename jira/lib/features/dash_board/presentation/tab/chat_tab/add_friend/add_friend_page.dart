@@ -290,7 +290,6 @@ class _AddFriendPageContentState extends State<AddFriendPageContent> {
 
         const SizedBox(height: 16),
 
-        // Message với design hiện đại hơn
         BlocSelector<AddFriendCubit, AddFriendState, String?>(
           selector: (state) => state.message,
           builder: (context, message) {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jira/core/app_colors.dart';
 
 class AvatarWidget extends StatelessWidget {
   final String? url;
@@ -14,14 +13,12 @@ class AvatarWidget extends StatelessWidget {
 
     final words = text.split(' ');
     if (words.length == 1) {
-      // Nếu chỉ có 1 từ, lấy 2 ký tự đầu
       final word = words.first;
       return word.length >= 2
           ? word.substring(0, 2).toUpperCase()
           : word[0].toUpperCase();
     }
 
-    // Nếu có nhiều từ, lấy ký tự đầu của từ đầu và từ cuối
     final first = words.first[0].toUpperCase();
     final second = words.last[0].toUpperCase();
     return '$first$second';

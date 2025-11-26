@@ -1,4 +1,3 @@
-// features/dash_board/presentation/tab/chat_tab/chat_detail/chat_detail_cubit.dart
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,12 +34,9 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
       }
 
       if (initialIsChatId) {
-        // Khi initialIsChatId = true, initialId là chatId đã tồn tại
-        // KHÔNG BAO GIỜ tạo chat mới trong trường hợp này
         _chatDocId = initialId;
         print('[ChatDetailCubit._init] Using existing chatId: $initialId');
 
-        // Đảm bảo chat tồn tại và cập nhật name nếu cần
         try {
           final chatDocRef = FirebaseConfig.firestore
               .collection('chats')
@@ -56,12 +52,9 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
           final chatData = chatDoc.data() as Map<String, dynamic>? ?? {};
           final isGroupChat = chatData['isGroup'] == true;
 
-          // Cập nhật name và photoURL nếu chat có name rỗng (chỉ cho 1-1 chat)
           if (!isGroupChat) {
             final currentName = (chatData['name'] ?? '').toString();
             final members = List<String>.from(chatData['members'] ?? []);
-
-            // Chỉ cập nhật nếu name rỗng và có đúng 2 members
             if (currentName.isEmpty && members.length == 2) {
               final uid = FirebaseConfig.auth.currentUser?.uid;
               if (uid != null) {
@@ -94,7 +87,6 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
                     }
 
                     if (updateData.isNotEmpty) {
-                      // Cập nhật ngay lập tức trước khi load messages
                       await chatDocRef.update(updateData);
                       print(
                         '[ChatDetailCubit._init] Updated chat info: $updateData',
@@ -107,16 +99,11 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
           }
         } catch (e) {
           print('[ChatDetailCubit._init] Error checking/updating chat: $e');
-          // Không return, vẫn tiếp tục load messages với chatId hiện tại
         }
       } else {
-        // Chỉ tạo chat mới khi initialIsChatId = false
         if (isGroup) {
           _chatDocId = initialId;
         } else {
-          // find existing 1-1 chat between uid and initialId
-          // Tìm chat có đúng 2 thành viên là uid và initialId
-          // Tìm từ cả 2 phía để đảm bảo không bỏ sót
           final queries = await Future.wait([
             FirebaseConfig.firestore
                 .collection('chats')
@@ -138,7 +125,6 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
             }
           }
 
-          // Tìm chat có đúng 2 members và chứa cả uid và initialId
           for (var doc in allDocs.values) {
             final members =
                 ((doc.data() as Map<String, dynamic>?)?['members'] as List?)
@@ -146,7 +132,6 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
                     .toList() ??
                 [];
 
-            // Kiểm tra có đúng 2 members và chứa cả uid và initialId
             if (members.length == 2 &&
                 members.contains(uid) &&
                 members.contains(initialId)) {
@@ -161,7 +146,6 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
           if (foundId != null) {
             _chatDocId = foundId;
 
-            // Cập nhật name và photoURL nếu chat có name rỗng
             try {
               final chatDocRef = FirebaseConfig.firestore
                   .collection('chats')
@@ -208,7 +192,6 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
               print('[ChatDetailCubit._init] Error updating chat info: $e');
             }
           } else {
-            // Tạo chat mới nếu không tìm thấy
             String? otherUserName;
             String? otherUserPhoto;
             try {
@@ -231,7 +214,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
             final chatRef = await FirebaseConfig.firestore
                 .collection('chats')
                 .add({
-                  'name': otherUserName ?? '', // Lưu tên ngay khi tạo
+                  'name': otherUserName ?? '',
                   'isGroup': false,
                   'members': [uid, initialId],
                   'admin': uid,
@@ -239,7 +222,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
                   'lastMessage': '',
                   'lastMessageTime': FieldValue.serverTimestamp(),
                   'lastMessageFrom': uid,
-                  'photoURL': otherUserPhoto, // Lưu avatar ngay khi tạo
+                  'photoURL': otherUserPhoto,
                 });
             _chatDocId = chatRef.id;
             print(
@@ -249,7 +232,6 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
         }
       }
 
-      // Đảm bảo _chatDocId đã được set trước khi load messages
       if (_chatDocId != null) {
         _loadMessages();
         _listenToTypingStatus();
@@ -296,7 +278,6 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
                 .map((d) => MessageModel.fromJson(d.data(), d.id))
                 .toList();
 
-            // Fetch user infos for senders in group chat
             await _fetchUserInfosForMessages(messages);
 
             emit(
@@ -320,7 +301,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
   }
 
   Future<void> _fetchUserInfosForMessages(List<MessageModel> messages) async {
-    if (!isGroup) return; // Chỉ cần cho group chat
+    if (!isGroup) return;
 
     final currentUid = FirebaseConfig.auth.currentUser?.uid ?? '';
     final uniqueSenderIds = messages
@@ -333,7 +314,6 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
 
     final newUserInfos = <String, Map<String, dynamic>>{};
 
-    // Fetch in batches of 10 (Firestore whereIn limit)
     for (var i = 0; i < uniqueSenderIds.length; i += 10) {
       final batch = uniqueSenderIds.sublist(
         i,
@@ -403,8 +383,6 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
       }
 
       if (_chatDocId == null) {
-        // Chỉ gọi _init() nếu chưa có chatId và initialIsChatId = false
-        // Nếu initialIsChatId = true mà _chatDocId vẫn null, có lỗi
         if (initialIsChatId) {
           emit(state.copyWith(errorMessage: 'Chat ID không hợp lệ'));
           return;
@@ -417,8 +395,6 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
       }
 
       final chatId = _chatDocId!;
-
-      // Đảm bảo chat tồn tại trước khi gửi tin nhắn
       final chatDoc = await FirebaseConfig.firestore
           .collection('chats')
           .doc(chatId)

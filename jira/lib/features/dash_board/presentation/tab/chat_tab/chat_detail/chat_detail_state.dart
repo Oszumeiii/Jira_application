@@ -1,4 +1,3 @@
-// features/dash_board/presentation/tab/chat_tab/chat_detail/chat_detail_state.dart
 import 'package:jira/features/dash_board/presentation/tab/chat_tab/chat/message_model.dart';
 
 class ChatDetailState {
@@ -6,8 +5,7 @@ class ChatDetailState {
   final bool isLoading;
   final bool isTyping;
   final String errorMessage;
-  final Map<String, Map<String, dynamic>>
-  userInfos; // Thêm map để lưu tên và avatar của người gửi
+  final Map<String, Map<String, dynamic>> userInfos;
 
   const ChatDetailState({
     this.messages = const [],
