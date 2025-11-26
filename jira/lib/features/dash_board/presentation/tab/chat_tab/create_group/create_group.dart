@@ -130,7 +130,7 @@ class CreateGroupContent extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      state.errorMessage!,
+                      state.errorMessage,
                       style: const TextStyle(fontWeight: FontWeight.w500),
                     ),
                   ),

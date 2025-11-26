@@ -349,7 +349,7 @@ Future<void> _updateDescription() async {
     if (_currentIssue.status == newStatus) return;
 
     final updatedIssue = _currentIssue.copyWith(status: newStatus);
-    await getIt<IssueCubit>().updateIssue(updatedIssue);;
+    await getIt<IssueCubit>().updateIssue(updatedIssue);
 
     setState(() {
       _currentIssue = updatedIssue;

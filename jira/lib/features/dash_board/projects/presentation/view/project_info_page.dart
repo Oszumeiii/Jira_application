@@ -6,7 +6,6 @@ import 'package:jira/features/dash_board/projects/data/models/project_model.dart
 import 'package:jira/features/dash_board/projects/domain/entities/project_entity.dart';
 import 'package:jira/features/dash_board/projects/presentation/cubit/project_cubit.dart';
 import 'package:jira/features/dash_board/projects/presentation/view/change_member_to_project.dart';
-import 'package:jira/features/dash_board/projects/presentation/view/widgets/project_info_widget.dart';
 
 class ProjectInfoPage extends StatefulWidget {
   final ProjectEntity project;

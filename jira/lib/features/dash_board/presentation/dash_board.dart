@@ -121,11 +121,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
      final tabBodies = [
-        HomeTab(),
-        ProjectsTab(),
-        TasksTab(key: tasksTabKey),
-        ChatTab(),
-      ];
+      HomeTab(),
+      ProjectsTab(),
+      TasksTab(key: tasksTabKey),
+      ChatTab(),
+    ];
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F0),

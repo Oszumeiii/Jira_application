@@ -58,7 +58,7 @@ class ProjectRow extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Status indicator
+          // Status indicatort
           if (status != null)
             Container(
               width: 10,

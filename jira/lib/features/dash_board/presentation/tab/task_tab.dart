@@ -97,14 +97,14 @@ class TasksTabState extends State<TasksTab> {
                   final task = tasks[index];
                   return GestureDetector(
                       onTap: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DetailTaskPage(issue: task),
-                        ),
-                      );
-                      refreshTasks();
-                    },
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailTaskPage(issue: task),
+                          ),
+                        );
+                        refreshTasks();
+                      },
 
                     child: TaskRow(
                       task: task,
