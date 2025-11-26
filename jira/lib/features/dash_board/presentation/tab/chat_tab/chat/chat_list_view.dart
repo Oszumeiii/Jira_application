@@ -78,11 +78,9 @@ class ChatListView extends StatelessWidget {
               bool isOnline = false;
 
               if (isGroup) {
-                // Nhóm: dùng dữ liệu từ document
                 name = data['name']?.toString() ?? 'Nhóm chat';
                 photoURL = data['groupPhotoURL'];
               } else {
-                // Chat 1-1: lấy từ danh sách bạn bè (chuẩn như FriendsListView)
                 final otherId = members.firstWhere(
                   (id) => id != currentUid,
                   orElse: () => '',
@@ -116,7 +114,6 @@ class ChatListView extends StatelessWidget {
               );
             }
 
-            // Lọc tìm kiếm
             final filtered = items.where((item) {
               if (searchQuery.trim().isEmpty) return true;
               return item.name.toLowerCase().contains(
@@ -124,7 +121,6 @@ class ChatListView extends StatelessWidget {
               );
             }).toList();
 
-            // Sắp xếp theo tin nhắn mới nhất
             filtered.sort((a, b) {
               final timeA = a.lastMessageTime ?? DateTime(2000);
               final timeB = b.lastMessageTime ?? DateTime(2000);
