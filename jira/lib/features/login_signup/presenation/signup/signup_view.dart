@@ -101,7 +101,7 @@ class _SignUpPage extends State<SignUpPage> {
                             width: 47.84358596801758,
                             height: 55.63597869873047,
                             child: Image(
-                              image: AssetImage("assets/images/JiraLogo.png"),
+                              image: AssetImage("assets/images/Logo.png"),
                             ),
                           ),
                         ),

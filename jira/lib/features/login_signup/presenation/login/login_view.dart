@@ -80,7 +80,7 @@ class _LoginView extends State<LoginView> {
                               width: 37.72,
                               height: 42.97,
                               child: Image(
-                                image: AssetImage('assets/images/JiraLogo.png'),
+                                image: AssetImage('assets/images/Logo.png'),
                               ),
                             ),
                           ),
