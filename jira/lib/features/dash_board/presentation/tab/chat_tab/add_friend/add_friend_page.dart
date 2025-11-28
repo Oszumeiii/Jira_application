@@ -20,7 +20,7 @@ class _AddFriendPageContentState extends State<AddFriendPageContent> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Search Email với animation
+        // Search Email with animation
         AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           decoration: BoxDecoration(
@@ -47,7 +47,7 @@ class _AddFriendPageContentState extends State<AddFriendPageContent> {
             onTapOutside: (_) => setState(() => _isFocused = false),
             onChanged: context.read<AddFriendCubit>().onQueryChanged,
             decoration: InputDecoration(
-              hintText: "Tìm kiếm theo email",
+              hintText: "Search by email",
               hintStyle: TextStyle(
                 color: Colors.grey[500],
                 fontSize: 15,
@@ -95,7 +95,7 @@ class _AddFriendPageContentState extends State<AddFriendPageContent> {
         ),
         const SizedBox(height: 16),
 
-        // Suggestions List với card đẹp hơn
+        // Suggestions List with nicer card design
         Expanded(
           child: Container(
             decoration: BoxDecoration(
@@ -121,7 +121,7 @@ class _AddFriendPageContentState extends State<AddFriendPageContent> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          "Đang tìm kiếm...",
+                          "Searching...",
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 14,
@@ -143,7 +143,7 @@ class _AddFriendPageContentState extends State<AddFriendPageContent> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          "Không tìm thấy người dùng",
+                          "No users found",
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 16,
@@ -152,7 +152,7 @@ class _AddFriendPageContentState extends State<AddFriendPageContent> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "Thử tìm kiếm với email khác",
+                          "Try searching with a different email",
                           style: TextStyle(
                             color: Colors.grey[400],
                             fontSize: 14,
@@ -175,7 +175,7 @@ class _AddFriendPageContentState extends State<AddFriendPageContent> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          "Tìm kiếm bạn bè",
+                          "Find friends",
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 16,
@@ -184,7 +184,7 @@ class _AddFriendPageContentState extends State<AddFriendPageContent> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          "Nhập email để tìm kiếm người dùng",
+                          "Enter an email to search users",
                           style: TextStyle(
                             color: Colors.grey[400],
                             fontSize: 14,
@@ -294,7 +294,7 @@ class _AddFriendPageContentState extends State<AddFriendPageContent> {
           selector: (state) => state.message,
           builder: (context, message) {
             if (message == null) return const SizedBox.shrink();
-            final isSuccess = message.contains('thành công');
+            final isSuccess = message.contains('success');
             return AnimatedContainer(
               duration: const Duration(milliseconds: 300),
               padding: const EdgeInsets.all(16),
