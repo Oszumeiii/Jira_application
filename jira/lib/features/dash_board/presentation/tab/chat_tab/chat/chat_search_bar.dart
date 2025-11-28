@@ -55,7 +55,7 @@ class _ChatSearchBarState extends State<ChatSearchBar> {
         onTap: () => setState(() => _isFocused = true),
         onTapOutside: (_) => setState(() => _isFocused = false),
         decoration: InputDecoration(
-          hintText: widget.showFriendsList ? "Tìm bạn bè..." : "Tìm kiếm",
+          hintText: widget.showFriendsList ? "Search friends..." : "Search",
           hintStyle: TextStyle(
             color: Colors.grey[500],
             fontSize: 15,

@@ -17,10 +17,12 @@ class SearchResultView extends StatelessWidget {
         final results = state.searchResults;
 
         if (state.searchQuery.isEmpty) {
-          return const Center(child: Text('Gõ để tìm người hoặc nhóm'));
+          return const Center(
+            child: Text('Type to search for people or groups'),
+          );
         }
         if (results.isEmpty) {
-          return const Center(child: Text('Không tìm thấy'));
+          return const Center(child: Text('No results found'));
         }
 
         return ListView.separated(
@@ -37,12 +39,12 @@ class SearchResultView extends StatelessWidget {
                 radius: 24,
               ),
               title: Text(
-                item.name.isNotEmpty ? item.name : 'Không tên',
+                item.name.isNotEmpty ? item.name : 'No name',
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
               subtitle: item.isGroup
-                  ? Text('${item.members.length} thành viên')
-                  : Text(item.email ?? 'Không có email'),
+                  ? Text('${item.members.length} members')
+                  : Text(item.email ?? 'No email'),
               trailing: item.isGroup
                   ? const Icon(Icons.group, color: Colors.grey)
                   : (item.isOnline

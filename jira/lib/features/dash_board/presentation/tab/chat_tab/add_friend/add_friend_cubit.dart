@@ -23,7 +23,6 @@ class AddFriendCubit extends Cubit<AddFriendState> {
     try {
       final currentUid = FirebaseConfig.auth.currentUser!.uid;
 
-      // TÌM THEO EMAIL (prefix search)
       final snapshot = await FirebaseConfig.firestore
           .collection('users')
           .where('email', isGreaterThanOrEqualTo: email)
@@ -35,12 +34,10 @@ class AddFriendCubit extends Cubit<AddFriendState> {
 
       for (var doc in snapshot.docs) {
         final uid = doc.id;
-        if (uid == currentUid) continue; // Bỏ qua chính mình
+        if (uid == currentUid) continue;
 
         final data = doc.data();
         final friends = List<String>.from(data['friends'] ?? []);
-
-        // Bỏ qua nếu đã là bạn
         if (friends.contains(currentUid)) continue;
 
         users.add(
@@ -57,7 +54,7 @@ class AddFriendCubit extends Cubit<AddFriendState> {
         state.copyWith(
           suggestions: users,
           isLoading: false,
-          message: users.isEmpty ? 'Không tìm thấy' : null,
+          message: users.isEmpty ? 'No users found' : null,
         ),
       );
     } catch (e, st) {
@@ -65,13 +62,12 @@ class AddFriendCubit extends Cubit<AddFriendState> {
       emit(
         state.copyWith(
           isLoading: false,
-          message: 'Lỗi tìm kiếm. Vui lòng thử lại.',
+          message: 'Search failed. Please try again.',
         ),
       );
     }
   }
 
-  // Gửi friend request: tạo document trong users/{targetUid}/notifications
   Future<void> sendFriendRequest(String targetUid) async {
     emit(
       state.copyWith(isLoading: true, errorMessage: null, successMessage: null),
@@ -82,7 +78,7 @@ class AddFriendCubit extends Cubit<AddFriendState> {
         emit(
           state.copyWith(
             isLoading: false,
-            errorMessage: 'Không thể gửi lời mời cho chính bạn',
+            errorMessage: 'Cannot send request to yourself',
           ),
         );
         return;
@@ -94,28 +90,23 @@ class AddFriendCubit extends Cubit<AddFriendState> {
       final targetDoc = await targetRef.get();
       if (!targetDoc.exists) {
         emit(
-          state.copyWith(
-            isLoading: false,
-            errorMessage: 'Người dùng không tồn tại',
-          ),
+          state.copyWith(isLoading: false, errorMessage: 'User does not exist'),
         );
         return;
       }
 
-      // Kiểm tra đã là bạn chưa
       final targetData = targetDoc.data()!;
       final targetFriends = List<String>.from(targetData['friends'] ?? []);
       if (targetFriends.contains(meUid)) {
         emit(
           state.copyWith(
             isLoading: false,
-            errorMessage: 'Đã là bạn của người này',
+            errorMessage: 'Already friends with this user',
           ),
         );
         return;
       }
 
-      // Kiểm tra đã gửi request pending trước đó chưa
       final existing = await targetRef
           .collection('notifications')
           .where('type', isEqualTo: 'friend_request')
@@ -128,13 +119,12 @@ class AddFriendCubit extends Cubit<AddFriendState> {
         emit(
           state.copyWith(
             isLoading: false,
-            errorMessage: 'Đã gửi lời mời trước đó',
+            errorMessage: 'Friend request already sent',
           ),
         );
         return;
       }
 
-      // Lấy thông tin người gửi để hiển thị
       final meDoc = await FirebaseConfig.firestore
           .collection('users')
           .doc(meUid)
@@ -147,19 +137,21 @@ class AddFriendCubit extends Cubit<AddFriendState> {
         'fromUid': meUid,
         'fromName': meName,
         'fromPhoto': mePhoto,
-        'status': 'pending', // pending, accepted, declined
+        'status': 'pending',
         'timestamp': FieldValue.serverTimestamp(),
       };
 
       await targetRef.collection('notifications').add(payload);
 
-      emit(state.copyWith(isLoading: false, successMessage: 'Đã gửi lời mời'));
+      emit(
+        state.copyWith(isLoading: false, successMessage: 'Friend request sent'),
+      );
     } catch (e, st) {
       print('[AddFriendCubit.sendFriendRequest] $e\n$st');
       emit(
         state.copyWith(
           isLoading: false,
-          errorMessage: 'Gửi lời mời thất bại: $e',
+          errorMessage: 'Failed to send request: $e',
         ),
       );
     }
