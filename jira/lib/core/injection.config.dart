@@ -11,6 +11,19 @@
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:jira/core/api_client.dart' as _i600;
+import 'package:jira/features/comment/data/remote_data_sorce/comment_remote_data_rource.dart'
+    as _i456;
+import 'package:jira/features/comment/data/repo_impl/comment_repo_impl.dart'
+    as _i477;
+import 'package:jira/features/comment/domain/repo/comment_repo.dart' as _i485;
+import 'package:jira/features/comment/domain/usecase/create_comment_usecase.dart'
+    as _i210;
+import 'package:jira/features/comment/domain/usecase/get_comment_usecase.dart'
+    as _i415;
+import 'package:jira/features/comment/domain/usecase/remove_comment_usecase.dart'
+    as _i37;
+import 'package:jira/features/comment/presentation/cubit/comment_cubit.dart'
+    as _i444;
 import 'package:jira/features/dash_board/Issues/data/data_source/issue_remote_data.dart'
     as _i151;
 import 'package:jira/features/dash_board/Issues/data/Repo_impl/issue_repo_impl.dart'
@@ -64,8 +77,12 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i151.IssueRemoteDataSourceImpl());
     gh.factory<_i355.ProjectRemoteDataSource>(
         () => _i355.ProjectRemoteDataSourceImpl());
+    gh.factory<_i456.CommentRemoteDataSource>(
+        () => _i456.CommentRemoteDataSourceImpl());
     gh.factory<_i521.IssueRepository>(
         () => _i77.IssueRepoImpl(gh<_i151.IssueRemoteDataSource>()));
+    gh.factory<_i485.CommentRepository>(() => _i477.CommentRepositoryImpl(
+        remoteDataSource: gh<_i456.CommentRemoteDataSource>()));
     gh.factory<_i211.GetIssuesByAssigneeUsecase>(
         () => _i211.GetIssuesByAssigneeUsecase(gh<_i521.IssueRepository>()));
     gh.factory<_i116.CreateIssueUsecase>(
@@ -78,6 +95,18 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i385.UpdateIssueUsecase(gh<_i521.IssueRepository>()));
     gh.factory<_i177.DeleteIssueUsecase>(
         () => _i177.DeleteIssueUsecase(gh<_i521.IssueRepository>()));
+    gh.factory<_i37.DeleteCommentUseCase>(() =>
+        _i37.DeleteCommentUseCase(repository: gh<_i485.CommentRepository>()));
+    gh.factory<_i415.GetCommentsByTaskUseCase>(() =>
+        _i415.GetCommentsByTaskUseCase(
+            repository: gh<_i485.CommentRepository>()));
+    gh.factory<_i210.CreateCommentUseCase>(() =>
+        _i210.CreateCommentUseCase(repository: gh<_i485.CommentRepository>()));
+    gh.factory<_i444.CommentCubit>(() => _i444.CommentCubit(
+          gh<_i415.GetCommentsByTaskUseCase>(),
+          gh<_i210.CreateCommentUseCase>(),
+          gh<_i37.DeleteCommentUseCase>(),
+        ));
     gh.factory<_i688.ProjectRepository>(
         () => _i77.ProjectRepositoryImpl(gh<_i355.ProjectRemoteDataSource>()));
     gh.factory<_i134.RemoveProjectUsecase>(

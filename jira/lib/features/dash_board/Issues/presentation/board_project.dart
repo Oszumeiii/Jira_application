@@ -167,9 +167,9 @@ class _BoardProjectScreenState extends State<BoardProjectScreen>
           return TabBarView(
             controller: _tabController,
             children: [
-              buildTasks(state.todo, const Color.fromARGB(255, 255, 0, 0)),
-              buildTasks(state.inProgress, const Color.fromARGB(255, 0, 140, 255)),
-              buildTasks(state.done, const Color.fromARGB(255, 0, 255, 8)),
+                buildTasks(state.todo, const Color(0xFFB0BEC5)),       // Gray Blue cho Todo
+                buildTasks(state.inProgress, const Color(0xFF42A5F5)), // Blue cho InProgres
+                buildTasks(state.done, const Color(0xFF66BB6A)),       // Green cho Done
             ],
           );
         },

@@ -7,7 +7,7 @@ class ProjectModel extends ProjectEntity {
     required super.name,
     required super.priority , 
     required super.projectType , 
-    required super.sumary ,
+     super.sumary ,
     required super.description,
     super.ownerId,
     super.members,

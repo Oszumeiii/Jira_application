@@ -55,43 +55,6 @@ class _HomeTabState extends State<HomeTab> {
             ),
 
           const SizedBox(height: 16),
-
-          // /// NOTES SECTION
-          // Text(
-          //   "Your daily notes ✍️",
-          //   style: const TextStyle(
-          //     fontSize: 22,
-          //     fontWeight: FontWeight.bold,
-          //     color: Color(0xFF111827),
-          //   ),
-          // ),
-
-          // const SizedBox(height: 8),
-          // SizedBox(
-          //   height: 100,
-          //   child: ListView(
-          //     scrollDirection: Axis.horizontal,
-          //     children: [
-          //       NoteCard(
-          //         avatar: 'https://i.pravatar.cc/150?img=3',
-          //         name: 'Huấn',
-          //         note: 'Hôm nay trời đẹp quá!',
-          //       ),
-          //       const SizedBox(width: 12),
-          //       NoteCard(
-          //         avatar: 'https://i.pravatar.cc/150?img=5',
-          //         name: 'Lan',
-          //         note: 'Đã hoàn thành bài tập Flutter 😄',
-          //       ),
-          //       const SizedBox(width: 12),
-          //       NoteCard(
-          //         avatar: 'https://i.pravatar.cc/150?img=8',
-          //         name: 'Minh',
-          //         note: 'Cuối tuần đi Đà Nẵng thôi!',
-          //       ),
-          //     ],
-          //   ),
-          // ),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 12.0),
             child: Container(

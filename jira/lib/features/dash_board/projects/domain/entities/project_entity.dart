@@ -4,7 +4,7 @@ class ProjectEntity {
   final String? id;
   final String name;
   final String priority ;
-  final String sumary ; 
+  final String? sumary ; 
   final String description;
   final String? ownerId;
   final List<String>? members;
@@ -18,7 +18,7 @@ class ProjectEntity {
     required this.name,
     required this.priority , 
     required this.projectType , 
-    required this.sumary , 
+    this.sumary , 
     required this.description,
      this.ownerId,
     required this.members,

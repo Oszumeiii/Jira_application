@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
             child: const DashboardScreen(),
           );
         } else {
-                    return MultiBlocProvider(
+          return MultiBlocProvider(
             providers: [
               BlocProvider<ProjectCubit>(create: (_) => getIt<ProjectCubit>()),
             ],

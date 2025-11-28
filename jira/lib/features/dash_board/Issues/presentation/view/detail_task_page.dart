@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:jira/core/injection.dart';
 import 'package:jira/features/Users/model/user_model.dart';
 import 'package:jira/features/Users/service/user_repo.dart';
+import 'package:jira/features/comment/presentation/cubit/comment_cubit.dart';
+import 'package:jira/features/comment/presentation/view/comment_section.dart';
 import 'package:jira/features/dash_board/Issues/domain/Entity/issue_entity.dart';
 import 'package:jira/features/dash_board/Issues/presentation/view/assign_member_bottomsheet.dart';
 import 'package:jira/features/dash_board/Issues/presentation/cubit/issue_cubit.dart';
@@ -634,67 +637,88 @@ Future<void> _updateDescription() async {
                 ],
               ),
             ),
+
+
+            const SizedBox(height: 16),
+          _buildSectionCard(
+            title: "Comments",
+            icon: Icons.comment_outlined,
+            child: BlocProvider<CommentCubit>(
+              create: (_) => getIt<CommentCubit>(),
+              child: CommentSection(taskId: issue.id!),
+            ),
+          ),
+
+
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionCard({
-    required String title,
-    required IconData icon,
-    required Widget child,
-    Widget? trailing,
-  }) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+Widget _buildSectionCard({
+  required String title,
+  required IconData icon,
+  required Widget child,
+  Widget? trailing,
+}) {
+  return Container(
+    width: double.infinity,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(20),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.05),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    ),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  icon,
+                  size: 22,
+                  color: Colors.blue.shade600,
+                ),
+              ),
+              const SizedBox(width: 12),
+
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+
+              if (trailing != null) trailing,
+            ],
           ),
+
+          const SizedBox(height: 20),
+          child,
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade50,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(icon, size: 20, color: Colors.blue.shade600),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                  ),
-                ),
-                if (trailing != null) trailing,
-              ],
-            ),
-            const SizedBox(height: 16),
-            child,
-          ],
-        ),
-      ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildPersonRow({
     required String label,
@@ -749,7 +773,7 @@ Future<void> _updateDescription() async {
                         CircleAvatar(
                           radius: 16,
                           backgroundColor: Colors.blue.shade100,
-                         backgroundImage: AssetImage('jira/assets/images/image.png'),
+                         //backgroundImage: AssetImage('jira/assets/images/image.png'),
                           child:  Text(
                                   user.lastName[0].toUpperCase(),
                                   style: TextStyle(

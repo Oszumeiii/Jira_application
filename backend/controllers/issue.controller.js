@@ -1,6 +1,32 @@
 import {db} from "../config/db.js"
 import  { sendSuccessResponse, sendErrorResponse } from "../utils/response.js";
 //DeleIssue 
+
+
+
+/**
+ * @swagger
+ * /issues/{issueId}:
+ *   delete:
+ *     summary: Xóa Issue
+ *     tags: [Issues]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: issueId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Issue deleted successfully
+ *       404:
+ *         description: Issue not found
+ *       500:
+ *         description: Lỗi server
+ */
+
 export const deleteIssue = async (req, res) => {
   try {
     const { issueId } = req.params;
@@ -25,6 +51,42 @@ export const deleteIssue = async (req, res) => {
     return sendErrorResponse(res, 500, "INTERNAL_ERROR", error.message);
   }
 };
+
+
+
+/**
+ * @swagger
+ * /issues/{issueId}:
+ *   put:
+ *     summary: Cập nhật Issue
+ *     tags: [Issues]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: issueId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "issue_123"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/Issue"
+ *     responses:
+ *       200:
+ *         description: Issue updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Issue"
+ *       404:
+ *         description: Issue not found
+ *       500:
+ *         description: Lỗi server
+ */
 
 //Update Issue
 export const updateIssue = async (req, res) => {
@@ -61,6 +123,35 @@ export const updateIssue = async (req, res) => {
 
 
 
+/**
+ * @swagger
+ * /issues:
+ *   get:
+ *     summary: Lấy danh sách issues theo projectId
+ *     tags: [Issues]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: idProject
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "project_001"
+ *     responses:
+ *       200:
+ *         description: Lấy danh sách issues thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/Issue"
+ *       400:
+ *         description: Thiếu idProject
+ *       500:
+ *         description: Lỗi server
+ */
 export const getIssuesByProject = async (req, res) => {
     console.log("Get Issues by Project ID called");
     try {
@@ -97,6 +188,57 @@ export const getIssuesByProject = async (req, res) => {
 };
 
 
+
+/**
+ * @swagger
+ * /issues:
+ *   post:
+ *     summary: Tạo issue mới
+ *     tags: [Issues]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               projectId:
+ *                 type: string
+ *               title:
+ *                 type: string
+ *               summary:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               type:
+ *                 type: string
+ *                 enum: [task, bug, story]
+ *               priority:
+ *                 type: string
+ *                 enum: [Low, Medium, High]
+ *               status:
+ *                 type: string
+ *                 enum: [todo, in-progress, review, done]
+ *               assigneeId:
+ *                 type: string
+ *                 nullable: true
+ *               parentId:
+ *                 type: string
+ *                 nullable: true
+ *     responses:
+ *       201:
+ *         description: Issue created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/IssueResponse"
+ *       400:
+ *         description: Thiếu title
+ *       500:
+ *         description: Lỗi server
+ */
 export const createIssue = async (req, res) => {
   try {
     console.log("Create Issue called");
@@ -171,6 +313,34 @@ export const createIssue = async (req, res) => {
 
 
 
+
+/**
+ * @swagger
+ * /issues/{issueId}:
+ *   get:
+ *     summary: Lấy thông tin Issue theo ID
+ *     tags: [Issues]
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: issueId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: "issue_abc123"
+ *     responses:
+ *       200:
+ *         description: Issue fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Issue"
+ *       404:
+ *         description: Issue not found
+ *       500:
+ *         description: Server error
+ */
 export const getIssueById = async (req, res) => {
     try {
         const issueId = req.params.issueId;
