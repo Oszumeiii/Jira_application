@@ -21,7 +21,7 @@ class FriendsListView extends StatelessWidget {
         if (state.filteredFriends.isEmpty) {
           return Center(
             child: Text(
-              state.searchQuery.isEmpty ? 'Chưa có bạn bè' : 'Không tìm thấy',
+              state.searchQuery.isEmpty ? 'No friends yet' : 'Not found',
               style: const TextStyle(color: Colors.grey),
             ),
           );
@@ -66,7 +66,7 @@ class FriendsListView extends StatelessWidget {
                   ),
                 ),
                 title: Text(
-                  friend.name.isNotEmpty ? friend.name : 'Không tên',
+                  friend.name.isNotEmpty ? friend.name : 'No name',
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,

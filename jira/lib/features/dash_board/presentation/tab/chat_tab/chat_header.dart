@@ -56,7 +56,6 @@ class _ChatHeaderState extends State<ChatHeader> {
             ),
           ),
 
-          // Action buttons với style hiện đại
           Row(
             children: [
               _buildIconButton(

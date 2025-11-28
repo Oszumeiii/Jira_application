@@ -26,7 +26,7 @@ class ChatListView extends StatelessWidget {
     return BlocBuilder<ChatTabCubit, ChatTabState>(
       builder: (context, state) {
         final friends = state.allFriends;
-        final friendMap = {for (var f in friends) f.id: f}; // Dễ tra cứu
+        final friendMap = {for (var f in friends) f.id: f};
 
         return StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
@@ -35,7 +35,7 @@ class ChatListView extends StatelessWidget {
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return const Center(child: Text('Lỗi tải tin nhắn'));
+              return const Center(child: Text('Error loading messages'));
             }
             if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
@@ -44,7 +44,6 @@ class ChatListView extends StatelessWidget {
             final chatDocs = snapshot.data!.docs;
             final List<ChatItemModel> items = [];
 
-            // 1. Thêm bạn bè chưa từng nhắn (xuống cuối)
             for (final friend in friends) {
               final hasChat = chatDocs.any((doc) {
                 final data = doc.data() as Map<String, dynamic>;
@@ -57,14 +56,13 @@ class ChatListView extends StatelessWidget {
               if (!hasChat) {
                 items.add(
                   friend.copyWith(
-                    lastMessage: 'Chưa có tin nhắn',
+                    lastMessage: 'No messages yet',
                     lastMessageTime: DateTime(2000),
                   ),
                 );
               }
             }
 
-            // 2. Thêm tất cả cuộc trò chuyện
             for (final doc in chatDocs) {
               final data = doc.data() as Map<String, dynamic>;
               final members = List<String>.from(data['members'] ?? []);
@@ -78,7 +76,7 @@ class ChatListView extends StatelessWidget {
               bool isOnline = false;
 
               if (isGroup) {
-                name = data['name']?.toString() ?? 'Nhóm chat';
+                name = data['name']?.toString() ?? 'Group Chat';
                 photoURL = data['groupPhotoURL'];
               } else {
                 final otherId = members.firstWhere(
@@ -91,12 +89,12 @@ class ChatListView extends StatelessWidget {
                   photoURL = friend.photoURL;
                   isOnline = friend.isOnline;
                 } else {
-                  name = 'Người dùng';
+                  name = 'User';
                 }
               }
 
               final lastMessage =
-                  data['lastMessage']?.toString() ?? 'Không có tin nhắn';
+                  data['lastMessage']?.toString() ?? 'No messages';
               final lastTime = (data['lastMessageTime'] as Timestamp?)
                   ?.toDate();
 
@@ -130,7 +128,7 @@ class ChatListView extends StatelessWidget {
             if (filtered.isEmpty) {
               return const Center(
                 child: Text(
-                  'Chưa có tin nhắn nào',
+                  'No messages yet',
                   style: TextStyle(color: Colors.grey),
                 ),
               );
@@ -179,7 +177,7 @@ class ChatListView extends StatelessWidget {
                       ),
                     ),
                     title: Text(
-                      item.name.isNotEmpty ? item.name : 'Không tên',
+                      item.name.isNotEmpty ? item.name : 'No name',
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
@@ -187,8 +185,8 @@ class ChatListView extends StatelessWidget {
                     ),
                     subtitle: Text(
                       item.isGroup
-                          ? '${item.members.length} thành viên'
-                          : (item.lastMessage ?? 'Chưa có tin nhắn'),
+                          ? '${item.members.length} members'
+                          : (item.lastMessage ?? 'No messages yet'),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 12, color: Colors.grey),
@@ -243,7 +241,6 @@ class ChatListView extends StatelessWidget {
   }
 }
 
-// Extension copyWith
 extension on ChatItemModel {
   ChatItemModel copyWith({String? lastMessage, DateTime? lastMessageTime}) {
     return ChatItemModel(

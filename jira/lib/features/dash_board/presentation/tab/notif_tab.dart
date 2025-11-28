@@ -19,7 +19,7 @@ class _NotifTabState extends State<NotifTab> {
     if (uid == null) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text('Thông báo'),
+          title: const Text('Notification'),
           backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(
@@ -28,7 +28,7 @@ class _NotifTabState extends State<NotifTab> {
           ),
         ),
         body: const Center(
-          child: Text('Chưa đăng nhập', style: TextStyle(color: Colors.grey)),
+          child: Text('Not logged in', style: TextStyle(color: Colors.grey)),
         ),
       );
     }
@@ -43,7 +43,7 @@ class _NotifTabState extends State<NotifTab> {
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text(
-          'Thông báo',
+          'Notification',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 22,
@@ -64,7 +64,7 @@ class _NotifTabState extends State<NotifTab> {
               children: [
                 Expanded(
                   child: _FilterTab(
-                    label: 'Tất cả',
+                    label: 'All',
                     isSelected: _selectedFilter == 'All',
                     onTap: () => setState(() => _selectedFilter = 'All'),
                   ),
@@ -72,7 +72,7 @@ class _NotifTabState extends State<NotifTab> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: _FilterTab(
-                    label: 'Chưa đọc',
+                    label: 'Unread',
                     isSelected: _selectedFilter == 'Unread',
                     onTap: () => setState(() => _selectedFilter = 'Unread'),
                     badge: true,
@@ -94,7 +94,7 @@ class _NotifTabState extends State<NotifTab> {
                   Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
                   const SizedBox(height: 16),
                   Text(
-                    'Lỗi: ${snapshot.error}',
+                    'Error: ${snapshot.error}',
                     style: const TextStyle(color: Colors.grey),
                   ),
                 ],
@@ -141,7 +141,7 @@ class _NotifTabState extends State<NotifTab> {
 
                 if (type == 'friend_request') {
                   final status = data['status'] as String? ?? 'pending';
-                  final fromName = data['fromName'] as String? ?? 'Người dùng';
+                  final fromName = data['fromName'] as String? ?? 'User';
                   final fromPhoto = data['fromPhoto'] as String?;
                   final fromUid = data['fromUid'] as String?;
 
@@ -159,7 +159,7 @@ class _NotifTabState extends State<NotifTab> {
                 } else {
                   card = _GeneralNotificationCard(
                     notificationDoc: d,
-                    title: data['title'] ?? 'Thông báo',
+                    title: data['title'] ?? 'Notification',
                     body: data['body'] ?? '',
                     timestamp: timestamp,
                     isRead: isRead,
@@ -201,14 +201,14 @@ class _NotifTabState extends State<NotifTab> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        title: const Text('Xóa thông báo?'),
+                        title: const Text('Delete notification?'),
                         content: const Text(
-                          'Bạn có chắc muốn xóa thông báo này không?',
+                          'Are you sure you want to delete this notification ?',
                         ),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, false),
-                            child: const Text('Hủy'),
+                            child: const Text('Cancel'),
                           ),
                           TextButton(
                             onPressed: () => Navigator.pop(ctx, true),
@@ -246,7 +246,7 @@ class _NotifTabState extends State<NotifTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Đã xóa thông báo'),
+            content: Text('Notification deleted'),
             duration: Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,
           ),
@@ -257,7 +257,7 @@ class _NotifTabState extends State<NotifTab> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Lỗi xóa thông báo'),
+            content: Text('Failed to delete notification'),
             backgroundColor: Colors.red,
           ),
         );
@@ -287,8 +287,8 @@ class _NotifTabState extends State<NotifTab> {
           const SizedBox(height: 24),
           Text(
             _selectedFilter == 'Unread'
-                ? 'Không có thông báo chưa đọc'
-                : 'Không có thông báo',
+                ? 'No unread notifications'
+                : 'No notifications',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w600,
@@ -298,8 +298,8 @@ class _NotifTabState extends State<NotifTab> {
           const SizedBox(height: 8),
           Text(
             _selectedFilter == 'Unread'
-                ? 'Tất cả thông báo đã được đọc'
-                : 'Bạn sẽ nhận được thông báo ở đây',
+                ? 'All notifications have been read'
+                : "You'll receive notifications here",
             style: TextStyle(fontSize: 14, color: Colors.grey[500]),
           ),
         ],
@@ -437,7 +437,7 @@ class _FriendRequestCardState extends State<_FriendRequestCard>
                 children: [
                   Icon(Icons.check_circle, color: Colors.white),
                   SizedBox(width: 8),
-                  Text('Đã là bạn bè rồi'),
+                  Text('Already friends'),
                 ],
               ),
               backgroundColor: Colors.green,
@@ -523,7 +523,7 @@ class _FriendRequestCardState extends State<_FriendRequestCard>
               children: [
                 Icon(Icons.check_circle, color: Colors.white),
                 SizedBox(width: 8),
-                Text('Đã chấp nhận lời mời kết bạn'),
+                Text('Friend request accepted'),
               ],
             ),
             backgroundColor: Colors.green,
@@ -543,7 +543,7 @@ class _FriendRequestCardState extends State<_FriendRequestCard>
               children: [
                 const Icon(Icons.error_outline, color: Colors.white),
                 const SizedBox(width: 8),
-                Expanded(child: Text('Lỗi chấp nhận: $e')),
+                Expanded(child: Text('Failed to accept: $e')),
               ],
             ),
             backgroundColor: Colors.red,
@@ -581,7 +581,7 @@ class _FriendRequestCardState extends State<_FriendRequestCard>
               children: [
                 Icon(Icons.cancel, color: Colors.white),
                 SizedBox(width: 8),
-                Text('Đã từ chối lời mời kết bạn'),
+                Text('Friend request declined'),
               ],
             ),
             backgroundColor: Colors.orange,
@@ -601,7 +601,7 @@ class _FriendRequestCardState extends State<_FriendRequestCard>
               children: [
                 const Icon(Icons.error_outline, color: Colors.white),
                 const SizedBox(width: 8),
-                Expanded(child: Text('Lỗi từ chối: $e')),
+                Expanded(child: Text('Failed to accept: $e')),
               ],
             ),
             backgroundColor: Colors.red,
@@ -623,18 +623,22 @@ class _FriendRequestCardState extends State<_FriendRequestCard>
     final now = DateTime.now();
     final difference = now.difference(date);
 
+    String plural(int value, String word) {
+      return value == 1 ? '$value $word ago' : '$value ${word}s ago';
+    }
+
     if (difference.inDays == 0) {
       if (difference.inHours == 0) {
-        if (difference.inMinutes == 0) return 'Vừa xong';
-        return '${difference.inMinutes} phút trước';
+        if (difference.inMinutes == 0) return 'Just now';
+        return plural(difference.inMinutes, 'minute');
       }
-      return '${difference.inHours} giờ trước';
+      return plural(difference.inHours, 'hour');
     } else if (difference.inDays == 1) {
-      return 'Hôm qua';
+      return 'Yesterday';
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} ngày trước';
+      return plural(difference.inDays, 'day');
     } else {
-      return '${date.day}/${date.month}/${date.year}';
+      return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year}';
     }
   }
 
@@ -780,10 +784,10 @@ class _FriendRequestCardState extends State<_FriendRequestCard>
                               const SizedBox(width: 4),
                               Text(
                                 isPending
-                                    ? 'Lời mời kết bạn'
+                                    ? 'Friend request'
                                     : isAccepted
-                                    ? 'Đã chấp nhận'
-                                    : 'Đã từ chối',
+                                    ? 'Accepted'
+                                    : 'Declined',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: isPending
@@ -810,7 +814,7 @@ class _FriendRequestCardState extends State<_FriendRequestCard>
                           onPressed: _isProcessing
                               ? null
                               : _acceptFriendRequest,
-                          label: 'Chấp nhận',
+                          label: 'Accepted',
                           icon: Icons.check_circle_outline,
                           color: AppColors.primary,
                           isLoading: _isProcessing,
@@ -822,7 +826,7 @@ class _FriendRequestCardState extends State<_FriendRequestCard>
                           onPressed: _isProcessing
                               ? null
                               : _declineFriendRequest,
-                          label: 'Từ chối',
+                          label: 'Declined',
                           icon: Icons.cancel_outlined,
                           color: Colors.red,
                           isOutlined: true,
@@ -854,7 +858,7 @@ class _FriendRequestCardState extends State<_FriendRequestCard>
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          isAccepted ? 'Đã chấp nhận' : 'Đã từ chối',
+                          isAccepted ? 'Accepted' : 'Declined',
                           style: TextStyle(
                             color: isAccepted ? Colors.green : Colors.red,
                             fontSize: 12,
@@ -958,23 +962,26 @@ class _GeneralNotificationCard extends StatelessWidget {
     required this.isRead,
     required this.onTap,
   });
-
   String _formatTimestamp(Timestamp? timestamp) {
     if (timestamp == null) return '';
     final date = timestamp.toDate();
     final now = DateTime.now();
     final difference = now.difference(date);
 
+    String plural(int value, String word) {
+      return value == 1 ? '$value $word ago' : '$value ${word}s ago';
+    }
+
     if (difference.inDays == 0) {
       if (difference.inHours == 0) {
-        if (difference.inMinutes == 0) return 'Vừa xong';
-        return '${difference.inMinutes} phút trước';
+        if (difference.inMinutes == 0) return 'Just now';
+        return plural(difference.inMinutes, 'minute');
       }
-      return '${difference.inHours} giờ trước';
+      return plural(difference.inHours, 'hour');
     } else if (difference.inDays == 1) {
-      return 'Hôm qua';
+      return 'Yesterday';
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} ngày trước';
+      return plural(difference.inDays, 'day');
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }
