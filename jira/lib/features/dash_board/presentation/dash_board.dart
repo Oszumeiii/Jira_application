@@ -96,14 +96,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: const Icon(Icons.add_task),
-              title: const Text('New task'),
-              onTap: () {
-                Navigator.pop(context);
-                // Thêm logic tạo task
-              },
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.add_task),
+            //   title: const Text('New task'),
+            //   onTap: () {
+            //     Navigator.pop(context);
+            //     // Thêm logic tạo task
+            //   },
+            // ),
             ListTile(
               leading: const Icon(Icons.folder_special),
               title: const Text('New project'),

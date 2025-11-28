@@ -84,7 +84,7 @@ class ProjectsTab extends StatelessWidget {
 
                         child: ProjectRow(
                             name: project.name,
-                            projectType: project.description,
+                            projectType: project.sumary!,
                             status: project.status,
                             onDetail: () {
                               final cubit = context.read<ProjectCubit>(); 
