@@ -28,6 +28,12 @@ class _AddMemberBottomSheetState extends State<AddMemberBottomSheet> {
     super.dispose();
   }
 
+  String _getInitial(dynamic name) {
+  final s = (name ?? '').toString().trim();
+  return s.isEmpty ? "?" : s[0].toUpperCase();
+}
+
+
   Future<void> fetchUsers({String query = ""}) async {
     setState(() => loading = true);
 
@@ -186,10 +192,11 @@ class _AddMemberBottomSheetState extends State<AddMemberBottomSheet> {
                                   CircleAvatar(
                                     backgroundColor: Colors.blueAccent,
                                     child: Text(
-                                      u['firstName']?.substring(0, 1) ?? "?",
+                                      _getInitial(u['firstName']),
                                       style: const TextStyle(color: Colors.white),
                                     ),
                                   ),
+
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(

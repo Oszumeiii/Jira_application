@@ -113,29 +113,28 @@ class CreateGroupContent extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Error Message
-            if (state.errorMessage != null)
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFFFEBE6), Color(0xFFFFD4CC)],
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFFFAB00)),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFFFEBE6), Color(0xFFFFD4CC)],
                 ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.warning, color: Color(0xFFFFAB00)),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        state.errorMessage!,
-                        style: const TextStyle(fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                  ],
-                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFFFAB00)),
               ),
+              child: Row(
+                children: [
+                  const Icon(Icons.warning, color: Color(0xFFFFAB00)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      state.errorMessage,
+                      style: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
             const SizedBox(height: 16),
 

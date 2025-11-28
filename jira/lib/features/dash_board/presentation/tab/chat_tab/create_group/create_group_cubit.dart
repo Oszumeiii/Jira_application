@@ -109,10 +109,11 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
 
   void toggleFriend(String uid) {
     final selected = List<String>.from(state.selectedFriendIds);
-    if (selected.contains(uid))
+    if (selected.contains(uid)) {
       selected.remove(uid);
-    else
+    } else {
       selected.add(uid);
+    }
     emit(state.copyWith(selectedFriendIds: selected));
   }
 
@@ -179,7 +180,7 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
     try {
       emit(state.copyWith(isLoading: true, errorMessage: ''));
       final uid = FirebaseConfig.auth.currentUser!.uid;
-      final members = <String>[uid]..addAll(state.selectedFriendIds);
+      final members = <String>[uid, ...state.selectedFriendIds];
 
       await FirebaseConfig.firestore.collection('chats').add({
         'name': name,

@@ -543,7 +543,7 @@ class _ProfileView extends StatelessWidget {
           );
         }
       }
-    } on UnsupportedError catch (e) {
+    } on UnsupportedError {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

@@ -93,11 +93,13 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   reverse: true,
                   itemCount: state.messages.length + (state.isTyping ? 1 : 0),
                   itemBuilder: (context, index) {
-                    if (state.isTyping && index == 0)
+                    if (state.isTyping && index == 0) {
                       return const TypingIndicator();
+                    }
                     final messageIndex = state.isTyping ? index - 1 : index;
-                    if (messageIndex >= state.messages.length)
+                    if (messageIndex >= state.messages.length) {
                       return const SizedBox.shrink();
+                    }
                     final message = state.messages[messageIndex];
                     final isCurrentUser =
                         message.from == FirebaseConfig.auth.currentUser?.uid;

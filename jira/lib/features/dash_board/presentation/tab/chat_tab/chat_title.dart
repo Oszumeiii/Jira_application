@@ -66,14 +66,23 @@ class ChatTile extends StatelessWidget {
       },
     );
   }
-
-  String _formatTime(DateTime time) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final date = DateTime(time.year, time.month, time.day);
-    if (date == today)
-      return '${time.hour}:${time.minute.toString().padLeft(2, '0')}';
-    if (date == today.subtract(const Duration(days: 1))) return 'Yesterday';
-    return '${time.day}/${time.month}';
-  }
 }
+String _formatTime(DateTime time) {
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final date = DateTime(time.year, time.month, time.day);
+
+
+  if (date == today) {
+    return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+  }
+
+  if (date == today.subtract(const Duration(days: 1))) {
+    return 'Yesterday';
+  }
+
+  return '${time.day}/${time.month}';
+}
+
+
+

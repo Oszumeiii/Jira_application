@@ -49,7 +49,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
             return;
           }
 
-          final chatData = chatDoc.data() as Map<String, dynamic>? ?? {};
+          final chatData = chatDoc.data() ?? {};
           final isGroupChat = chatData['isGroup'] == true;
 
           if (!isGroupChat) {
@@ -153,7 +153,7 @@ class ChatDetailCubit extends Cubit<ChatDetailState> {
 
               final chatDoc = await chatDocRef.get();
               if (chatDoc.exists) {
-                final chatData = chatDoc.data() as Map<String, dynamic>? ?? {};
+                final chatData = chatDoc.data() ?? {};
                 final currentName = (chatData['name'] ?? '').toString();
 
                 if (currentName.isEmpty) {

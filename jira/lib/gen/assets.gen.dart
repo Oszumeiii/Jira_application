@@ -16,6 +16,12 @@ class $AssetsImagesGen {
   AssetGenImage get jiraLogo =>
       const AssetGenImage('assets/images/JiraLogo.png');
 
+  /// File path: assets/images/Logo.png
+  AssetGenImage get logo => const AssetGenImage('assets/images/Logo.png');
+
+  /// File path: assets/images/Logo2.png
+  AssetGenImage get logo2 => const AssetGenImage('assets/images/Logo2.png');
+
   /// File path: assets/images/Vector.png
   AssetGenImage get vector => const AssetGenImage('assets/images/Vector.png');
 
@@ -47,6 +53,8 @@ class $AssetsImagesGen {
   /// List of all assets
   List<AssetGenImage> get values => [
         jiraLogo,
+        logo,
+        logo2,
         vector,
         bell,
         eyehide,

@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         // GoRoute(path: '/dashboard/projects', builder: (context, state) => const ProjectsTab()),
         // GoRoute(path: '/dashboard/tasks', builder: (context, state) => const SplashScreen()),
       ],
-    ); // Xoa state  tren may ao di
+    ); 
     return MultiBlocProvider(
       providers: [BlocProvider(create: (_) => AuthCubit())],
       child: MaterialApp.router(
@@ -58,4 +58,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-// Co le loi o Phan Chat , Friend

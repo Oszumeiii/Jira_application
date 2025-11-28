@@ -19,14 +19,16 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final GlobalKey<TasksTabState> tasksTabKey = GlobalKey<TasksTabState>();
+
   int _selectedIndex = 0;
   final List<String> _tabs = ['Home', 'Projects', 'Tasks', 'Chat'];
-  final List<Widget> _tabBodies = [
-    HomeTab(),
-    ProjectsTab(),
-    TasksTab(),
-    ChatTab(),
-  ];
+  // final List<Widget> _tabBodies = [
+  //   HomeTab(),
+  //   ProjectsTab(),
+  //    TasksTab(key: tasksTabKey),
+  //   ChatTab(),
+  // ];
   @override
   void initState() {
     super.initState();
@@ -76,6 +78,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   void _onTabSelected(int index) {
     setState(() => _selectedIndex = index);
+     if (index == 2) {
+    tasksTabKey.currentState?.refreshTasks(); 
+  }
   }
 
   void _onCreatePressed() {
@@ -91,14 +96,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: const Icon(Icons.add_task),
-              title: const Text('New task'),
-              onTap: () {
-                Navigator.pop(context);
-                // Thêm logic tạo task
-              },
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.add_task),
+            //   title: const Text('New task'),
+            //   onTap: () {
+            //     Navigator.pop(context);
+            //     // Thêm logic tạo task
+            //   },
+            // ),
             ListTile(
               leading: const Icon(Icons.folder_special),
               title: const Text('New project'),
@@ -115,6 +120,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+     final tabBodies = [
+      HomeTab(),
+      ProjectsTab(),
+      TasksTab(key: tasksTabKey),
+      ChatTab(),
+    ];
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F0),
       appBar: AppBar(
@@ -148,7 +160,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
-      body: IndexedStack(index: _selectedIndex, children: _tabBodies),
+      body: IndexedStack(index: _selectedIndex, children: tabBodies),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [

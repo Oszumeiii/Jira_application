@@ -6,7 +6,6 @@ import 'package:jira/features/dash_board/projects/data/models/project_model.dart
 import 'package:jira/features/dash_board/projects/domain/entities/project_entity.dart';
 import 'package:jira/features/dash_board/projects/presentation/cubit/project_cubit.dart';
 import 'package:jira/features/dash_board/projects/presentation/view/change_member_to_project.dart';
-import 'package:jira/features/dash_board/projects/presentation/view/widgets/project_info_widget.dart';
 
 class ProjectInfoPage extends StatefulWidget {
   final ProjectEntity project;
@@ -24,6 +23,7 @@ class _ProjectInfoPageState extends State<ProjectInfoPage> {
   late final TextEditingController _descCtrl;
   late final TextEditingController _statusCtrl;
   late final TextEditingController _membersCtrl;
+  late final TextEditingController _sumaryCtrl;
 
   late Future<List<UserModel>> _membersFuture;
 
@@ -34,6 +34,7 @@ class _ProjectInfoPageState extends State<ProjectInfoPage> {
     _nameCtrl = TextEditingController(text: _currentProject.name);
     _descCtrl = TextEditingController(text: _currentProject.description);
     _statusCtrl = TextEditingController(text: _currentProject.status);
+    _sumaryCtrl = TextEditingController(text: _currentProject.sumary);
     _membersCtrl = TextEditingController(text: _currentProject.members?.join(', ') ?? "");
     _membersFuture = UserService.getUsersInProject(widget.project.id!);
   }
@@ -44,6 +45,7 @@ class _ProjectInfoPageState extends State<ProjectInfoPage> {
     _descCtrl.dispose();
     _statusCtrl.dispose();
     _membersCtrl.dispose();
+    _sumaryCtrl.dispose();
     super.dispose();
   }
 
@@ -63,7 +65,7 @@ class _ProjectInfoPageState extends State<ProjectInfoPage> {
             children: [
               Icon(Icons.check_circle, color: Colors.white),
               SizedBox(width: 12),
-              Text("Cập nhật thành công!"),
+              Text("Update successfully!"),
             ],
           ),
           behavior: SnackBarBehavior.floating,
@@ -75,21 +77,24 @@ class _ProjectInfoPageState extends State<ProjectInfoPage> {
     }
   }
 
-  Future<void> _updateField({
-    String? name,
-    String? description,
-    String? status,
-    List<String>? members,
-  }) async {
-    final updated = ProjectModel.fromEntity(_currentProject).copyWith(
-      name: name,
-      description: description,
-      status: status,
-      members: members,
-      updatedAt: DateTime.now(),
-    );
-    await _applyUpdate(updated);
-  }
+Future<void> _updateField({
+  String? name,
+  String? sumary,
+  String? description,
+  String? status,
+  List<String>? members,
+}) async {
+  final updated = ProjectModel.fromEntity(_currentProject).copyWith(
+    name: name,
+    sumary: sumary,
+    description: description,
+    status: status,
+    members: members,
+    updatedAt: DateTime.now(),
+  );
+  await _applyUpdate(updated);
+}
+
 
   //----------------------- CHANGE MEMBERS -----------------------
   Future<void> _changeMember(List<UserModel> selected) async {
@@ -227,10 +232,10 @@ Future<void> _edit({
                         options != null && options.isNotEmpty
                             ? controller.text
                             : controller.text),
-                    child: const Text("Save"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue.shade600,
                     ),
+                    child: const Text("Save"),
                   ),
                 ],
               ),
@@ -278,7 +283,20 @@ Future<void> _edit({
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 const SizedBox(height: 16),
-                
+              _buildInfoCard(
+                  title: "Summary",
+                  icon: Icons.description_rounded,
+                  content: _currentProject.sumary!,
+                  onEdit: () => _edit(
+                    label: "Summary",
+                    controller: _sumaryCtrl,
+                    maxLines: 3,
+                    onSave: (t) => _updateField(sumary: t),
+                  ),
+                ),
+
+
+                const SizedBox(height: 16),
                 // Description Card
                 _buildInfoCard(
                   title: "Description",
@@ -604,7 +622,7 @@ Future<void> _edit({
                         Icon(Icons.people_outline, size: 40, color: Colors.grey.shade400),
                         const SizedBox(height: 8),
                         Text(
-                          "Chưa có thành viên",
+                          "No members",
                           style: TextStyle(color: Colors.grey.shade600),
                         ),
                       ],

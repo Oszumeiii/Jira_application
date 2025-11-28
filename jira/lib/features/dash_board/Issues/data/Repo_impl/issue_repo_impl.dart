@@ -12,17 +12,10 @@ class IssueRepoImpl extends IssueRepository{
 
   @override
     Future<IssueEntity> createIssue(IssueEntity issue) async {
-      print("🔥 SEND: ${issue.title}");
-
       final model = await remoteDataSource.createIssue(
         IssueModel.fromEntity(issue),
       );
-      print(model.toJson());
-
       final entity = model.toEntity();
-
-      print("🔥 RECEIVED: ${entity.title}");
-
       return entity;
     }
 

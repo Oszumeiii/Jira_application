@@ -7,6 +7,7 @@ abstract class IssueRemoteDataSource {
    Future<List<IssueModel>> getIssuesByProject(String idProject);
    Future<IssueModel> updateIssue (IssueModel issue);
    Future<bool> deleteIssue (String idIssue);
+   Future<List<IssueModel>> getIssueByUser(String idUser);
    
   //Future<void> removeProject(String idProject);
 }
@@ -148,6 +149,40 @@ Future<bool> deleteIssue(String idIssue) async {
     return false; 
   }
 }
+
+  @override
+  Future<List<IssueModel>> getIssueByUser(String userId) async {
+    try {
+    print('Call getIssuesByProject');
+
+   final response = await ApiClient.dio.get(
+      '/issues/assignee/$userId',
+    );
+
+    if (response.data == null || response.data is! Map<String, dynamic>) {
+      print("API did not return valid JSON");
+      return [];
+    }
+
+    final jsonData = response.data as Map<String, dynamic>;
+
+    final int statusCode = jsonData['statusCode'] ?? 500;
+
+    if (statusCode != 200) {
+      print("API returned an error: ${jsonData['message']}");
+      return [];
+    }
+
+    final dataList = (jsonData['data'] ?? []) as List<dynamic>;
+
+    return dataList.map((e) => IssueModel.fromJson(e)).toList();
+
+  } catch (e, s) {
+    print("Error while calling API getIssuesByProject: $e");
+    print(s);
+    return [];
+  }
+  }
 }
 
 

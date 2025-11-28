@@ -44,7 +44,7 @@ class ChatTabCubit extends Cubit<ChatTabState> {
           .collection('users')
           .orderBy('userName')
           .startAt([q])
-          .endAt([q + '\uf8ff'])
+          .endAt(['$q\uf8ff'])
           .limit(30)
           .get();
 
@@ -129,7 +129,7 @@ class ChatTabCubit extends Cubit<ChatTabState> {
           .collection('users')
           .orderBy('userNameSearch')
           .startAt([q])
-          .endAt([q + '\uf8ff'])
+          .endAt(['$q\uf8ff'])
           .limit(20)
           .get();
 
@@ -143,7 +143,7 @@ class ChatTabCubit extends Cubit<ChatTabState> {
           .where('isGroup', isEqualTo: true)
           .orderBy('nameSearch')
           .startAt([q])
-          .endAt([q + '\uf8ff'])
+          .endAt(['$q\uf8ff'])
           .limit(20)
           .get();
 
