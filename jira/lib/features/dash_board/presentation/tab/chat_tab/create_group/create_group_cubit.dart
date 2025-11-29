@@ -16,22 +16,18 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
 
   Future<void> searchUsers(String query) async {
     final q = query.trim();
-    
-    // Hủy timer trước đó nếu có
     _searchTimer?.cancel();
-    
+
     if (q.isEmpty) {
       await _loadFriends();
       return;
     }
 
-    // Chỉ tìm kiếm nếu query có ít nhất 2 ký tự
     if (q.length < 2) {
       emit(state.copyWith(friends: [], isLoading: false, errorMessage: ''));
       return;
     }
 
-    // Debounce: đợi 300ms sau khi người dùng ngừng gõ
     _searchTimer = Timer(const Duration(milliseconds: 300), () async {
       await _performSearch(q);
     });
@@ -43,10 +39,8 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
       final me = FirebaseConfig.auth.currentUser!.uid;
       final results = <Friend>[];
 
-      // Tìm kiếm theo email (prefix search)
-      // Tương tự như add_friend_cubit.dart
       final emailQuery = query.toLowerCase();
-      
+
       try {
         final snapshot = await FirebaseConfig.firestore
             .collection('users')
@@ -55,14 +49,10 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
             .limit(30)
             .get();
 
-        print('[CreateGroupCubit] Found ${snapshot.docs.length} users matching email: $emailQuery');
-
         for (var doc in snapshot.docs) {
-          if (doc.id == me) continue; // Bỏ qua chính mình
+          if (doc.id == me) continue;
           final data = doc.data();
           final email = (data['email'] ?? '').toString().toLowerCase();
-          
-          // Kiểm tra email có chứa query không (case-insensitive)
           if (email.contains(emailQuery)) {
             results.add(
               Friend(
@@ -75,22 +65,17 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
           }
         }
       } catch (e) {
-        print('[CreateGroupCubit._performSearch] Email search error: $e');
-        // Nếu lỗi do index, thử cách khác
         if (e.toString().contains('index')) {
-          // Fallback: lấy tất cả users và filter ở client (chỉ dùng khi ít users)
           try {
             final allUsers = await FirebaseConfig.firestore
                 .collection('users')
                 .limit(100)
                 .get();
-            
-            final emailQuery = query.toLowerCase();
+
             for (var doc in allUsers.docs) {
               if (doc.id == me) continue;
               final data = doc.data();
               final email = (data['email'] ?? '').toString().toLowerCase();
-              
               if (email.contains(emailQuery)) {
                 results.add(
                   Friend(
@@ -102,25 +87,23 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
                 );
               }
             }
-          } catch (e2) {
-            print('[CreateGroupCubit._performSearch] Fallback error: $e2');
-          }
+          } catch (_) {}
         } else {
           rethrow;
         }
       }
 
-      print('[CreateGroupCubit._performSearch] Returning ${results.length} results');
       emit(
         state.copyWith(friends: results, isLoading: false, errorMessage: ''),
       );
     } catch (e) {
-      print('[CreateGroupCubit._performSearch] Error: $e');
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'Lỗi tìm người: $e',
-        friends: [],
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: 'Error searching users: $e',
+          friends: [],
+        ),
+      );
     }
   }
 
@@ -148,11 +131,9 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
         return;
       }
 
-      // Lấy danh sách friendIds từ mảng friends trong user document
       final friendIds = List<String>.from(userDoc.data()?['friends'] ?? []);
       final friends = <Friend>[];
 
-      // Load thông tin từng friend
       for (var friendId in friendIds) {
         try {
           final friendDoc = await FirebaseConfig.firestore
@@ -165,24 +146,22 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
             friends.add(
               Friend(
                 uid: friendId,
-                name: friendData['userName'] ??
-                     friendData['firstName'] ??
-                     '',
+                name: friendData['userName'] ?? friendData['firstName'] ?? '',
                 email: friendData['email'] ?? '',
                 photoURL: friendData['photoURL'],
               ),
             );
           }
-        } catch (e) {
-          print('[CreateGroupCubit._loadFriends] Error loading friend $friendId: $e');
-        }
+        } catch (_) {}
       }
 
       emit(state.copyWith(friends: friends, isLoading: false));
     } catch (e) {
-      print('[CreateGroupCubit._loadFriends] $e');
       emit(
-        state.copyWith(isLoading: false, errorMessage: 'Lỗi tải bạn bè: $e'),
+        state.copyWith(
+          isLoading: false,
+          errorMessage: 'Error loading friends: $e',
+        ),
       );
     }
   }
@@ -190,11 +169,11 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
   Future<void> createGroup() async {
     final name = state.groupName.trim();
     if (name.isEmpty) {
-      emit(state.copyWith(errorMessage: 'Vui lòng nhập tên nhóm'));
+      emit(state.copyWith(errorMessage: 'Please enter a group name'));
       return;
     }
     if (state.selectedFriendIds.isEmpty) {
-      emit(state.copyWith(errorMessage: 'Chọn ít nhất 1 thành viên'));
+      emit(state.copyWith(errorMessage: 'Select at least 1 member'));
       return;
     }
 
@@ -203,7 +182,7 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
       final uid = FirebaseConfig.auth.currentUser!.uid;
       final members = <String>[uid, ...state.selectedFriendIds];
 
-      final docRef = await FirebaseConfig.firestore.collection('chats').add({
+      await FirebaseConfig.firestore.collection('chats').add({
         'name': name,
         'isGroup': true,
         'members': members,
@@ -215,11 +194,12 @@ class CreateGroupCubit extends Cubit<CreateGroupState> {
       });
 
       emit(state.copyWith(isLoading: false, isSuccess: true));
-      print('Created group ${docRef.id}');
     } catch (e) {
-      print('[CreateGroupCubit.createGroup] $e');
       emit(
-        state.copyWith(isLoading: false, errorMessage: 'Tạo nhóm thất bại: $e'),
+        state.copyWith(
+          isLoading: false,
+          errorMessage: 'Failed to create group: $e',
+        ),
       );
     }
   }

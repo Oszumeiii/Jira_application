@@ -1,5 +1,3 @@
-// features/dash_board/presentation/tab/chat_tab/create_group/create_group_content.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'create_group_cubit.dart';
@@ -24,7 +22,7 @@ class CreateGroupContent extends StatelessWidget {
               child: TextField(
                 onChanged: context.read<CreateGroupCubit>().onGroupNameChanged,
                 decoration: const InputDecoration(
-                  hintText: "Tên nhóm",
+                  hintText: "Group Name",
                   prefixIcon: Icon(Icons.group, color: Color(0xFF6554C0)),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(
@@ -40,12 +38,12 @@ class CreateGroupContent extends StatelessWidget {
             Row(
               children: [
                 const Text(
-                  "Thành viên",
+                  "Members",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
                 const Spacer(),
                 Text(
-                  "${state.selectedFriendIds.length} được chọn",
+                  "${state.selectedFriendIds.length} selected",
                   style: const TextStyle(color: Color(0xFF6554C0)),
                 ),
               ],
@@ -63,7 +61,7 @@ class CreateGroupContent extends StatelessWidget {
                 child: state.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : state.friends.isEmpty
-                    ? const Center(child: Text("Chưa có bạn bè"))
+                    ? const Center(child: Text("No friends"))
                     : ListView.separated(
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         itemCount: state.friends.length,
@@ -157,7 +155,7 @@ class CreateGroupContent extends StatelessWidget {
                         ),
                       )
                     : const Icon(Icons.add, size: 20),
-                label: Text(state.isLoading ? "Đang tạo..." : "Tạo nhóm"),
+                label: Text(state.isLoading ? "Creating..." : "Create Group"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF6554C0),
                   foregroundColor: Colors.white,

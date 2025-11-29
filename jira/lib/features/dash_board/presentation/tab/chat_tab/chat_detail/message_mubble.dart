@@ -71,7 +71,6 @@ class _MessageBubbleState extends State<MessageBubble> {
                       ),
                     ),
                   ),
-
                   if (_isTapped)
                     Padding(
                       padding: const EdgeInsets.only(top: 4, right: 4),
@@ -103,7 +102,6 @@ class _MessageBubbleState extends State<MessageBubble> {
             radius: 18,
           ),
           const SizedBox(width: 10),
-
           Expanded(
             child: GestureDetector(
               onTap: () => setState(() => _isTapped = !_isTapped),
@@ -115,7 +113,7 @@ class _MessageBubbleState extends State<MessageBubble> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 4, left: 4),
                       child: Text(
-                        widget.opponentName ?? 'Người dùng',
+                        widget.opponentName ?? 'User',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[700],
@@ -123,7 +121,6 @@ class _MessageBubbleState extends State<MessageBubble> {
                         ),
                       ),
                     ),
-
                   Container(
                     constraints: BoxConstraints(
                       maxWidth: MediaQuery.of(context).size.width * 0.7,
@@ -146,7 +143,6 @@ class _MessageBubbleState extends State<MessageBubble> {
                       ),
                     ),
                   ),
-
                   if (_isTapped)
                     Padding(
                       padding: const EdgeInsets.only(top: 4, left: 4),

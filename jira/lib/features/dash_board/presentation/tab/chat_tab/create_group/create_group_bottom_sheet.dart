@@ -49,7 +49,7 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
             height: maxHeight,
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white, // ensure white background
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -60,7 +60,6 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
             ),
             child: Column(
               children: [
-                // header
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
@@ -76,7 +75,7 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
                     children: [
                       Expanded(
                         child: Text(
-                          'Tạo nhóm mới',
+                          'Create New Group',
                           style: TextStyle(
                             color: AppColors.primary,
                             fontSize: 16,
@@ -91,8 +90,6 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
                     ],
                   ),
                 ),
-
-                // body
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -104,8 +101,8 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
                         TextField(
                           controller: _groupNameController,
                           decoration: InputDecoration(
-                            labelText: 'Tên nhóm',
-                            hintText: 'Nhập tên nhóm...',
+                            labelText: 'Group Name',
+                            hintText: 'Enter group name...',
                             prefixIcon: const Icon(Icons.group),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -118,7 +115,7 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
                         const SizedBox(height: 8),
                         TextField(
                           decoration: InputDecoration(
-                            hintText: 'Tìm kiếm',
+                            hintText: 'Search',
                             prefixIcon: const Icon(Icons.search),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -138,9 +135,9 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
                             if (state.friends.isEmpty) {
                               return Center(
                                 child: Text(
-                                  state.errorMessage.isNotEmpty == true
-                                      ? state.errorMessage
-                                      : 'Không có kết quả',
+                                  state.errorMessage?.isNotEmpty == true
+                                      ? state.errorMessage!
+                                      : 'No results',
                                   style: const TextStyle(color: Colors.grey),
                                 ),
                               );
@@ -167,7 +164,7 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
                                     title: Text(
                                       friend.name.isNotEmpty
                                           ? friend.name
-                                          : 'Không tên',
+                                          : 'No name',
                                     ),
                                     subtitle: Text(
                                       friend.email ?? '',
@@ -216,7 +213,7 @@ class _CreateGroupBottomSheetState extends State<CreateGroupBottomSheet> {
                                   );
                               },
                               child: const Text(
-                                'Tạo nhóm',
+                                'Create Group',
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),

@@ -68,6 +68,8 @@ class SearchResultView extends StatelessWidget {
                         chatName: item.name,
                         isGroup: item.isGroup,
                         members: item.members,
+                        opponentName: item.isGroup ? null : item.name,
+                        opponentAvatarUrl: item.isGroup ? null : item.photoURL,
                       ),
                     ),
                   ),
