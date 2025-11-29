@@ -86,7 +86,7 @@ class _LoginView extends State<LoginView> {
           builder: (context, state) {
             return LoadingOverlay(
               isLoading: state.isloading,
-              message: 'Đang đăng nhập...',
+              message: 'Logging in…',
               child: SingleChildScrollView(
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
