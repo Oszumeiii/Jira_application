@@ -97,36 +97,111 @@ class _ChatInfoPageState extends State<ChatInfoPage> {
     );
   }
 
-  Future<void> _removeFriend() async {
-    final confirm = await showDialog<bool>(
+  Future<bool?> _showCustomConfirmDialog({
+    required String title,
+    required String content,
+    required String confirmText,
+    required Color confirmColor,
+    required IconData icon,
+    required Color iconColor,
+  }) async {
+    return showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
+      barrierDismissible: false,
+      builder: (ctx) => Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text(
-          'Remove Friend',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Text(
-          'Are you sure you want to remove ${widget.chatName} from your friends list? This action cannot be undone.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: iconColor.withOpacity(0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 40, color: iconColor),
               ),
-            ),
-            child: const Text('Remove'),
+              const SizedBox(height: 20),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                content,
+                style: const TextStyle(fontSize: 15, color: Colors.black87),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 28),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: confirmColor,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        confirmText,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Future<void> _removeFriend() async {
+    final confirm = await _showCustomConfirmDialog(
+      title: 'Remove Friend',
+      content:
+          'Are you sure you want to remove ${widget.chatName} from your friends list?\nThis action cannot be undone.',
+      confirmText: 'Remove',
+      confirmColor: Colors.red,
+      icon: Icons.person_remove,
+      iconColor: Colors.red,
     );
 
     if (confirm != true) return;
@@ -174,35 +249,14 @@ class _ChatInfoPageState extends State<ChatInfoPage> {
   }
 
   Future<void> _blockUser() async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text(
-          'Block User',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Text(
-          'Are you sure you want to block ${widget.chatName}? They will not be able to send you messages.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.orange,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text('Block'),
-          ),
-        ],
-      ),
+    final confirm = await _showCustomConfirmDialog(
+      title: 'Block User',
+      content:
+          'Are you sure you want to block ${widget.chatName}?\nThey will not be able to send you messages.',
+      confirmText: 'Block',
+      confirmColor: Colors.orange.shade700,
+      icon: Icons.block,
+      iconColor: Colors.orange.shade700,
     );
 
     if (confirm == true) {
@@ -213,35 +267,14 @@ class _ChatInfoPageState extends State<ChatInfoPage> {
   }
 
   Future<void> _leaveGroup() async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text(
-          'Leave Group',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: const Text(
-          'Are you sure you want to leave this group? You will not be able to see new messages.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text('Leave'),
-          ),
-        ],
-      ),
+    final confirm = await _showCustomConfirmDialog(
+      title: 'Leave Group',
+      content:
+          'Are you sure you want to leave this group?\nYou will no longer see new messages.',
+      confirmText: 'Leave',
+      confirmColor: Colors.red,
+      icon: Icons.exit_to_app,
+      iconColor: Colors.red,
     );
 
     if (confirm != true) return;
@@ -526,7 +559,7 @@ class _ChatInfoPageState extends State<ChatInfoPage> {
 
         const SizedBox(height: 24),
 
-        // Leave group button (smaller width, matching color)
+        // Leave group button
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 60),
           child: SizedBox(
@@ -641,7 +674,6 @@ class _ChatInfoPageState extends State<ChatInfoPage> {
                     const Spacer(),
                     InkWell(
                       onTap: () => setState(() => _showInfo = false),
-                      borderRadius: BorderRadius.circular(20),
                       child: Padding(
                         padding: const EdgeInsets.all(4),
                         child: Icon(
