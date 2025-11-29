@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
         // GoRoute(path: '/dashboard/projects', builder: (context, state) => const ProjectsTab()),
         // GoRoute(path: '/dashboard/tasks', builder: (context, state) => const SplashScreen()),
       ],
-    ); 
+    );
     return MultiBlocProvider(
       providers: [BlocProvider(create: (_) => AuthCubit())],
       child: MaterialApp.router(

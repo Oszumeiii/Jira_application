@@ -347,7 +347,6 @@ class _ChatInfoPageState extends State<ChatInfoPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Header with avatar and name
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 32),
@@ -461,7 +460,6 @@ class _ChatInfoPageState extends State<ChatInfoPage> {
 
             const SizedBox(height: 12),
 
-            // Main content
             if (widget.isGroup)
               _buildGroupContent()
             else
@@ -475,7 +473,6 @@ class _ChatInfoPageState extends State<ChatInfoPage> {
   Widget _buildGroupContent() {
     return Column(
       children: [
-        // Invite link
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
@@ -517,7 +514,6 @@ class _ChatInfoPageState extends State<ChatInfoPage> {
 
         const SizedBox(height: 12),
 
-        // Members list
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(

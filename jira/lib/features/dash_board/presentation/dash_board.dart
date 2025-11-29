@@ -78,9 +78,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   void _onTabSelected(int index) {
     setState(() => _selectedIndex = index);
-     if (index == 2) {
-    tasksTabKey.currentState?.refreshTasks(); 
-  }
+    if (index == 2) {
+      tasksTabKey.currentState?.refreshTasks();
+    }
   }
 
   void _onCreatePressed() {
@@ -120,7 +120,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-     final tabBodies = [
+    final tabBodies = [
       HomeTab(),
       ProjectsTab(),
       TasksTab(key: tasksTabKey),
@@ -130,34 +130,49 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F0),
       appBar: AppBar(
+        toolbarHeight: 80,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        automaticallyImplyLeading: false,
+        // Đường viền dưới đẹp
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(color: Colors.grey.shade200, height: 1.0),
+        ),
+
         title: Text(
           _tabs[_selectedIndex],
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-        ),
-        backgroundColor: const Color(0xFFF5F5F0),
-        actions: [
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.notifications),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const NotifTab()),
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.account_circle),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                  );
-                },
-              ),
-            ],
+          style: const TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF0052CC),
+            letterSpacing: -0.8,
           ),
+        ),
+
+        actions: [
+          IconButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const NotifTab()),
+            ),
+            icon: const Icon(Icons.notifications_outlined),
+            iconSize: 26,
+            color: const Color(0xFF0052CC),
+            splashRadius: 24,
+          ),
+          IconButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ProfileScreen()),
+            ),
+            icon: const Icon(Icons.account_circle_outlined),
+            iconSize: 26,
+            color: const Color(0xFF0052CC),
+            splashRadius: 24,
+          ),
+          const SizedBox(width: 8),
         ],
       ),
       body: IndexedStack(index: _selectedIndex, children: tabBodies),
