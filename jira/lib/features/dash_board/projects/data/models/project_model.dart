@@ -14,6 +14,7 @@ class ProjectModel extends ProjectEntity {
     required super.status,
     required super.createdAt,
     super.updatedAt,
+    super.progress = 0.0,
   });
 
 ProjectModel copyWith({
@@ -28,6 +29,7 @@ ProjectModel copyWith({
   String? status,
   DateTime? createdAt,
   DateTime? updatedAt,
+  double? progress,
 }) {
   return ProjectModel(
     id: id ?? this.id,
@@ -41,6 +43,7 @@ ProjectModel copyWith({
     status: status ?? this.status,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
+     progress: progress ?? this.progress,
   );
 }
 
@@ -58,6 +61,7 @@ ProjectModel copyWith({
       status: entity.status,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
+      progress: entity.progress,
     );
   }
 
@@ -86,6 +90,7 @@ factory ProjectModel.fromJson(Map<String, dynamic> json) {
     status: json['status'] ?? 'active',
     createdAt: parseDate(json['createdAt']),
     updatedAt: json['updatedAt'] != null ? parseDate(json['updatedAt']) : null,
+    progress: (json['progress'] != null) ? (json['progress'] as num).toDouble() : 0.0,
   );
 }
 
@@ -104,6 +109,7 @@ factory ProjectModel.fromJson(Map<String, dynamic> json) {
       "status": status,
       "createdAt": createdAt.toUtc().toIso8601String(),
       "updatedAt": updatedAt?.toUtc().toIso8601String(),
+      "progress": progress, 
     };
   }
 
@@ -120,6 +126,7 @@ factory ProjectModel.fromJson(Map<String, dynamic> json) {
       status: status,
       createdAt: createdAt,
       updatedAt: updatedAt,
+      progress: progress,
     );
   }
 }

@@ -45,8 +45,6 @@ class IssueCubit extends Cubit<IssueState> {
     emit(state.copyWith(isLoading: true, error: null));
     try {
       final newIssue = await createIssueUsecase(issue);
-      print (newIssue.id);
-      print (newIssue.title);
       final updatedTodo = List.of(state.todo)..add(newIssue);
       emit(state.copyWith(isLoading: false, todo: updatedTodo));
     } catch (e) {

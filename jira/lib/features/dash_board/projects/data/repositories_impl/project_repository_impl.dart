@@ -1,4 +1,6 @@
 import 'package:injectable/injectable.dart';
+import 'package:jira/core/injection.dart';
+import 'package:jira/features/dash_board/Issues/domain/Usecase/get_issue_by_project_usecase.dart';
 import 'package:jira/features/dash_board/projects/data/data_source/project_remote_datasource.dart';
 import 'package:jira/features/dash_board/projects/data/models/project_model.dart';
 import 'package:jira/features/dash_board/projects/domain/entities/project_entity.dart';
@@ -28,16 +30,37 @@ class ProjectRepositoryImpl extends ProjectRepository{
       createdAt: project.createdAt,
       updatedAt: project.updatedAt,
     );
-    print(project);
     return remoteDataSource.createProject(projectModel);
   }
   
 @override
 Future<List<ProjectEntity>> getAllProjects() async {
+  // Lấy dữ liệu từ remoteDataSource
   final projectModels = await remoteDataSource.getAllProjects();
-  final projects = projectModels.map((m) => m.toEntity()).toList();
-  return projects;
+
+  // Tính progress cho từng project
+  final projectsWithProgress = await Future.wait(
+    projectModels.map((project) async {
+      double progress = 0.0;
+      try {
+        final getIssueUsecase = getIt<GetIssueByProjectUsecase>();
+        final issues = await getIssueUsecase.call(project.id!);
+        if (issues.isNotEmpty) {
+          final completed = issues.where((issue) => issue.status.toLowerCase() == 'done').length;
+          progress = completed / issues.length;
+        }
+      } catch (e) {
+        print("Error fetching progress for project ${project.id}: $e");
+      }
+
+      // Trả về ProjectModel đã có progress, chuyển thành Entity
+      return project.copyWith(progress: progress).toEntity();
+    }),
+  );
+
+  return projectsWithProgress;
 }
+
 
   @override
   Future<void> removeProject(String idProject) async{

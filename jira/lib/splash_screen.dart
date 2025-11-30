@@ -4,7 +4,9 @@ import 'package:jira/core/injection.dart';
 import 'package:jira/features/dash_board/projects/presentation/cubit/project_cubit.dart';
 import 'package:jira/features/dash_board/presentation/dash_board.dart';
 import 'package:jira/features/login_signup/domain/cubit/AuthCubit.dart';
-import 'package:jira/features/login_signup/presenation/login/login_view.dart';
+import 'package:jira/features/login_signup/presenation/onboarding/onboarding_view.dart';
+
+
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,42 +16,40 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  late Future<bool> _initFuture;
+  bool _showSplash = true;
 
   @override
   void initState() {
     super.initState();
-    // Delay 2 giây rồi trả về trạng thái đăng nhập
-    _initFuture = Future.delayed(const Duration(seconds: 2), () {
-      return context.read<AuthCubit>().state.isLoggedIn;
+    // Giữ splash 2 giây
+    Future.delayed(const Duration(seconds: 5), () {
+      if (mounted) {
+        setState(() {
+          _showSplash = false;
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-      future: _initFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState != ConnectionState.done) {
-          return _buildSplashUI();
-        }
+    if (_showSplash) {
+      return _buildSplashUI();
+    }
 
-        final isLoggedIn = snapshot.data ?? false;
-
-        if (isLoggedIn) {
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, authState) {
+        if (authState.isLoggedIn) {
           return MultiBlocProvider(
             providers: [
-              BlocProvider<ProjectCubit>(create: (_) => getIt<ProjectCubit>()),
+              BlocProvider<ProjectCubit>(
+                create: (_) => getIt<ProjectCubit>()..loadProjects(), 
+              ),
             ],
             child: const DashboardScreen(),
           );
         } else {
-          return MultiBlocProvider(
-            providers: [
-              BlocProvider<ProjectCubit>(create: (_) => getIt<ProjectCubit>()),
-            ],
-            child: const DashboardScreen(),
-          );
+          return const OnboardingScreen();
         }
       },
     );
@@ -61,15 +61,10 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Center(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox(
               height: 99,
-              child: Image.asset(
-                "assets/images/Logo2.png",
-                fit: BoxFit.contain,
-              ),
+              child: Image.asset("assets/images/Logo2.png", fit: BoxFit.contain),
             ),
             const SizedBox(width: 10),
             const Text(

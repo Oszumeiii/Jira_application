@@ -25,22 +25,33 @@ class CommentModel extends CommentEntity {
   // }
 
 
-  factory CommentModel.fromJson(Map<String, dynamic> json) {
-    final createdAtJson = json['createdAt'];
-    final dateTime = DateTime.fromMillisecondsSinceEpoch(
-      (createdAtJson['_seconds'] * 1000) + (createdAtJson['_nanoseconds'] ~/ 1000000),
-    );
+factory CommentModel.fromJson(Map<String, dynamic> json) {
+  final createdAt = json['createdAt'];
 
-    return CommentModel(
-      id: json['id'],
-      taskId: json['taskId'] ?? '',
-      userId: json['userId'],
-      content: json['content'],
-      username: json['username'],
-      email: json['email'],
-      createdAt: dateTime,
+  DateTime parsedDate;
+
+  if (createdAt is String) {
+    parsedDate = DateTime.parse(createdAt);
+  } else if (createdAt is Map<String, dynamic>) {
+    parsedDate = DateTime.fromMillisecondsSinceEpoch(
+      (createdAt['_seconds'] * 1000) +
+      (createdAt['_nanoseconds'] ~/ 1000000),
     );
+  } else {
+    parsedDate = DateTime.now();
   }
+
+  return CommentModel(
+    id: json['id'],
+    taskId: json['taskId'] ?? '',
+    userId: json['userId'],
+    content: json['content'],
+    username: json['username'],
+    email: json['email'],
+    createdAt: parsedDate,
+  );
+}
+
 
 
 

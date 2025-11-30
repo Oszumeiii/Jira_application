@@ -22,7 +22,7 @@ class _HomeTabState extends State<HomeTab> {
   @override
   void initState() {
     super.initState();
-    context.read<ProjectCubit>().loadProjects();
+    //context.read<ProjectCubit>().loadProjects();
     _tasksTodayFuture = _loadTasksToday();
   }
 
@@ -148,42 +148,43 @@ class _HomeTabState extends State<HomeTab> {
 
           /// PROJECT LIST
           BlocBuilder<ProjectCubit, ProjectState>(
-            builder: (context, state) {
-              final projects = state.projects;
+  builder: (context, state) {
+    final projects = state.projects;
 
-              if (state.isLoading && projects.isEmpty) {
-                return const Center(child: CircularProgressIndicator());
-              }
+    if (state.isLoading && projects.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
-              if (projects.isEmpty) {
-                return const Center(child: Text("No projects available"));
-              }
+    if (projects.isEmpty) {
+      return const Center(child: Text("No projects available"));
+    }
 
-              return ListView.separated(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: projects.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final project = projects[index];
-                  return FutureBuilder<double>(
-                    future: getProjectProgress(project.id!),
-                    builder: (context, snapshot) {
-                      final progress = snapshot.data ?? 0.0;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: ProjectCard(
-                          name: project.name,
-                          description: project.sumary ?? '',
-                          progress: progress,
-                        ),
-                      );
-                    },
-                  );
-                },
-              );
-            },
-          ),
+    return ListView.separated(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: projects.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final project = projects[index];
+
+        return FutureBuilder<double>(
+          future: getProjectProgress(project.id!),
+          builder: (context, snapshot) {
+            final progress = snapshot.data ?? 0.0; 
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ProjectCard(
+                name: project.name,
+                description: project.sumary ?? '',
+                progress: progress,
+              ),
+            );
+          },
+        );
+      },
+    );
+  },
+)
         ],
       ),
     );
@@ -237,7 +238,6 @@ class _HomeTabState extends State<HomeTab> {
 
       return tasks.where((task) => task.status.toLowerCase() != "done").toList();
     } catch (e) {
-      print("Error load tasks today: $e");
       return [];
     }
   }
@@ -252,7 +252,6 @@ class _HomeTabState extends State<HomeTab> {
       final completed = issues.where((issue) => issue.status.toLowerCase() == 'done').length;
       return completed / issues.length;
     } catch (e) {
-      print("Error fetching project progress: $e");
       return 0.0;
     }
   }

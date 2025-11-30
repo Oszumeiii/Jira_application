@@ -100,8 +100,10 @@ class LoginCubit extends Cubit<LoginState> {
         if (token != null) {
           final storage = FlutterSecureStorage();
           await storage.write(key: 'idToken', value: token);
+          await storage.write(key: 'uid', value: uid);
         }
-        _authCubit.login(uid);
+
+        await _authCubit.login(uid, token!);
         emit(
           state.copyWith(
             isloading: false,

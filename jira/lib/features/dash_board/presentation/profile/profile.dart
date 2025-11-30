@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jira/core/injection.dart';
 import 'package:jira/features/dash_board/presentation/profile/cubit/profile_cubit.dart';
 import 'package:jira/features/dash_board/presentation/profile/cubit/profile_state.dart';
 import 'dart:io';
+
+import 'package:jira/features/login_signup/domain/cubit/AuthCubit.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -284,6 +287,7 @@ class _ProfileView extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: GestureDetector(
                     onTap: () {
+                      getIt<AuthCubit>().logout();
                       context.go('/login');
                     },
                     child: AnimatedContainer(

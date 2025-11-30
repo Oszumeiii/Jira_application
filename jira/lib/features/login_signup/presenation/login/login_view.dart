@@ -26,7 +26,7 @@ class _LoginView extends State<LoginView> {
   }
 
   void _navigationToDashboard() {
-    context.go('/dashboard');
+    context.go('/');
   }
 
   @override

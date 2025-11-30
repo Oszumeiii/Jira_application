@@ -12,6 +12,8 @@ class ProjectEntity {
   final String status;
   final DateTime createdAt;
   final DateTime? updatedAt;
+  final double progress ;
+
 
   const ProjectEntity({
     required this.id,
@@ -25,5 +27,6 @@ class ProjectEntity {
     required this.status,
     required this.createdAt,
     required this.updatedAt,
+    this.progress = 0.0,
   });
 }

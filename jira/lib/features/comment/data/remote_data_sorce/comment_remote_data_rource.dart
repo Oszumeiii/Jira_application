@@ -46,6 +46,7 @@ class CommentRemoteDataSourceImpl implements CommentRemoteDataSource {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         final data = response.data['data'] as Map<String, dynamic>;
+        print(data);
         return CommentModel.fromJson(data);
       } else {
         throw Exception('Failed to create comment');

@@ -42,6 +42,8 @@ class ProjectCubit extends Cubit<ProjectState> {
     }
   }
 
+  
+
   Future<void> createProject(ProjectEntity project) async {
     emit(state.copyWith(isLoading: true, isSuccess: false, errorMessage: ''));
     try {
@@ -65,7 +67,6 @@ class ProjectCubit extends Cubit<ProjectState> {
   }
 
   Future<void> removeProject(String idProject) async {
-    print(idProject);
     emit(state.copyWith(isLoading: true, isSuccess: false, errorMessage: ''));
 
     try {
@@ -94,7 +95,6 @@ Future<void> updateProject(ProjectEntity project) async {
 
   try {
     final updatedProject = await updateProjectUsecase(project);
-
     final updatedProjects = List<ProjectEntity>.from(state.projects);
     final index = updatedProjects.indexWhere((p) => p.id == updatedProject.id);
 

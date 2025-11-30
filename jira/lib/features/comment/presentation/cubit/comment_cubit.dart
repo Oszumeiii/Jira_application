@@ -43,6 +43,7 @@ class CommentCubit extends Cubit<CommentState> {
         createdAt: DateTime.now(),
       );
       final createdComment = await createCommentUsecase(newComment);
+      print('Created Comment: ${createdComment.id}');
       final updatedComments = List<CommentEntity>.from(state.comments)..add(createdComment);
       emit(state.copyWith(isLoading: false, comments: updatedComments));
     } catch (e) {
