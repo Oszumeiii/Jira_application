@@ -4,7 +4,9 @@ import 'package:jira/core/injection.dart';
 import 'package:jira/features/dash_board/Issues/presentation/cubit/issue_cubit.dart';
 import 'package:jira/features/dash_board/projects/presentation/cubit/project_cubit.dart';
 import 'package:jira/features/dash_board/projects/presentation/cubit/project_state.dart';
-import 'package:jira/features/dash_board/Issues/presentation/detail_project_page.dart';
+import 'package:jira/features/dash_board/Issues/presentation/board_project.dart';
+import 'package:jira/features/dash_board/projects/presentation/view/project_info_page.dart';
+import 'package:jira/features/login_signup/domain/cubit/AuthCubit.dart';
 import '../../../../login_signup/presenation/widgets/project_row.dart';
 
 class ProjectsTab extends StatelessWidget {
@@ -20,33 +22,32 @@ class ProjectsTab extends StatelessWidget {
           );
         } else if (state.errorMessage.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.errorMessage)),
+            SnackBar(
+              content: Text(state.errorMessage),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              backgroundColor: Colors.green.shade600,
+            ),
           );
         }
       },
       builder: (context, state) {
         final projects = state.projects;
+        final currentUid = getIt<AuthCubit>().state.uid; 
 
         if (state.isLoading && projects.isEmpty) {
           return const Center(child: CircularProgressIndicator());
         }
 
         if (projects.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text("No projects yet."),
-                const SizedBox(height: 12),
-                ElevatedButton(
-                  onPressed: () {
-                  },
-                  child: const Text("Create your first project"),
-                ),
-              ],
-            ),
+          return const Center(
+            child: Text("No projects yet."),
           );
         }
+
+
+        final myProjects = projects.where((p) => p.ownerId == currentUid).toList();
+        final joinedProjects = projects.where((p) => p.ownerId != currentUid).toList();
 
         return RefreshIndicator(
           onRefresh: () async {
@@ -54,49 +55,115 @@ class ProjectsTab extends StatelessWidget {
           },
           child: Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: ListView(
               children: [
-                const Text(
-                  "My Projects",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: ListView.separated(
-                    itemCount: projects.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 8),
-                    itemBuilder: (context, index) {
-                      final project = projects[index];
-                      return GestureDetector(
-                        onTap: () {
-                            Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BlocProvider(
-                                create: (_) => getIt<IssueCubit>(),
-                                child: ProjectDetailPage(project: project),
-                              ),
+                // const Text(
+                //   "Projects",
+                //   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                // ),
+                // const SizedBox(height: 12),
+
+                ExpansionTile(
+                  title: Text("My Projects",
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+                  initiallyExpanded: true,
+                  children: myProjects.isEmpty
+                      ? [const ListTile(title: Text("No projects created."))]
+                      : myProjects.map((project) {
+                          return GestureDetector(
+                            child: ProjectRow(
+                              name: project.name,
+                              projectType: project.sumary!,
+                              status: project.status,
+                              onDetail: () {
+                                final cubit = context.read<ProjectCubit>();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BlocProvider.value(
+                                      value: cubit,
+                                      child: ProjectInfoPage(project: project),
+                                    ),
+                                  ),
+                                );
+                              },
+                              onDelete: () async {
+                                await context.read<ProjectCubit>().removeProject(project.id!);
+                              },
+                              
                             ),
+                            onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BlocProvider(
+                                      create: (_) => getIt<IssueCubit>(),
+                                      child: BoardProjectScreen(project: project),
+                                    ),
+                                  ),
+                                );
+                              },
                           );
+                        }).toList(),
+                ),
 
-                          },
+                const SizedBox(height: 8),
 
-                        child: ProjectRow(
-                          name: project.name,
-                          projectType: project.description ,
-                          status: project.status,
-                          onEdit: () {
-                          },
-                          onDelete: () async {
-                            await context
-                                .read<ProjectCubit>()
-                                .removeProject(project.id!);
-                          },
-                        ),
-                      );
-                    },
-                  ),
+                ExpansionTile(
+                  title: Text("Joined Projects",
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+                  initiallyExpanded: false,
+                  children: joinedProjects.isEmpty
+                      ? [const ListTile(title: Text("No joined projects."))]
+                      : joinedProjects.map((project) {
+                          return GestureDetector(
+                            child: ProjectRow(
+                              name: project.name,
+                              projectType: project.sumary!,
+                              status: project.status,
+                              onDetail: () {
+                                final cubit = context.read<ProjectCubit>();
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BlocProvider.value(
+                                      value: cubit,
+                                      child: ProjectInfoPage(project: project),
+                                    ),
+                                  ),
+                                );
+                              },
+
+                              onLeave: () async {
+                                await context.read<ProjectCubit>().onLeaveProject(project , currentUid);
+                              },
+                            
+
+                            //   if (context.mounted) {
+                            //     ScaffoldMessenger.of(context).showSnackBar(
+                            //       const SnackBar(
+                            //         content: Text("You have left the project"),
+                            //         behavior: SnackBarBehavior.floating,
+                            //       ),
+                            //     );
+                            //   }
+                             
+                              
+                            ),
+
+                            onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BlocProvider(
+                                      create: (_) => getIt<IssueCubit>(),
+                                      child: BoardProjectScreen(project: project),
+                                    ),
+                                  ),
+                                );
+                              },
+                          );
+                        }).toList(),
                 ),
               ],
             ),
@@ -105,4 +172,6 @@ class ProjectsTab extends StatelessWidget {
       },
     );
   }
+
+  
 }

@@ -26,7 +26,7 @@ class _LoginView extends State<LoginView> {
   }
 
   void _navigationToDashboard() {
-    context.go('/dashboard');
+    context.go('/');
   }
 
   @override
@@ -49,23 +49,35 @@ class _LoginView extends State<LoginView> {
                       _navigationToDashboard();
                       context.read<LoginCubit>().resetLoginSuccess();
                     } else if (state.errorMessage.isNotEmpty) {
-                      context.read<LoginCubit>().resetErrorMessage();
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text("Đăng nhập thất bại"),
-                          content: Text(state.errorMessage),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                                context.read<LoginCubit>().resetErrorMessage();
-                              },
-                              child: Text("OK"),
+                      final snackBar = SnackBar(
+                      behavior: SnackBarBehavior.floating,
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      duration: Duration(seconds: 3),
+                      content: Container(
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade400,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.error_outline, color: Colors.white),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                "Invalid email or password",
+                                style: TextStyle(color: Colors.white, fontSize: 16),
+                              ),
                             ),
                           ],
                         ),
-                      );
+                      ),
+                    );
+
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                    context.read<LoginCubit>().resetErrorMessage();
                     }
                   },
                   builder: (context, state) {
@@ -73,6 +85,7 @@ class _LoginView extends State<LoginView> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const SizedBox(height : 30),
                         Center(
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 64.63),
@@ -80,7 +93,7 @@ class _LoginView extends State<LoginView> {
                               width: 37.72,
                               height: 42.97,
                               child: Image(
-                                image: AssetImage('assets/images/JiraLogo.png'),
+                                image: AssetImage('assets/images/Logo.png'),
                               ),
                             ),
                           ),

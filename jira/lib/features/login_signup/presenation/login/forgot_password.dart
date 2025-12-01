@@ -60,6 +60,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const SizedBox(height : 30),
                         Center(
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(0, 0, 0, 64.63),
@@ -67,7 +68,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               width: 37.72,
                               height: 42.97,
                               child: Image(
-                                image: AssetImage('assets/images/JiraLogo.png'),
+                                image: AssetImage('assets/images/Logo.png'),
                               ),
                             ),
                           ),

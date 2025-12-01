@@ -11,10 +11,14 @@ class IssueRepoImpl extends IssueRepository{
 
 
   @override
-  Future<IssueEntity> createIssue(IssueEntity issue) {
-    return remoteDataSource.createIssue(IssueModel.fromEntity(issue))
-        .then((model) => model.toEntity());
-  }
+    Future<IssueEntity> createIssue(IssueEntity issue) async {
+      final model = await remoteDataSource.createIssue(
+        IssueModel.fromEntity(issue),
+      );
+      final entity = model.toEntity();
+      return entity;
+    }
+
 
   @override
   Future<IssueEntity> getIssueById(String issueId) {

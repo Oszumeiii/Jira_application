@@ -7,6 +7,7 @@ abstract class IssueRemoteDataSource {
    Future<List<IssueModel>> getIssuesByProject(String idProject);
    Future<IssueModel> updateIssue (IssueModel issue);
    Future<bool> deleteIssue (String idIssue);
+   Future<List<IssueModel>> getIssueByUser(String idUser);
    
   //Future<void> removeProject(String idProject);
 }
@@ -15,7 +16,7 @@ abstract class IssueRemoteDataSource {
 
 @Injectable(as: IssueRemoteDataSource) 
 class IssueRemoteDataSourceImpl implements IssueRemoteDataSource {
- @override
+@override
 Future<IssueModel> createIssue(IssueModel issue) async {
   try {
     final response = await ApiClient.dio.post(
@@ -28,24 +29,24 @@ Future<IssueModel> createIssue(IssueModel issue) async {
     }
 
     final jsonData = response.data as Map<String, dynamic>;
-    final statusCode = jsonData['statusCode'] ?? 500;
 
+    final statusCode = jsonData['statusCode'];
     if (statusCode != 201) {
-      final message = jsonData['message'] ?? "Unknown error";
-      throw Exception("API Error: $message");
+      throw Exception("API Error: ${jsonData['message'] ?? 'Unknown error'}");
     }
 
-    final data = jsonData['data'];
+    final data = jsonData['data']['issue'];
     if (data == null || data is! Map<String, dynamic>) {
-      throw Exception("API returned empty or invalid data");
+      throw Exception("API returned invalid or empty data");
     }
-
     return IssueModel.fromJson(data);
+
   } catch (e) {
     print("Error while creating issue: $e");
-    rethrow; 
+    rethrow;
   }
 }
+
 
 
   @override
@@ -148,6 +149,40 @@ Future<bool> deleteIssue(String idIssue) async {
     return false; 
   }
 }
+
+  @override
+  Future<List<IssueModel>> getIssueByUser(String userId) async {
+    try {
+    print('Call getIssuesByProject');
+
+   final response = await ApiClient.dio.get(
+      '/issues/assignee/$userId',
+    );
+
+    if (response.data == null || response.data is! Map<String, dynamic>) {
+      print("API did not return valid JSON");
+      return [];
+    }
+
+    final jsonData = response.data as Map<String, dynamic>;
+
+    final int statusCode = jsonData['statusCode'] ?? 500;
+
+    if (statusCode != 200) {
+      print("API returned an error: ${jsonData['message']}");
+      return [];
+    }
+
+    final dataList = (jsonData['data'] ?? []) as List<dynamic>;
+
+    return dataList.map((e) => IssueModel.fromJson(e)).toList();
+
+  } catch (e, s) {
+    print("Error while calling API getIssuesByProject: $e");
+    print(s);
+    return [];
+  }
+  }
 }
 
 

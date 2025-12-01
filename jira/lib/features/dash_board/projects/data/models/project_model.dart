@@ -7,14 +7,64 @@ class ProjectModel extends ProjectEntity {
     required super.name,
     required super.priority , 
     required super.projectType , 
-    required super.sumary ,
+     super.sumary ,
     required super.description,
     super.ownerId,
     super.members,
     required super.status,
     required super.createdAt,
     super.updatedAt,
+    super.progress = 0.0,
   });
+
+ProjectModel copyWith({
+  String? id,
+  String? name,
+  String? priority,
+  String? projectType,
+  String? sumary,
+  String? description,
+  String? ownerId,
+  List<String>? members,
+  String? status,
+  DateTime? createdAt,
+  DateTime? updatedAt,
+  double? progress,
+}) {
+  return ProjectModel(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    priority: priority ?? this.priority,
+    projectType: projectType ?? this.projectType,
+    sumary: sumary ?? this.sumary,
+    description: description ?? this.description,
+    ownerId: ownerId ?? this.ownerId,
+    members: members ?? this.members,
+    status: status ?? this.status,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+     progress: progress ?? this.progress,
+  );
+}
+
+
+  factory ProjectModel.fromEntity(ProjectEntity entity) {
+    return ProjectModel(
+      id: entity.id,
+      name: entity.name,
+      priority: entity.priority,
+      projectType: entity.projectType,
+      sumary: entity.sumary,
+      description: entity.description,
+      ownerId: entity.ownerId,
+      members: entity.members,
+      status: entity.status,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
+      progress: entity.progress,
+    );
+  }
+
 
 
 factory ProjectModel.fromJson(Map<String, dynamic> json) {
@@ -40,6 +90,7 @@ factory ProjectModel.fromJson(Map<String, dynamic> json) {
     status: json['status'] ?? 'active',
     createdAt: parseDate(json['createdAt']),
     updatedAt: json['updatedAt'] != null ? parseDate(json['updatedAt']) : null,
+    progress: (json['progress'] != null) ? (json['progress'] as num).toDouble() : 0.0,
   );
 }
 
@@ -58,6 +109,7 @@ factory ProjectModel.fromJson(Map<String, dynamic> json) {
       "status": status,
       "createdAt": createdAt.toUtc().toIso8601String(),
       "updatedAt": updatedAt?.toUtc().toIso8601String(),
+      "progress": progress, 
     };
   }
 
@@ -74,6 +126,7 @@ factory ProjectModel.fromJson(Map<String, dynamic> json) {
       status: status,
       createdAt: createdAt,
       updatedAt: updatedAt,
+      progress: progress,
     );
   }
 }

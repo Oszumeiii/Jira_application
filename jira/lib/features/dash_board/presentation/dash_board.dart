@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:jira/features/dash_board/presentation/add_project_page.dart';
 import 'package:jira/features/dash_board/presentation/profile/profile.dart';
-import 'package:jira/features/dash_board/presentation/tab/chat_tab/chat_tab.dart';
+import 'package:jira/features/dash_board/presentation/tab/chat_tab/chat_tab/chat_tab.dart';
 import 'package:jira/features/dash_board/presentation/tab/home_tab.dart';
 import 'package:jira/features/dash_board/presentation/tab/notif_tab.dart';
 import 'package:jira/features/dash_board/projects/domain/entities/project_entity.dart';
@@ -19,20 +19,22 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final GlobalKey<TasksTabState> tasksTabKey = GlobalKey<TasksTabState>();
+
   int _selectedIndex = 0;
   final List<String> _tabs = ['Home', 'Projects', 'Tasks', 'Chat'];
-  final List<Widget> _tabBodies = [
-    HomeTab(),
-    ProjectsTab(),
-    TasksTab(),
-    ChatTab(),
-  ];
+  // final List<Widget> _tabBodies = [
+  //   HomeTab(),
+  //   ProjectsTab(),
+  //    TasksTab(key: tasksTabKey),
+  //   ChatTab(),
+  // ];
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ProjectCubit>().loadProjects();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   context.read<ProjectCubit>().loadProjects();
+    // });
   }
 
   void _showBottomSheetAddProject() async {
@@ -49,19 +51,36 @@ class _DashboardScreenState extends State<DashboardScreen> {
           .createProject(project)
           .then((_) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Project created successfully")),
+              SnackBar(
+                content: const Text("Project created Sucessfully !"),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                backgroundColor: const Color.fromARGB(255, 0, 52, 137),
+              ),
             );
           })
           .catchError((e) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text("Error: $e")));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text("Error !"),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                backgroundColor: Colors.green.shade600,
+              ),
+            );
           });
     }
   }
 
   void _onTabSelected(int index) {
     setState(() => _selectedIndex = index);
+    if (index == 2) {
+      tasksTabKey.currentState?.refreshTasks();
+    }
   }
 
   void _onCreatePressed() {
@@ -77,14 +96,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ListTile(
-              leading: const Icon(Icons.add_task),
-              title: const Text('New task'),
-              onTap: () {
-                Navigator.pop(context);
-                // Thêm logic tạo task
-              },
-            ),
+            // ListTile(
+            //   leading: const Icon(Icons.add_task),
+            //   title: const Text('New task'),
+            //   onTap: () {
+            //     Navigator.pop(context);
+            //     // Thêm logic tạo task
+            //   },
+            // ),
             ListTile(
               leading: const Icon(Icons.folder_special),
               title: const Text('New project'),
@@ -101,40 +120,61 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final tabBodies = [
+      HomeTab(),
+      ProjectsTab(),
+      TasksTab(key: tasksTabKey),
+      ChatTab(),
+    ];
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F0),
       appBar: AppBar(
+        toolbarHeight: 70,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        automaticallyImplyLeading: false,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(color: Colors.grey.shade200, height: 1.0),
+        ),
+
         title: Text(
           _tabs[_selectedIndex],
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
-        ),
-        backgroundColor: const Color(0xFFF5F5F0),
-        actions: [
-          Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.notifications),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const NotifTab()),
-                  );
-                },
-              ),
-              IconButton(
-                icon: const Icon(Icons.account_circle),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const ProfileScreen()),
-                  );
-                },
-              ),
-            ],
+          style: const TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF0052CC),
+            letterSpacing: -0.8,
           ),
+        ),
+
+        actions: [
+          IconButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const NotifTab()),
+            ),
+            icon: const Icon(Icons.notifications_outlined),
+            iconSize: 26,
+            color: const Color(0xFF0052CC),
+            splashRadius: 24,
+          ),
+          IconButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ProfileScreen()),
+            ),
+            icon: const Icon(Icons.account_circle_outlined),
+            iconSize: 26,
+            color: const Color(0xFF0052CC),
+            splashRadius: 24,
+          ),
+          const SizedBox(width: 8),
         ],
       ),
-      body: IndexedStack(index: _selectedIndex, children: _tabBodies),
+      body: IndexedStack(index: _selectedIndex, children: tabBodies),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [

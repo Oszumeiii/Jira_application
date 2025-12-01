@@ -1,120 +1,165 @@
-// features/add_friend/cubit/add_friend_cubit.dart
-import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
+import 'package:jira/core/firebase_config.dart';
 import 'add_friend_state.dart';
 
 class AddFriendCubit extends Cubit<AddFriendState> {
-  final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  Timer? _debounce;
-
   AddFriendCubit() : super(const AddFriendState());
 
   void onQueryChanged(String query) {
-    emit(state.copyWith(query: query, message: null));
+    final trimmed = query.trim();
+    emit(state.copyWith(query: trimmed));
 
-    if (query.isEmpty || query.length < 2) {
-      emit(state.copyWith(suggestions: [], isLoading: false));
-      return;
+    if (trimmed.length >= 3) {
+      _searchUsers(trimmed);
+    } else {
+      emit(state.copyWith(suggestions: [], message: null));
     }
-
-    _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 400), () {
-      _searchUsers(query.trim());
-    });
   }
 
-  Future<void> _searchUsers(String query) async {
-    emit(state.copyWith(isLoading: true, suggestions: []));
+  Future<void> _searchUsers(String email) async {
+    emit(state.copyWith(isLoading: true, message: null));
 
     try {
-      final currentUid = _auth.currentUser!.uid;
+      final currentUid = FirebaseConfig.auth.currentUser!.uid;
 
-      final snapshot = await _db
+      final snapshot = await FirebaseConfig.firestore
           .collection('users')
-          .where('email', isGreaterThanOrEqualTo: query)
-          .where('email', isLessThanOrEqualTo: '$query\uf8ff')
-          .limit(5)
+          .where('email', isGreaterThanOrEqualTo: email)
+          .where('email', isLessThanOrEqualTo: '$email\uf8ff')
+          .limit(10)
           .get();
 
-      final currentDoc = await _db.collection('users').doc(currentUid).get();
-      final friends = List<String>.from(currentDoc['friends'] ?? []);
+      final users = <UserSuggestion>[];
 
-      final suggestions = <UserSuggestion>[];
       for (var doc in snapshot.docs) {
         final uid = doc.id;
-        if (uid == currentUid || friends.contains(uid)) continue;
+        if (uid == currentUid) continue;
 
         final data = doc.data();
-        suggestions.add(
+        final friends = List<String>.from(data['friends'] ?? []);
+        if (friends.contains(currentUid)) continue;
+
+        users.add(
           UserSuggestion(
             uid: uid,
-            name: data['name'] ?? 'Unknown',
-            email: data['email'],
+            name: data['userName'] ?? data['firstName'] ?? 'Unknown',
+            email: data['email'] ?? '',
             photoURL: data['photoURL'],
           ),
         );
       }
 
-      emit(state.copyWith(isLoading: false, suggestions: suggestions));
-    } catch (e) {
+      emit(
+        state.copyWith(
+          suggestions: users,
+          isLoading: false,
+          message: users.isEmpty ? 'No users found' : null,
+        ),
+      );
+    } catch (e, st) {
+      print('[AddFriendCubit._searchUsers] $e\n$st');
       emit(
         state.copyWith(
           isLoading: false,
-          message: 'Tìm kiếm thất bại. Vui lòng thử lại.',
+          message: 'Search failed. Please try again.',
         ),
       );
     }
   }
 
-  Future<void> addFriend(String friendUid) async {
-    emit(state.copyWith(isLoading: true, message: null));
-
+  Future<void> sendFriendRequest(String targetUid) async {
+    emit(
+      state.copyWith(isLoading: true, errorMessage: null, successMessage: null),
+    );
     try {
-      final currentUid = _auth.currentUser!.uid;
-
-      final currentDoc = await _db.collection('users').doc(currentUid).get();
-      final friends = List<String>.from(currentDoc['friends'] ?? []);
-      if (friends.contains(friendUid)) {
+      final meUid = FirebaseConfig.auth.currentUser!.uid;
+      if (meUid == targetUid) {
         emit(
           state.copyWith(
             isLoading: false,
-            message: 'Bạn đã là bạn bè với người này.',
+            errorMessage: 'Cannot send request to yourself',
           ),
         );
         return;
       }
 
-      await Future.wait([
-        _db.collection('users').doc(currentUid).update({
-          'friends': FieldValue.arrayUnion([friendUid]),
-        }),
-        _db.collection('users').doc(friendUid).update({
-          'friends': FieldValue.arrayUnion([currentUid]),
-        }),
-      ]);
+      final targetRef = FirebaseConfig.firestore
+          .collection('users')
+          .doc(targetUid);
+      final targetDoc = await targetRef.get();
+      if (!targetDoc.exists) {
+        emit(
+          state.copyWith(isLoading: false, errorMessage: 'User does not exist'),
+        );
+        return;
+      }
 
+      final targetData = targetDoc.data()!;
+      final targetFriends = List<String>.from(targetData['friends'] ?? []);
+      if (targetFriends.contains(meUid)) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: 'Already friends with this user',
+          ),
+        );
+        return;
+      }
+
+      final existing = await targetRef
+          .collection('notifications')
+          .where('type', isEqualTo: 'friend_request')
+          .where('fromUid', isEqualTo: meUid)
+          .where('status', isEqualTo: 'pending')
+          .limit(1)
+          .get();
+
+      if (existing.docs.isNotEmpty) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: 'Friend request already sent',
+          ),
+        );
+        return;
+      }
+
+      final meDoc = await FirebaseConfig.firestore
+          .collection('users')
+          .doc(meUid)
+          .get();
+      final meName = meDoc.data()?['userName'] ?? '';
+      final mePhoto = meDoc.data()?['photoURL'];
+
+      final payload = {
+        'type': 'friend_request',
+        'fromUid': meUid,
+        'fromName': meName,
+        'fromPhoto': mePhoto,
+        'status': 'pending',
+        'timestamp': FieldValue.serverTimestamp(),
+      };
+
+      await targetRef.collection('notifications').add(payload);
+
+      emit(
+        state.copyWith(isLoading: false, successMessage: 'Friend request sent'),
+      );
+    } catch (e, st) {
+      print('[AddFriendCubit.sendFriendRequest] $e\n$st');
       emit(
         state.copyWith(
           isLoading: false,
-          message: 'Đã thêm bạn thành công!',
-          query: '',
-          suggestions: [],
+          errorMessage: 'Failed to send request: $e',
         ),
-      );
-    } catch (e) {
-      emit(
-        state.copyWith(isLoading: false, message: 'Lỗi: Không thể thêm bạn.'),
       );
     }
   }
 
-  @override
-  Future<void> close() {
-    _debounce?.cancel();
-    return super.close();
+  void clearMessage() {
+    emit(
+      state.copyWith(message: null, errorMessage: null, successMessage: null),
+    );
   }
 }

@@ -22,31 +22,30 @@ class _DetailIssuePageState extends State<DetailIssuePage> {
   late IssueEntity _currentIssue;
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _summaryController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _currentIssue = widget.issue;
     _titleController.text = _currentIssue.title;
+    _summaryController.text = _currentIssue.summary;
     _descriptionController.text = _currentIssue.description ?? '';
     _assigneeFuture = _fetchUser(_currentIssue.assigneeId);
     _reporterFuture = _fetchUser(_currentIssue.reporterId);
     _projectMembersFuture = UserService.getUsersInProject(_currentIssue.projectId);
 
-    try {
-      final cubit = BlocProvider.of<IssueCubit>(context);
-      print("IssueCubit tồn tại: $cubit");
-    } catch (e) {
-      print("Không tìm thấy IssueCubit trong context");
-    }
   }
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _summaryController.dispose();
     super.dispose();
   }
+
+  
 
   Future<UserModel?> _fetchUser(String? userId) async {
     if (userId == null) return null;
@@ -100,124 +99,376 @@ class _DetailIssuePageState extends State<DetailIssuePage> {
     }
   }
 
-  Future<void> _updateTitle() async {
-    final newTitle = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Edit Title'),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        content: TextField(
-          controller: _titleController,
-          decoration: const InputDecoration(
-            labelText: 'Issue Title',
-            border: OutlineInputBorder(),
-          ),
-          autofocus: true,
-          maxLines: 2,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, _titleController.text),
-            child: const Text('Save'),
-          ),
-        ],
-      ),
-    );
-
-    if (newTitle != null && newTitle.isNotEmpty && newTitle != _currentIssue.title) {
-      final updatedIssue = _currentIssue.copyWith(title: newTitle);
-      await context.read<IssueCubit>().updateIssue(updatedIssue);
-
-      setState(() {
-        _currentIssue = updatedIssue;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text("Title updated successfully!"),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          backgroundColor: Colors.green.shade600,
-        ),
-      );
-    }
-  }
-
-  Future<void> _updateDescription() async {
-    final newDescription = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Edit Description'),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        content: TextField(
-          controller: _descriptionController,
-          decoration: const InputDecoration(
-            labelText: 'Description',
-            border: OutlineInputBorder(),
-            alignLabelWithHint: true,
-          ),
-          autofocus: true,
-          maxLines: 8,
-          minLines: 4,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, _descriptionController.text),
-            child: const Text('Save'),
-          ),
-        ],
-      ),
-    );
-
-    if (newDescription != null && newDescription != _currentIssue.description) {
-      final updatedIssue = _currentIssue.copyWith(description: newDescription);
-      await context.read<IssueCubit>().updateIssue(updatedIssue);
-
-      setState(() {
-        _currentIssue = updatedIssue;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text("Description updated successfully!"),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          backgroundColor: Colors.green.shade600,
+Future<void> _updateTitle() async {
+  final newTitle = await showModalBottomSheet<String>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) {
+      final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+      return Padding(
+        padding: EdgeInsets.only(bottom: bottomInset),
+        child: DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          expand: false, // rất quan trọng để sheet co lại khi keyboard bật
+          builder: (_, controller) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: ListView(
+                controller: controller,
+                padding: const EdgeInsets.all(20),
+                children: [
+                  Text(
+                    'Edit Title',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue.shade800,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _titleController,
+                    autofocus: true,
+                    maxLines: 2,
+                    minLines: 1,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      hintText: 'Enter title...',
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.grey.shade600,
+                        ),
+                        child: const Text('Cancel'),
+                      ),
+                      const SizedBox(width: 12),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context, _titleController.text),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue.shade600,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text('Save'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       );
-    }
+    },
+  );
+
+  if (newTitle != null && newTitle.isNotEmpty && newTitle != _currentIssue.title) {
+    final updatedIssue = _currentIssue.copyWith(title: newTitle);
+    await context.read<IssueCubit>().updateIssue(updatedIssue);
+
+    setState(() {
+      _currentIssue = updatedIssue;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text("Title updated successfully!"),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        backgroundColor: Colors.green.shade600,
+      ),
+    );
   }
+}
+
+Future<void> _updateDescription() async {
+  final newDescription = await showModalBottomSheet<String>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) {
+      final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+      return Padding(
+        padding: EdgeInsets.only(bottom: bottomInset),
+        child: DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (_, controller) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: ListView(
+                controller: controller,
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                children: [
+                  Text(
+                    'Edit Description',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue.shade800,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _descriptionController,
+                    autofocus: true,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    minLines: 6,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      hintText: 'Enter description...',
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.grey.shade600,
+                        ),
+                        child: const Text('Cancel'),
+                      ),
+                      const SizedBox(width: 12),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context, _descriptionController.text),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue.shade600,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text('Save'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      );
+    },
+  );
+
+  if (newDescription != null && newDescription != _currentIssue.description) {
+    final updatedIssue = _currentIssue.copyWith(description: newDescription);
+    await context.read<IssueCubit>().updateIssue(updatedIssue);
+
+    setState(() {
+      _currentIssue = updatedIssue;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text("Description updated successfully!"),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        backgroundColor: Colors.green.shade600,
+      ),
+    );
+  }
+}
+
+Future<void> _updateSummary() async {
+  final newSummary = await showModalBottomSheet<String>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) {
+      final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+      return Padding(
+        padding: EdgeInsets.only(bottom: bottomInset),
+        child: DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (_, controller) {
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: ListView(
+                controller: controller,
+                padding: const EdgeInsets.all(20),
+                children: [
+                  Text(
+                    'Edit Summary',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue.shade800,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _summaryController,
+                    autofocus: true,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    minLines: 3,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: Colors.grey.shade100,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                      hintText: 'Enter summary...',
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.grey.shade600,
+                        ),
+                        child: const Text('Cancel'),
+                      ),
+                      const SizedBox(width: 12),
+                      ElevatedButton(
+                        onPressed: () => Navigator.pop(context, _summaryController.text),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue.shade600,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text('Save'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      );
+    },
+  );
+
+  if (newSummary != null && newSummary != _currentIssue.summary) {
+    final updatedIssue = _currentIssue.copyWith(summary: newSummary);
+    await context.read<IssueCubit>().updateIssue(updatedIssue);
+
+    setState(() {
+      _currentIssue = updatedIssue;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text("Summary updated successfully!"),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        backgroundColor: Colors.green.shade600,
+      ),
+    );
+  }
+}
+
 
   Future<void> _deleteIssue() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Issue'),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        content: const Text('Are you sure you want to delete this issue? This action cannot be undone.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+final confirmed = await showDialog<bool>(
+  context: context,
+  builder: (context) => AlertDialog(
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20),
+    ),
+    backgroundColor: Colors.white,
+    titlePadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+    contentPadding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+    actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+
+    title: Row(
+      children: [
+        Icon(Icons.warning_amber_rounded,
+            color: Colors.red.shade600, size: 28),
+        const SizedBox(width: 10),
+        const Text(
+          'Delete Issue',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+            color: Colors.black,
           ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.red.shade600,
-            ),
-            child: const Text('Delete'),
-          ),
-        ],
+        ),
+      ],
+    ),
+
+    content: const Text(
+      'Are you sure you want to delete this issue? This action cannot be undone.',
+      style: TextStyle(
+        fontSize: 15,
+        color: Colors.black87,
+        height: 1.4,
       ),
-    );
+    ),
+
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context, false),
+        style: TextButton.styleFrom(
+          foregroundColor: Colors.black87,
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+          textStyle: const TextStyle(fontSize: 15),
+        ),
+        child: const Text('Cancel'),
+      ),
+      FilledButton(
+        onPressed: () => Navigator.pop(context, true),
+        style: FilledButton.styleFrom(
+          backgroundColor: Colors.red.shade600,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          textStyle: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        child: const Text('Delete'),
+      ),
+    ],
+  ),
+);
+
 
     if (confirmed == true) {
       try {
@@ -294,7 +545,11 @@ class _DetailIssuePageState extends State<DetailIssuePage> {
         actions: [
           PopupMenuButton<String>(
             icon: const Icon(Icons.more_vert),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            color: Colors.white, // màu nền menu
+            elevation: 8,
             onSelected: (value) {
               switch (value) {
                 case 'edit_title':
@@ -312,52 +567,53 @@ class _DetailIssuePageState extends State<DetailIssuePage> {
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'edit_title',
                 child: Row(
                   children: [
-                    Icon(Icons.edit, size: 20),
-                    SizedBox(width: 12),
-                    Text('Edit Title'),
+                    Icon(Icons.edit, size: 20, color: Colors.blue.shade700),
+                    const SizedBox(width: 12),
+                    const Text('Edit Title', style: TextStyle(fontWeight: FontWeight.w500)),
                   ],
                 ),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'edit_description',
                 child: Row(
                   children: [
-                    Icon(Icons.description, size: 20),
-                    SizedBox(width: 12),
-                    Text('Edit Description'),
+                    Icon(Icons.description, size: 20, color: Colors.blue.shade700),
+                    const SizedBox(width: 12),
+                    const Text('Edit Description', style: TextStyle(fontWeight: FontWeight.w500)),
                   ],
                 ),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'change_assignee',
                 child: Row(
                   children: [
-                    Icon(Icons.person_outline, size: 20),
-                    SizedBox(width: 12),
-                    Text('Change Assignee'),
+                    Icon(Icons.person_outline, size: 20, color: Colors.blue.shade700),
+                    const SizedBox(width: 12),
+                    const Text('Change Assignee', style: TextStyle(fontWeight: FontWeight.w500)),
                   ],
                 ),
               ),
               const PopupMenuDivider(),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'delete',
                 child: Row(
                   children: [
-                    Icon(Icons.delete_outline, size: 20, color: Colors.red),
-                    SizedBox(width: 12),
-                    Text('Delete Issue', style: TextStyle(color: Colors.red)),
+                    const Icon(Icons.delete_outline, size: 20, color: Colors.red),
+                    const SizedBox(width: 12),
+                    const Text('Delete Issue', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w500)),
                   ],
                 ),
               ),
             ],
-          ),
+          )
         ],
       ),
       body: SingleChildScrollView(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -454,6 +710,7 @@ class _DetailIssuePageState extends State<DetailIssuePage> {
                           future: _assigneeFuture,
                           onAssign: () async {
                             final members = await _projectMembersFuture;
+    
                             if (members == null || members.isEmpty) return;
 
                             final List<UserModel>? result =
@@ -485,6 +742,30 @@ class _DetailIssuePageState extends State<DetailIssuePage> {
                       ],
                     ),
                   ),
+
+
+                  const SizedBox(height: 16),
+
+                  // Description Section
+                  _buildSectionCard(
+                    title: "Summary",
+                    icon: Icons.description_outlined,
+                    trailing: IconButton(
+                      icon: const Icon(Icons.edit, size: 20),
+                      onPressed: _updateSummary,
+                      tooltip: 'Edit Summary',
+                    ),
+                    child: Text(
+                      issue.summary ,
+                      style: TextStyle(
+                        fontSize: 15,
+                        height: 1.6,
+                        color: Colors.grey.shade700,
+                      ),
+                    ),
+                  ),
+
+
 
                   const SizedBox(height: 16),
 
@@ -620,11 +901,21 @@ class _DetailIssuePageState extends State<DetailIssuePage> {
             future: future,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                );
+                return SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0, end: 1),
+                        duration: const Duration(seconds: 1),
+                        builder: (context, value, child) {
+                          return Transform.rotate(
+                            angle: value * 6.3, // 2*π rad
+                            child: child,
+                          );
+                        },
+                        child: Icon(Icons.autorenew, color: Colors.blue.shade600, size: 20),
+                      ),
+                    );
               }
               
               final user = snapshot.data;
@@ -639,7 +930,7 @@ class _DetailIssuePageState extends State<DetailIssuePage> {
                         CircleAvatar(
                           radius: 16,
                           backgroundColor: Colors.blue.shade100,
-                         backgroundImage: AssetImage('jira/assets/images/image.png'),
+                        // backgroundImage: AssetImage('jira/assets/images/image.png'),
                           child:  Text(
                                   user.lastName[0].toUpperCase(),
                                   style: TextStyle(

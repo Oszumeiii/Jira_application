@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -48,13 +49,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     _controller.jumpToPage(_pages.length - 1);
   }
 
-  // void _goToLogin() {
-  //   Navigator.pushReplacement(
-  //     context,
-  //     MaterialPageRoute(builder: (_) => LoginView()),
-  //   );
-  // }
-
   void _goToLogin() {
     context.go('/login');
   }
@@ -74,32 +68,32 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 itemBuilder: (_, index) {
                   final page = _pages[index];
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(height: 30),
+                        SizedBox(height: 30.h),
                         Image.asset(
                           page['image']!,
-                          height: 300,
+                          height: 200.h,
                           fit: BoxFit.contain,
                         ),
-                        const SizedBox(height: 60),
+                        SizedBox(height: 60.h),
                         Text(
                           page['title']!,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 24,
+                          style: TextStyle(
+                            fontSize: 24.sp,
                             fontWeight: FontWeight.bold,
                             color: Colors.black87,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        SizedBox(height: 16.h),
                         Text(
                           page['desc']!,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 15,
+                          style: TextStyle(
+                            fontSize: 15.sp,
                             color: Colors.black54,
                             height: 1.5,
                           ),
@@ -110,58 +104,59 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 _pages.length,
                 (index) => AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  height: 8,
-                  width: _currentPage == index ? 24 : 8,
+                  margin: EdgeInsets.symmetric(horizontal: 4.w),
+                  height: 8.h,
+                  width: _currentPage == index ? 24.w : 8.w,
                   decoration: BoxDecoration(
                     color: _currentPage == index
                         ? Colors.deepPurple
                         : Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                 ),
               ),
             ),
-            const SizedBox(height: 30),
+            SizedBox(height: 30.h),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _currentPage < _pages.length - 1
                       ? TextButton(
                           onPressed: _skip,
-                          child: const Text(
+                          child: Text(
                             'Skip',
-                            style: TextStyle(color: Colors.black54),
+                            style: TextStyle(color: Colors.black54, fontSize: 16.sp),
                           ),
                         )
-                      : const SizedBox(width: 70),
+                      : SizedBox(width: 70.w),
                   ElevatedButton(
                     onPressed: _nextPage,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.deepPurple,
                       shape: const CircleBorder(),
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16.w),
                     ),
                     child: Icon(
                       _currentPage == _pages.length - 1
                           ? Icons.check
                           : Icons.arrow_forward,
                       color: Colors.white,
+                      size: 24.sp,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 30),
+            SizedBox(height: 30.h),
           ],
         ),
       ),
