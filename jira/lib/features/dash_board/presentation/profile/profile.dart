@@ -208,7 +208,7 @@ class _ProfileView extends StatelessWidget {
                             Icon(Icons.language, color: Colors.white, size: 18),
                             SizedBox(width: 8),
                             Text(
-                              "huanhung.atlassian.net",
+                              "Jira.atlassian.net",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w500,
