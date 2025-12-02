@@ -138,8 +138,12 @@ class _HomeTabState extends State<HomeTab> {
                   ],
                 ),
                 child: IconButton(
-                  icon: const Icon(Icons.add, color: Colors.white),
-                  onPressed: _showBottomSheetAddProject,
+                  icon: const Icon(Icons.autorenew, color: Colors.white),
+                  onPressed: () {
+                    setState(() {
+                      _tasksTodayFuture = _loadTasksToday(); 
+                    });
+              },
                 ),
               ),
             ],
@@ -148,43 +152,43 @@ class _HomeTabState extends State<HomeTab> {
 
           /// PROJECT LIST
           BlocBuilder<ProjectCubit, ProjectState>(
-  builder: (context, state) {
-    final projects = state.projects;
+          builder: (context, state) {
+            final projects = state.projects;
 
-    if (state.isLoading && projects.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
-    }
+            if (state.isLoading && projects.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-    if (projects.isEmpty) {
-      return const Center(child: Text("No projects available"));
-    }
+            if (projects.isEmpty) {
+              return const Center(child: Text("No projects available"));
+            }
 
-    return ListView.separated(
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemCount: projects.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
-      itemBuilder: (context, index) {
-        final project = projects[index];
+            return ListView.separated(
+              physics: const NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: projects.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final project = projects[index];
 
-        return FutureBuilder<double>(
-          future: getProjectProgress(project.id!),
-          builder: (context, snapshot) {
-            final progress = snapshot.data ?? 0.0; 
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: ProjectCard(
-                name: project.name,
-                description: project.sumary ?? '',
-                progress: progress,
-              ),
+                return FutureBuilder<double>(
+                  future: getProjectProgress(project.id!),
+                  builder: (context, snapshot) {
+                    final progress = snapshot.data ?? 0.0; 
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: ProjectCard(
+                        name: project.name,
+                        description: project.sumary ?? '',
+                        progress: progress,
+                      ),
+                    );
+                  },
+                );
+              },
             );
           },
-        );
-      },
-    );
-  },
-)
+        )
         ],
       ),
     );
@@ -229,7 +233,6 @@ class _HomeTabState extends State<HomeTab> {
       final response = await ApiClient.dio.get("/issues/assignee");
 
       if (response.statusCode != 200) {
-        print("API error: ${response.statusCode}");
         return [];
       }
 
