@@ -8,6 +8,7 @@ import 'package:jira/core/injection.dart';
 import 'package:jira/features/dash_board/presentation/profile/profile.dart';
 import 'package:jira/features/dash_board/projects/presentation/cubit/project_cubit.dart';
 import 'package:jira/features/login_signup/domain/cubit/AuthCubit.dart';
+import 'package:jira/features/login_signup/presenation/onboarding/onboarding_view.dart';
 import 'package:jira/firebase_options.dart';
 import 'package:jira/features/login_signup/presenation/login/login_view.dart';
 import 'package:jira/features/dash_board/presentation/dash_board.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
       routes: [
         GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
         GoRoute(path: '/login', builder: (context, state) => LoginView()),
+        GoRoute(path: '/onboarding', builder: (context, state) => OnboardingScreen()),
         GoRoute(
           path: '/dashboard',
           builder: (context, state) => MultiBlocProvider(
