@@ -48,20 +48,20 @@ class FriendsListView extends StatelessWidget {
                           radius: 28,
                         ),
                       ),
-                      if (friend.isOnline)
-                        Positioned(
-                          bottom: 2,
-                          right: 2,
-                          child: Container(
-                            width: 14,
-                            height: 14,
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 2),
-                            ),
-                          ),
-                        ),
+                      // if (friend.isOnline)
+                      //   Positioned(
+                      //     bottom: 2,
+                      //     right: 2,
+                      //     child: Container(
+                      //       width: 14,
+                      //       height: 14,
+                      //       decoration: BoxDecoration(
+                      //         color: Colors.green,
+                      //         shape: BoxShape.circle,
+                      //         border: Border.all(color: Colors.white, width: 2),
+                      //       ),
+                      //     ),
+                      //   ),
                     ],
                   ),
                 ),
@@ -78,19 +78,7 @@ class FriendsListView extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 12),
                 ),
-                trailing: friend.isOnline
-                    ? const Text(
-                        'Online',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      )
-                    : const Text(
-                        'Offline',
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                      ),
+
                 onTap: () {
                   final currentUid = FirebaseAuth.instance.currentUser?.uid;
                   final members = <String>[
