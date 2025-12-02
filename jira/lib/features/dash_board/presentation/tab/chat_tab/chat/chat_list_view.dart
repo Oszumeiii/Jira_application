@@ -156,23 +156,23 @@ class ChatListView extends StatelessWidget {
                               radius: 28,
                             ),
                           ),
-                          if (!item.isGroup && item.isOnline)
-                            Positioned(
-                              bottom: 2,
-                              right: 2,
-                              child: Container(
-                                width: 14,
-                                height: 14,
-                                decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 2,
-                                  ),
-                                ),
-                              ),
-                            ),
+                          // if (!item.isGroup && item.isOnline)
+                          //   Positioned(
+                          //     bottom: 2,
+                          //     right: 2,
+                          //     child: Container(
+                          //       width: 14,
+                          //       height: 14,
+                          //       decoration: BoxDecoration(
+                          //         color: Colors.green,
+                          //         shape: BoxShape.circle,
+                          //         border: Border.all(
+                          //           color: Colors.white,
+                          //           width: 2,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
                         ],
                       ),
                     ),
@@ -191,18 +191,18 @@ class ChatListView extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(fontSize: 12, color: Colors.grey),
                     ),
-                    trailing: item.isGroup
-                        ? null
-                        : Text(
-                            item.isOnline ? 'Online' : 'Offline',
-                            style: TextStyle(
-                              color: item.isOnline
-                                  ? Colors.green
-                                  : Colors.grey[600],
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                    // trailing: item.isGroup
+                    //     ? null
+                    //     : Text(
+                    //         item.isOnline ? 'Online' : 'Offline',
+                    //         style: TextStyle(
+                    //           color: item.isOnline
+                    //               ? Colors.green
+                    //               : Colors.grey[600],
+                    //           fontSize: 12,
+                    //           fontWeight: FontWeight.w500,
+                    //         ),
+                    //       ),
                     onTap: () {
                       final targetChatId = item.isGroup
                           ? item.id
