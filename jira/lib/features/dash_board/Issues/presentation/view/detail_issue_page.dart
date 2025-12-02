@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jira/core/injection.dart';
 import 'package:jira/features/Users/model/user_model.dart';
 import 'package:jira/features/Users/service/user_repo.dart';
+import 'package:jira/features/comment/presentation/cubit/comment_cubit.dart';
+import 'package:jira/features/comment/presentation/view/comment_section.dart';
 import 'package:jira/features/dash_board/Issues/domain/Entity/issue_entity.dart';
 import 'package:jira/features/dash_board/Issues/presentation/view/assign_member_bottomsheet.dart';
 import 'package:jira/features/dash_board/Issues/presentation/cubit/issue_cubit.dart';
@@ -812,6 +815,18 @@ final confirmed = await showDialog<bool>(
                   ),
 
                   const SizedBox(height: 24),
+                  const Divider(),
+
+
+                  const SizedBox(height: 16),
+                _buildSectionCard(
+                  title: "Comments",
+                  icon: Icons.comment_outlined,
+                  child: BlocProvider<CommentCubit>(
+                    create: (_) => getIt<CommentCubit>(),
+                    child: CommentSection(taskId: issue.id!),
+                  ),
+                ),
                 ],
               ),
             ),

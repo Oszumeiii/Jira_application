@@ -156,7 +156,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               context,
               MaterialPageRoute(builder: (_) => const NotifTab()),
             ),
-            icon: const Icon(Icons.notifications_outlined),
+            icon: const Icon(Icons.notifications_outlined , color: Colors.red),
             iconSize: 26,
             color: const Color(0xFF0052CC),
             splashRadius: 24,
