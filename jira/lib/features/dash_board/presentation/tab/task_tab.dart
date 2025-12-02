@@ -86,35 +86,53 @@ class TasksTabState extends State<TasksTab> {
               style: TextStyle(color: Colors.grey, fontSize: 16),
             ),
           );
-        } else {
+        } else {  
           final tasks = snapshot.data!;
+
+
+          final Map<String, List<IssueModel>> groupedTasks = {
+            "To Do": tasks.where((t) => t.status.toLowerCase() == "todo").toList(),
+            "In Progress": tasks.where((t) => t.status.toLowerCase() == "inprogress").toList(),
+            "Done": tasks.where((t) => t.status.toLowerCase() == "done").toList(),
+          };
+
           return RefreshIndicator(
             onRefresh: refreshTasks,
-            child: ListView.builder(
+            child: ListView(
               padding: const EdgeInsets.all(16),
-              itemCount: tasks.length,
-              itemBuilder: (context, index) {
-                  final task = tasks[index];
-                  return GestureDetector(
-                      onTap: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailTaskPage(issue: task),
-                          ),
-                        );
-                        refreshTasks();
-                      },
+              children: groupedTasks.entries.map((entry) {
+                final status = entry.key;
+                final taskList = entry.value;
 
-                    child: TaskRow(
-                      task: task,
-                      onStatusChanged: (newStatus) {
-                        changeStatus(task, newStatus);
-                      },
-                    ),
-                  );
-                }
-
+                return ExpansionTile(
+                  title: Text(
+                    "$status ",
+                    style: const TextStyle(fontWeight: FontWeight.bold , fontSize: 20),
+                  ),
+                  initiallyExpanded: status == "To Do",
+                  children: taskList.isEmpty
+                      ? [const ListTile(title: Text("No tasks"))]
+                      : taskList.map((task) {
+                          return GestureDetector(
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => DetailTaskPage(issue: task),
+                                ),
+                              );
+                              refreshTasks();
+                            },
+                            child: TaskRow(
+                              task: task,
+                              onStatusChanged: (newStatus) {
+                                changeStatus(task, newStatus);
+                              },
+                            ),
+                          );
+                        }).toList(),
+                );
+              }).toList(),
             ),
           );
         }
